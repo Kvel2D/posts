@@ -75,7 +75,7 @@ ApplicationMain.init = function() {
 	}
 };
 ApplicationMain.main = function() {
-	ApplicationMain.config = { build : "304", company : "", file : "game", fps : 60, name : "Tarotus", orientation : "landscape", packageName : "com.kvel2d", version : "1.0.0", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : true, height : 0, hidden : null, maximized : null, minimized : null, parameters : "{}", resizable : true, stencilBuffer : true, title : "Tarotus", vsync : true, width : 0, x : null, y : null}]};
+	ApplicationMain.config = { build : "307", company : "", file : "game", fps : 60, name : "Tarotus", orientation : "landscape", packageName : "com.kvel2d", version : "1.0.0", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : true, height : 0, hidden : null, maximized : null, minimized : null, parameters : "{}", resizable : true, stencilBuffer : true, title : "Tarotus", vsync : true, width : 0, x : null, y : null}]};
 };
 ApplicationMain.start = function() {
 	var hasMain = false;
@@ -2755,6 +2755,7 @@ var Main = function() {
 	this.own_hit = 7.0;
 	this.own_sp = 400.0;
 	this.own_crit = 5.0;
+	this.avg_lock_pen = 0.0;
 	this.avg_lock_hit = 7.0;
 	this.avg_lock_sp = 400.0;
 	this.avg_lock_crit = 5.0;
@@ -2781,6 +2782,9 @@ var Main = function() {
 	}
 	if(this.obj.data.avg_lock_hit != null) {
 		this.avg_lock_hit = this.obj.data.avg_lock_hit;
+	}
+	if(this.obj.data.avg_lock_pen != null) {
+		this.avg_lock_pen = this.obj.data.avg_lock_pen;
 	}
 	if(this.obj.data.own_crit != null) {
 		this.own_crit = this.obj.data.own_crit;
@@ -2841,8 +2845,8 @@ Main.prototype = {
 		var raid_lock_crit = (this.avg_lock_crit + (this.avg_lock_int + 85) / 60.6 + 3.18 + 5) * avg_lock_hit_chance * this.number_of_locks;
 		var own_dmg = calc_dmg(this.own_sp,this.own_crit,this.own_hit,this.own_int,this.own_pen,raid_lock_crit);
 		var own_dmg_with_modifiers = calc_dmg(this.own_sp + this.sp_modifier,this.own_crit + this.crit_modifier,this.own_hit + this.hit_modifier,this.own_int,this.own_pen + this.pen_modifier,raid_lock_crit + this.crit_modifier);
-		var all_locks_dmg = own_dmg + this.number_of_locks * calc_dmg(this.avg_lock_sp,this.avg_lock_crit,this.avg_lock_hit,this.avg_lock_int,0,raid_lock_crit);
-		var all_locks_dmg_with_modifiers = own_dmg_with_modifiers + this.number_of_locks * calc_dmg(this.avg_lock_sp,this.avg_lock_crit,this.avg_lock_hit,this.avg_lock_int,0,raid_lock_crit + this.crit_modifier);
+		var all_locks_dmg = own_dmg + this.number_of_locks * calc_dmg(this.avg_lock_sp,this.avg_lock_crit,this.avg_lock_hit,this.avg_lock_int,this.avg_lock_pen,raid_lock_crit);
+		var all_locks_dmg_with_modifiers = own_dmg_with_modifiers + this.number_of_locks * calc_dmg(this.avg_lock_sp,this.avg_lock_crit,this.avg_lock_hit,this.avg_lock_int,this.avg_lock_pen,raid_lock_crit + this.crit_modifier);
 		var values_x = haxegon_Text.width("All lock's modified dmg per bolt:") + 5;
 		haxegon_Text.display(0,0,"Your default dmg per bolt:");
 		haxegon_Text.display(values_x,0,"" + haxegon_MathExtensions.fixed_float(Math,own_dmg,2));
@@ -2882,31 +2886,41 @@ Main.prototype = {
 			_gthis.obj.data.avg_lock_int = x8;
 			_gthis.obj.flush();
 		},this.avg_lock_int);
-		haxegon_GUI.editable_number(100,660,"World buffs(+18crit) set to 1 for true = ",function(x9) {
-			_gthis.world_buffs = haxegon_MathExtensions.sign(Math,x9);
-			_gthis.obj.data.world_buffs = haxegon_MathExtensions.sign(Math,x9);
+		haxegon_GUI.editable_number(100,650,"Avg lock pen = ",function(x9) {
+			_gthis.avg_lock_pen = x9;
+			_gthis.obj.data.avg_lock_pen = x9;
+			_gthis.obj.flush();
+		},this.avg_lock_pen);
+		haxegon_GUI.editable_number(100,700,"World buffs(+18crit) set to 1 for true = ",function(x10) {
+			_gthis.world_buffs = haxegon_MathExtensions.sign(Math,x10);
+			_gthis.obj.data.world_buffs = haxegon_MathExtensions.sign(Math,x10);
 			_gthis.obj.flush();
 		},this.world_buffs);
-		haxegon_GUI.editable_number(600,530,"Your sp = ",function(x10) {
-			_gthis.own_sp = x10;
-			_gthis.obj.data.own_sp = x10;
+		haxegon_GUI.editable_number(600,530,"Your sp = ",function(x11) {
+			_gthis.own_sp = x11;
+			_gthis.obj.data.own_sp = x11;
 			_gthis.obj.flush();
 		},this.own_sp);
-		haxegon_GUI.editable_number(600,560,"Your crit = ",function(x11) {
-			_gthis.own_crit = x11;
-			_gthis.obj.data.own_crit = x11;
+		haxegon_GUI.editable_number(600,560,"Your crit = ",function(x12) {
+			_gthis.own_crit = x12;
+			_gthis.obj.data.own_crit = x12;
 			_gthis.obj.flush();
 		},this.own_crit);
-		haxegon_GUI.editable_number(600,590,"Your hit = ",function(x12) {
-			_gthis.own_hit = x12;
-			_gthis.obj.data.own_hit = x12;
+		haxegon_GUI.editable_number(600,590,"Your hit = ",function(x13) {
+			_gthis.own_hit = x13;
+			_gthis.obj.data.own_hit = x13;
 			_gthis.obj.flush();
 		},this.own_hit);
-		haxegon_GUI.editable_number(600,620,"Your int = ",function(x13) {
-			_gthis.own_int = x13;
-			_gthis.obj.data.own_int = x13;
+		haxegon_GUI.editable_number(600,620,"Your int = ",function(x14) {
+			_gthis.own_int = x14;
+			_gthis.obj.data.own_int = x14;
 			_gthis.obj.flush();
 		},this.own_int);
+		haxegon_GUI.editable_number(600,650,"Your pen = ",function(x15) {
+			_gthis.own_pen = x15;
+			_gthis.obj.data.own_pen = x15;
+			_gthis.obj.flush();
+		},this.own_pen);
 	}
 	,__class__: Main
 };
@@ -12387,7 +12401,7 @@ var lime_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 639506;
+	this.version = 196900;
 };
 $hxClasses["lime.AssetCache"] = lime_AssetCache;
 lime_AssetCache.__name__ = ["lime","AssetCache"];
