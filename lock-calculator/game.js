@@ -75,7 +75,7 @@ ApplicationMain.init = function() {
 	}
 };
 ApplicationMain.main = function() {
-	ApplicationMain.config = { build : "307", company : "", file : "game", fps : 60, name : "Tarotus", orientation : "landscape", packageName : "com.kvel2d", version : "1.0.0", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : true, height : 0, hidden : null, maximized : null, minimized : null, parameters : "{}", resizable : true, stencilBuffer : true, title : "Tarotus", vsync : true, width : 0, x : null, y : null}]};
+	ApplicationMain.config = { build : "311", company : "", file : "game", fps : 60, name : "Tarotus", orientation : "landscape", packageName : "com.kvel2d", version : "1.0.0", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : true, height : 0, hidden : null, maximized : null, minimized : null, parameters : "{}", resizable : true, stencilBuffer : true, title : "Tarotus", vsync : true, width : 0, x : null, y : null}]};
 };
 ApplicationMain.start = function() {
 	var hasMain = false;
@@ -2749,6 +2749,7 @@ _$List_ListIterator.prototype = {
 	,__class__: _$List_ListIterator
 };
 var Main = function() {
+	this.boss_resistance = 24.0;
 	this.world_buffs = 0;
 	this.own_pen = 0.0;
 	this.own_int = 180.0;
@@ -2838,7 +2839,7 @@ Main.prototype = {
 			var raid_crit_chance = Math.min(1.0,crit_chance * hit_chance + raid_crit / 100);
 			var dmg = (481.5 + sp * 0.8571) * 1.15 * Math.max(1.0,raid_crit_chance * 1.2 + (1 - raid_crit_chance)) * hit_chance;
 			dmg = dmg * (1.0 - crit_chance) + dmg * 2 * crit_chance;
-			dmg *= 1 - 0.75 * (Math.max(15,70.0 - pen) / 300);
+			dmg *= 1 - 0.75 * (Math.max(24,_gthis.boss_resistance - pen) / 300);
 			return dmg;
 		};
 		var avg_lock_hit_chance = Math.min(0.99,(83.0 + this.avg_lock_hit) / 100);
@@ -2891,34 +2892,39 @@ Main.prototype = {
 			_gthis.obj.data.avg_lock_pen = x9;
 			_gthis.obj.flush();
 		},this.avg_lock_pen);
-		haxegon_GUI.editable_number(100,700,"World buffs(+18crit) set to 1 for true = ",function(x10) {
+		haxegon_GUI.editable_number(100,680,"World buffs(+18crit) set to 1 for true = ",function(x10) {
 			_gthis.world_buffs = haxegon_MathExtensions.sign(Math,x10);
 			_gthis.obj.data.world_buffs = haxegon_MathExtensions.sign(Math,x10);
 			_gthis.obj.flush();
 		},this.world_buffs);
-		haxegon_GUI.editable_number(600,530,"Your sp = ",function(x11) {
-			_gthis.own_sp = x11;
-			_gthis.obj.data.own_sp = x11;
+		haxegon_GUI.editable_number(100,710,"Boss resistance after curse, include 24 innate = ",function(x11) {
+			_gthis.boss_resistance = x11;
+			_gthis.obj.data.boss_resistance = x11;
+			_gthis.obj.flush();
+		},this.boss_resistance);
+		haxegon_GUI.editable_number(600,530,"Your sp = ",function(x12) {
+			_gthis.own_sp = x12;
+			_gthis.obj.data.own_sp = x12;
 			_gthis.obj.flush();
 		},this.own_sp);
-		haxegon_GUI.editable_number(600,560,"Your crit = ",function(x12) {
-			_gthis.own_crit = x12;
-			_gthis.obj.data.own_crit = x12;
+		haxegon_GUI.editable_number(600,560,"Your crit = ",function(x13) {
+			_gthis.own_crit = x13;
+			_gthis.obj.data.own_crit = x13;
 			_gthis.obj.flush();
 		},this.own_crit);
-		haxegon_GUI.editable_number(600,590,"Your hit = ",function(x13) {
-			_gthis.own_hit = x13;
-			_gthis.obj.data.own_hit = x13;
+		haxegon_GUI.editable_number(600,590,"Your hit = ",function(x14) {
+			_gthis.own_hit = x14;
+			_gthis.obj.data.own_hit = x14;
 			_gthis.obj.flush();
 		},this.own_hit);
-		haxegon_GUI.editable_number(600,620,"Your int = ",function(x14) {
-			_gthis.own_int = x14;
-			_gthis.obj.data.own_int = x14;
+		haxegon_GUI.editable_number(600,620,"Your int = ",function(x15) {
+			_gthis.own_int = x15;
+			_gthis.obj.data.own_int = x15;
 			_gthis.obj.flush();
 		},this.own_int);
-		haxegon_GUI.editable_number(600,650,"Your pen = ",function(x15) {
-			_gthis.own_pen = x15;
-			_gthis.obj.data.own_pen = x15;
+		haxegon_GUI.editable_number(600,650,"Your pen = ",function(x16) {
+			_gthis.own_pen = x16;
+			_gthis.obj.data.own_pen = x16;
 			_gthis.obj.flush();
 		},this.own_pen);
 	}
@@ -12401,7 +12407,7 @@ var lime_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 196900;
+	this.version = 518409;
 };
 $hxClasses["lime.AssetCache"] = lime_AssetCache;
 lime_AssetCache.__name__ = ["lime","AssetCache"];
@@ -44419,7 +44425,6 @@ Main.DEFAULT_PEN = 0.0;
 Main.DEFAULT_CRIT = 5.0;
 Main.DEFAULT_HIT = 7.0;
 Main.DEFAULT_SP = 400.0;
-Main.BOSS_RESISTANCE = 70.0;
 Xml.Element = 0;
 Xml.PCData = 1;
 Xml.CData = 2;
