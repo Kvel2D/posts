@@ -75,7 +75,7 @@ ApplicationMain.init = function() {
 	}
 };
 ApplicationMain.main = function() {
-	ApplicationMain.config = { build : "313", company : "", file : "game", fps : 60, name : "Tarotus", orientation : "landscape", packageName : "com.kvel2d", version : "1.0.0", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : true, height : 0, hidden : null, maximized : null, minimized : null, parameters : "{}", resizable : true, stencilBuffer : true, title : "Tarotus", vsync : true, width : 0, x : null, y : null}]};
+	ApplicationMain.config = { build : "314", company : "", file : "game", fps : 60, name : "Tarotus", orientation : "landscape", packageName : "com.kvel2d", version : "1.0.0", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : true, height : 0, hidden : null, maximized : null, minimized : null, parameters : "{}", resizable : true, stencilBuffer : true, title : "Tarotus", vsync : true, width : 0, x : null, y : null}]};
 };
 ApplicationMain.start = function() {
 	var hasMain = false;
@@ -2804,6 +2804,9 @@ var Main = function() {
 	}
 	if(this.obj.data.world_buffs != null) {
 		this.world_buffs = this.obj.data.world_buffs;
+	}
+	if(this.obj.data.boss_resistance != null) {
+		this.boss_resistance = this.obj.data.boss_resistance;
 	}
 };
 $hxClasses["Main"] = Main;
@@ -12407,7 +12410,7 @@ var lime_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 738568;
+	this.version = 387338;
 };
 $hxClasses["lime.AssetCache"] = lime_AssetCache;
 lime_AssetCache.__name__ = ["lime","AssetCache"];
