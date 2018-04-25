@@ -75,7 +75,7 @@ ApplicationMain.init = function() {
 	}
 };
 ApplicationMain.main = function() {
-	ApplicationMain.config = { build : "314", company : "", file : "game", fps : 60, name : "Tarotus", orientation : "landscape", packageName : "com.kvel2d", version : "1.0.0", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : true, height : 0, hidden : null, maximized : null, minimized : null, parameters : "{}", resizable : true, stencilBuffer : true, title : "Tarotus", vsync : true, width : 0, x : null, y : null}]};
+	ApplicationMain.config = { build : "317", company : "", file : "game", fps : 60, name : "Tarotus", orientation : "landscape", packageName : "com.kvel2d", version : "1.0.0", windows : [{ antialiasing : 0, background : 0, borderless : false, depthBuffer : false, display : 0, fullscreen : false, hardware : true, height : 0, hidden : null, maximized : null, minimized : null, parameters : "{}", resizable : true, stencilBuffer : true, title : "Tarotus", vsync : true, width : 0, x : null, y : null}]};
 };
 ApplicationMain.start = function() {
 	var hasMain = false;
@@ -2752,7 +2752,6 @@ var Main = function() {
 	this.boss_resistance = 24.0;
 	this.world_buffs = 0;
 	this.own_pen = 0.0;
-	this.own_int = 180.0;
 	this.own_hit = 7.0;
 	this.own_sp = 400.0;
 	this.own_crit = 5.0;
@@ -2760,8 +2759,7 @@ var Main = function() {
 	this.avg_lock_hit = 7.0;
 	this.avg_lock_sp = 400.0;
 	this.avg_lock_crit = 5.0;
-	this.avg_lock_int = 180.0;
-	this.number_of_locks = 2;
+	this.number_of_locks = 3;
 	this.pen_modifier = 0;
 	this.hit_modifier = 0;
 	this.sp_modifier = 0;
@@ -2771,9 +2769,6 @@ var Main = function() {
 	this.obj = openfl_net_SharedObject.getLocal("stats");
 	if(this.obj.data.number_of_locks != null) {
 		this.number_of_locks = this.obj.data.number_of_locks;
-	}
-	if(this.obj.data.avg_lock_int != null) {
-		this.avg_lock_int = this.obj.data.avg_lock_int;
 	}
 	if(this.obj.data.avg_lock_crit != null) {
 		this.avg_lock_crit = this.obj.data.avg_lock_crit;
@@ -2795,9 +2790,6 @@ var Main = function() {
 	}
 	if(this.obj.data.own_hit != null) {
 		this.own_hit = this.obj.data.own_hit;
-	}
-	if(this.obj.data.own_int != null) {
-		this.own_int = this.obj.data.own_int;
 	}
 	if(this.obj.data.own_pen != null) {
 		this.own_pen = this.obj.data.own_pen;
@@ -2833,12 +2825,12 @@ Main.prototype = {
 		haxegon_GUI.auto_slider("pen",function(x3) {
 			_gthis.pen_modifier = Math.round(x3);
 		},tmp3,-20,20,10,500,1);
-		var calc_dmg = function(sp,crit,hit,$int,pen,raid_crit) {
+		var calc_dmg = function(sp,crit,hit,pen,raid_crit) {
 			var hit_chance = Math.min(0.99,(83.0 + hit) / 100);
 			if(_gthis.world_buffs != 0) {
 				crit += 18;
 			}
-			var crit_chance = Math.min(1.0,(crit + ($int + 85) / 60.6 + 3.18 + 5) / 100);
+			var crit_chance = Math.min(1.0,(crit + 5) / 100);
 			var raid_crit_chance = Math.min(1.0,crit_chance * hit_chance + raid_crit / 100);
 			var dmg = (481.5 + sp * 0.8571) * 1.15 * Math.max(1.0,raid_crit_chance * 1.2 + (1 - raid_crit_chance)) * hit_chance;
 			dmg = dmg * (1.0 - crit_chance) + dmg * 2 * crit_chance;
@@ -2846,11 +2838,11 @@ Main.prototype = {
 			return dmg;
 		};
 		var avg_lock_hit_chance = Math.min(0.99,(83.0 + this.avg_lock_hit) / 100);
-		var raid_lock_crit = (this.avg_lock_crit + (this.avg_lock_int + 85) / 60.6 + 3.18 + 5) * avg_lock_hit_chance * this.number_of_locks;
-		var own_dmg = calc_dmg(this.own_sp,this.own_crit,this.own_hit,this.own_int,this.own_pen,raid_lock_crit);
-		var own_dmg_with_modifiers = calc_dmg(this.own_sp + this.sp_modifier,this.own_crit + this.crit_modifier,this.own_hit + this.hit_modifier,this.own_int,this.own_pen + this.pen_modifier,raid_lock_crit + this.crit_modifier);
-		var all_locks_dmg = own_dmg + this.number_of_locks * calc_dmg(this.avg_lock_sp,this.avg_lock_crit,this.avg_lock_hit,this.avg_lock_int,this.avg_lock_pen,raid_lock_crit);
-		var all_locks_dmg_with_modifiers = own_dmg_with_modifiers + this.number_of_locks * calc_dmg(this.avg_lock_sp,this.avg_lock_crit,this.avg_lock_hit,this.avg_lock_int,this.avg_lock_pen,raid_lock_crit + this.crit_modifier);
+		var raid_lock_crit = (this.avg_lock_crit + 5) * avg_lock_hit_chance * this.number_of_locks;
+		var own_dmg = calc_dmg(this.own_sp,this.own_crit,this.own_hit,this.own_pen,raid_lock_crit);
+		var own_dmg_with_modifiers = calc_dmg(this.own_sp + this.sp_modifier,this.own_crit + this.crit_modifier,this.own_hit + this.hit_modifier,this.own_pen + this.pen_modifier,raid_lock_crit + this.crit_modifier);
+		var all_locks_dmg = own_dmg + this.number_of_locks * calc_dmg(this.avg_lock_sp,this.avg_lock_crit,this.avg_lock_hit,this.avg_lock_pen,raid_lock_crit);
+		var all_locks_dmg_with_modifiers = own_dmg_with_modifiers + this.number_of_locks * calc_dmg(this.avg_lock_sp,this.avg_lock_crit,this.avg_lock_hit,this.avg_lock_pen,raid_lock_crit + this.crit_modifier);
 		var values_x = haxegon_Text.width("All lock's modified dmg per bolt:") + 5;
 		haxegon_Text.display(0,0,"Your default dmg per bolt:");
 		haxegon_Text.display(values_x,0,"" + haxegon_MathExtensions.fixed_float(Math,own_dmg,2));
@@ -2885,49 +2877,39 @@ Main.prototype = {
 			_gthis.obj.data.avg_lock_hit = x7;
 			_gthis.obj.flush();
 		},this.avg_lock_hit);
-		haxegon_GUI.editable_number(100,620,"Avg lock int = ",function(x8) {
-			_gthis.avg_lock_int = x8;
-			_gthis.obj.data.avg_lock_int = x8;
-			_gthis.obj.flush();
-		},this.avg_lock_int);
-		haxegon_GUI.editable_number(100,650,"Avg lock pen = ",function(x9) {
-			_gthis.avg_lock_pen = x9;
-			_gthis.obj.data.avg_lock_pen = x9;
+		haxegon_GUI.editable_number(100,620,"Avg lock pen = ",function(x8) {
+			_gthis.avg_lock_pen = x8;
+			_gthis.obj.data.avg_lock_pen = x8;
 			_gthis.obj.flush();
 		},this.avg_lock_pen);
-		haxegon_GUI.editable_number(100,680,"World buffs(+18crit) set to 1 for true = ",function(x10) {
-			_gthis.world_buffs = haxegon_MathExtensions.sign(Math,x10);
-			_gthis.obj.data.world_buffs = haxegon_MathExtensions.sign(Math,x10);
+		haxegon_GUI.editable_number(100,680,"World buffs(+13crit) set to 1 for true = ",function(x9) {
+			_gthis.world_buffs = haxegon_MathExtensions.sign(Math,x9);
+			_gthis.obj.data.world_buffs = haxegon_MathExtensions.sign(Math,x9);
 			_gthis.obj.flush();
 		},this.world_buffs);
-		haxegon_GUI.editable_number(100,710,"Boss resistance after curse, include 24 innate = ",function(x11) {
-			_gthis.boss_resistance = x11;
-			_gthis.obj.data.boss_resistance = x11;
+		haxegon_GUI.editable_number(100,710,"Boss resistance after curse, include 24 innate = ",function(x10) {
+			_gthis.boss_resistance = x10;
+			_gthis.obj.data.boss_resistance = x10;
 			_gthis.obj.flush();
 		},this.boss_resistance);
-		haxegon_GUI.editable_number(600,530,"Your sp = ",function(x12) {
-			_gthis.own_sp = x12;
-			_gthis.obj.data.own_sp = x12;
+		haxegon_GUI.editable_number(600,530,"Your sp = ",function(x11) {
+			_gthis.own_sp = x11;
+			_gthis.obj.data.own_sp = x11;
 			_gthis.obj.flush();
 		},this.own_sp);
-		haxegon_GUI.editable_number(600,560,"Your crit = ",function(x13) {
-			_gthis.own_crit = x13;
-			_gthis.obj.data.own_crit = x13;
+		haxegon_GUI.editable_number(600,560,"Your crit = ",function(x12) {
+			_gthis.own_crit = x12;
+			_gthis.obj.data.own_crit = x12;
 			_gthis.obj.flush();
 		},this.own_crit);
-		haxegon_GUI.editable_number(600,590,"Your hit = ",function(x14) {
-			_gthis.own_hit = x14;
-			_gthis.obj.data.own_hit = x14;
+		haxegon_GUI.editable_number(600,590,"Your hit = ",function(x13) {
+			_gthis.own_hit = x13;
+			_gthis.obj.data.own_hit = x13;
 			_gthis.obj.flush();
 		},this.own_hit);
-		haxegon_GUI.editable_number(600,620,"Your int = ",function(x15) {
-			_gthis.own_int = x15;
-			_gthis.obj.data.own_int = x15;
-			_gthis.obj.flush();
-		},this.own_int);
-		haxegon_GUI.editable_number(600,650,"Your pen = ",function(x16) {
-			_gthis.own_pen = x16;
-			_gthis.obj.data.own_pen = x16;
+		haxegon_GUI.editable_number(600,620,"Your pen = ",function(x14) {
+			_gthis.own_pen = x14;
+			_gthis.obj.data.own_pen = x14;
 			_gthis.obj.flush();
 		},this.own_pen);
 	}
@@ -5746,7 +5728,8 @@ haxegon_GUI.editable_number = function(editable_x,editable_y,text,set_function,c
 	if(haxegon_GUI.editable_cache.hash == hash) {
 		if(haxegon_GUI.editable_cache.editing) {
 			if(haxegon_GUI.html5_input(editable_x,editable_y,text,haxegon_GUI.button_text_on_color,haxegon_GUI.button_text_on_color)) {
-				set_function(Std.parseInt(haxegon_GUI.html5_get_input()));
+				var x = haxegon_GUI.html5_get_input();
+				set_function(parseFloat(x));
 				haxegon_GUI.editable_cache.editing = false;
 				haxegon_GUI.editable_cache.hash = "";
 			}
@@ -5787,6 +5770,8 @@ haxegon_GUI.html5_input = function(x,y,text,col1,col2) {
 		haxegon_GUI.input += "8";
 	} else if(haxegon_Input.just_pressed(haxegon_Key.NINE)) {
 		haxegon_GUI.input += "9";
+	} else if(haxegon_Input.just_pressed(haxegon_Key.PERIOD)) {
+		haxegon_GUI.input += ".";
 	}
 	return false;
 };
@@ -12410,7 +12395,7 @@ var lime_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 387338;
+	this.version = 109427;
 };
 $hxClasses["lime.AssetCache"] = lime_AssetCache;
 lime_AssetCache.__name__ = ["lime","AssetCache"];
@@ -44423,11 +44408,11 @@ openfl_display_DisplayObject.__worldRenderDirty = 0;
 openfl_display_DisplayObject.__worldTransformDirty = 0;
 openfl_text_Font.__registeredFonts = [];
 Main.BOLT_DMG = 481.5;
-Main.DEFAULT_INT = 180.0;
 Main.DEFAULT_PEN = 0.0;
 Main.DEFAULT_CRIT = 5.0;
 Main.DEFAULT_HIT = 7.0;
 Main.DEFAULT_SP = 400.0;
+Main.DEFAULT_RESISTANCE = 24.0;
 Xml.Element = 0;
 Xml.PCData = 1;
 Xml.CData = 2;
