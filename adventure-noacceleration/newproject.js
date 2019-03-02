@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","31");
+		_this.setReserved("build","36");
 	} else {
-		_this.h["build"] = "31";
+		_this.h["build"] = "36";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -923,9 +923,9 @@ ApplicationMain.create = function(config) {
 	}
 	var _this5 = app.meta;
 	if(__map_reserved["version"] != null) {
-		_this5.setReserved("version","0.1.1");
+		_this5.setReserved("version","0.1.2");
 	} else {
-		_this5.h["version"] = "0.1.1";
+		_this5.h["version"] = "0.1.2";
 	}
 	var attributes = { allowHighDPI : true, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 0, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "Adventure", width : 0, x : null, y : null};
 	attributes.context = { antialiasing : 0, background : 0, colorDepth : 32, depth : true, hardware : true, stencil : true, type : null, vsync : true};
@@ -8387,19 +8387,38 @@ Main.prototype = {
 			}
 			this.move_timer++;
 		}
-		if(player_dx != 0 || player_dy != 0) {
+		if(player_dx != 0) {
 			var move_amount = 1 + Player.movespeed_mod;
 			var _g1 = 0;
 			var _g = move_amount;
 			while(_g1 < _g) {
 				var i = _g1++;
 				var x = Player.x + player_dx;
-				var y = Player.y + player_dy;
+				var y = Player.y;
 				if(!(x < 0 || y < 0 || x >= 125 || y >= 125)) {
-					var free_map = Main.get_free_map(Player.x + player_dx,Player.y + player_dy,1,1);
-					var noclipping_through_wall = Main.walls[Player.x + player_dx][Player.y + player_dy] && (Player.noclip || this.DEV_noclip);
+					var free_map = Main.get_free_map(Player.x + player_dx,Player.y,1,1);
+					var noclipping_through_wall = Main.walls[Player.x + player_dx][Player.y] && (Player.noclip || this.DEV_noclip);
 					if(free_map[0][0] || noclipping_through_wall) {
 						Player.x += player_dx;
+						Player.y += 0;
+						turn_ended = true;
+					}
+				}
+			}
+		}
+		if(player_dy != 0) {
+			var move_amount1 = 1 + Player.movespeed_mod;
+			var _g11 = 0;
+			var _g2 = move_amount1;
+			while(_g11 < _g2) {
+				var i1 = _g11++;
+				var x1 = Player.x;
+				var y1 = Player.y + player_dy;
+				if(!(x1 < 0 || y1 < 0 || x1 >= 125 || y1 >= 125)) {
+					var free_map1 = Main.get_free_map(Player.x,Player.y + player_dy,1,1);
+					var noclipping_through_wall1 = Main.walls[Player.x][Player.y + player_dy] && (Player.noclip || this.DEV_noclip);
+					if(free_map1[0][0] || noclipping_through_wall1) {
+						Player.x += 0;
 						Player.y += player_dy;
 						turn_ended = true;
 					}
@@ -8432,16 +8451,16 @@ Main.prototype = {
 			var mouse_INVENTORY_Y = Math.floor((haxegon_Mouse.y - 210) / 4 / 8);
 			var mouse_equip_x = Math.floor((haxegon_Mouse.x - 1005) / 4 / 8);
 			var mouse_equip_y = Math.floor((haxegon_Mouse.y - 135) / 4 / 8);
-			var hovering_inventory = function(x1,y1) {
-				if(x1 >= 0 && y1 >= 0 && x1 < 4) {
-					return y1 < 2;
+			var hovering_inventory = function(x2,y2) {
+				if(x2 >= 0 && y2 >= 0 && x2 < 4) {
+					return y2 < 2;
 				} else {
 					return false;
 				}
 			};
-			var hovering_equipment = function(x2,y2) {
-				if(y2 == 0 && x2 >= 0) {
-					return x2 < 4;
+			var hovering_equipment = function(x3,y3) {
+				if(y3 == 0 && x3 >= 0) {
+					return x3 < 4;
 				} else {
 					return false;
 				}
@@ -8475,33 +8494,33 @@ Main.prototype = {
 				var equipment = Entity.equipment.h[e];
 				if(equipment.spells.length > 0) {
 					tooltip += "\n";
-					var _g2 = 0;
-					var _g11 = equipment.spells;
-					while(_g2 < _g11.length) {
-						var s = _g11[_g2];
-						++_g2;
+					var _g3 = 0;
+					var _g12 = equipment.spells;
+					while(_g3 < _g12.length) {
+						var s = _g12[_g3];
+						++_g3;
 						tooltip += "\n" + Spells.get_description(s);
 					}
 				}
 			}
 			if(Entity.item.h.hasOwnProperty(e) && Entity.item.h[e].spells.length > 0) {
 				var item = Entity.item.h[e];
-				var _g3 = 0;
-				var _g12 = item.spells;
-				while(_g3 < _g12.length) {
-					var s1 = _g12[_g3];
-					++_g3;
+				var _g4 = 0;
+				var _g13 = item.spells;
+				while(_g4 < _g13.length) {
+					var s1 = _g13[_g4];
+					++_g4;
 					tooltip += "\n" + Spells.get_description(s1);
 				}
 			}
 			if(Entity["use"].h.hasOwnProperty(e)) {
 				var $use = Entity["use"].h[e];
 				tooltip += "\nUse:";
-				var _g4 = 0;
-				var _g13 = $use.spells;
-				while(_g4 < _g13.length) {
-					var s2 = _g13[_g4];
-					++_g4;
+				var _g5 = 0;
+				var _g14 = $use.spells;
+				while(_g5 < _g14.length) {
+					var s2 = _g14[_g5];
+					++_g5;
 					tooltip += "\n" + Spells.get_description(s2);
 				}
 			}
@@ -8702,12 +8721,12 @@ Main.prototype = {
 				}
 				if(Player.room != -1) {
 					Main.visited_room[Player.room] = true;
-					var _g5 = 0;
-					var _g14 = Main.rooms[Player.room].adjacent_rooms;
-					while(_g5 < _g14.length) {
-						var i1 = _g14[_g5];
-						++_g5;
-						Main.visited_room[i1] = true;
+					var _g6 = 0;
+					var _g15 = Main.rooms[Player.room].adjacent_rooms;
+					while(_g6 < _g15.length) {
+						var i2 = _g15[_g6];
+						++_g6;
+						Main.visited_room[i2] = true;
 					}
 				}
 			} else {
@@ -8727,14 +8746,14 @@ Main.prototype = {
 			Player.spell_damage_mod = 0;
 			Player.increase_drop_level = false;
 			Player.invisible = false;
-			var _g6 = [];
+			var _g7 = [];
 			var _g21 = 0;
-			var _g15 = 4;
-			while(_g21 < _g15) {
-				var i2 = _g21++;
-				_g6.push([]);
+			var _g16 = 4;
+			while(_g21 < _g16) {
+				var i3 = _g21++;
+				_g7.push([]);
 			}
-			this.spells_this_turn = _g6;
+			this.spells_this_turn = _g7;
 			var process_spell = function(spell) {
 				var spell_over = false;
 				var active = false;
@@ -8751,8 +8770,8 @@ Main.prototype = {
 						}
 					}
 				};
-				var _g16 = spell.duration_type;
-				switch(_g16[1]) {
+				var _g17 = spell.duration_type;
+				switch(_g17[1]) {
 				case 0:
 					spell_over = true;
 					active = true;
@@ -8774,7 +8793,7 @@ Main.prototype = {
 							spell.interval *= 2;
 						}
 					} else {
-						haxe_Log.trace("no prio defined for " + Std.string(spell.type),{ fileName : "Main.hx", lineNumber : 2349, className : "Main", methodName : "update_normal"});
+						haxe_Log.trace("no prio defined for " + Std.string(spell.type),{ fileName : "Main.hx", lineNumber : 2368, className : "Main", methodName : "update_normal"});
 					}
 				}
 				return spell_over;
@@ -8784,19 +8803,19 @@ Main.prototype = {
 					remove_from_list = false;
 				}
 				var expired_spells = [];
-				var _g17 = 0;
-				while(_g17 < list.length) {
-					var spell1 = list[_g17];
-					++_g17;
+				var _g18 = 0;
+				while(_g18 < list.length) {
+					var spell1 = list[_g18];
+					++_g18;
 					var spell_over1 = process_spell(spell1);
 					if(spell_over1) {
 						expired_spells.push(spell1);
 					}
 				}
-				var _g18 = 0;
-				while(_g18 < expired_spells.length) {
-					var spell2 = expired_spells[_g18];
-					++_g18;
+				var _g19 = 0;
+				while(_g19 < expired_spells.length) {
+					var spell2 = expired_spells[_g19];
+					++_g19;
 					if(spell2.duration_type != SpellDuration.SpellDuration_Permanent) {
 						_gthis.add_message("Spell " + Std.string(spell2.type) + " wore off.");
 					}
@@ -8805,23 +8824,23 @@ Main.prototype = {
 					}
 				}
 			};
-			var _g19 = 0;
-			while(_g19 < 4) {
-				var x3 = _g19++;
+			var _g110 = 0;
+			while(_g110 < 4) {
+				var x4 = _g110++;
 				var _g22 = 0;
 				while(_g22 < 2) {
-					var y3 = _g22++;
-					var e1 = Player.inventory[x3][y3];
+					var y4 = _g22++;
+					var e1 = Player.inventory[x4][y4];
 					if(Entity.item.h.hasOwnProperty(e1) && !Entity.position.h.hasOwnProperty(e1) && Entity.item.h[e1].spells.length > 0) {
 						process_spell_list(Entity.item.h[e1].spells);
 					}
 				}
 			}
-			var _g110 = 0;
+			var _g111 = 0;
 			var _g23 = EquipmentType.__empty_constructs__;
-			while(_g110 < _g23.length) {
-				var equipment_type = _g23[_g110];
-				++_g110;
+			while(_g111 < _g23.length) {
+				var equipment_type = _g23[_g111];
+				++_g111;
 				var e2 = Player.equipment.get(equipment_type);
 				if(Entity.equipment.h.hasOwnProperty(e2) && !Entity.position.h.hasOwnProperty(e2) && Entity.equipment.h[e2].spells.length > 0) {
 					process_spell_list(Entity.equipment.h[e2].spells);
@@ -8830,11 +8849,11 @@ Main.prototype = {
 			process_spell_list(Player.spells,true);
 			process_spell_list(Main.location_spells[Player.x][Player.y]);
 			var _g24 = 0;
-			var _g111 = 4;
-			while(_g24 < _g111) {
-				var i3 = _g24++;
+			var _g112 = 4;
+			while(_g24 < _g112) {
+				var i4 = _g24++;
 				var _g31 = 0;
-				var _g41 = this.spells_this_turn[i3];
+				var _g41 = this.spells_this_turn[i4];
 				while(_g31 < _g41.length) {
 					var spell3 = _g41[_g31];
 					++_g31;
@@ -8850,11 +8869,11 @@ Main.prototype = {
 				this.attack_target = -1;
 			}
 			var entities_that_attacked_player = [];
-			var _g112 = 0;
+			var _g113 = 0;
 			var _g25 = Main.entities_with(Entity.combat);
-			while(_g112 < _g25.length) {
-				var e3 = _g25[_g112];
-				++_g112;
+			while(_g113 < _g25.length) {
+				var e3 = _g25[_g113];
+				++_g113;
 				var attacked_player = this.entity_attack(e3);
 				if(attacked_player) {
 					entities_that_attacked_player.push(e3);
@@ -8862,21 +8881,21 @@ Main.prototype = {
 			}
 			var player_damage_shield_total = Player.damage_shield + Player.damage_shield_mod;
 			if(player_damage_shield_total > 0) {
-				var _g113 = 0;
-				while(_g113 < entities_that_attacked_player.length) {
-					var e4 = entities_that_attacked_player[_g113];
-					++_g113;
+				var _g114 = 0;
+				while(_g114 < entities_that_attacked_player.length) {
+					var e4 = entities_that_attacked_player[_g114];
+					++_g114;
 					this.player_attack_entity(e4,player_damage_shield_total);
 				}
 			}
 			if(Main.walls[Player.x][Player.y] && !(Player.noclip || this.DEV_noclip)) {
 				var closest_room = null;
 				var closest_dst2 = 100000000.0;
-				var _g114 = 0;
+				var _g115 = 0;
 				var _g26 = Main.rooms;
-				while(_g114 < _g26.length) {
-					var r = _g26[_g114];
-					++_g114;
+				while(_g115 < _g26.length) {
+					var r = _g26[_g115];
+					++_g115;
 					var dst2 = MathExtensions.dst2(Math,Player.x,Player.y,r.x,r.y);
 					if(dst2 < closest_dst2) {
 						closest_dst2 = dst2;
@@ -8891,11 +8910,11 @@ Main.prototype = {
 			if(Player.health <= 0) {
 				this.add_message("You died.");
 			}
-			var _g115 = 0;
+			var _g116 = 0;
 			var _g27 = Main.entities_with(Entity.move);
-			while(_g115 < _g27.length) {
-				var e5 = _g27[_g115];
-				++_g115;
+			while(_g116 < _g27.length) {
+				var e5 = _g27[_g116];
+				++_g116;
 				if(Entity.position.h.hasOwnProperty(e5)) {
 					this.move_entity(e5);
 				}
@@ -39496,7 +39515,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 51797;
+	this.version = 717083;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
