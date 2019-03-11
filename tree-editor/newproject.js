@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","134");
+		_this.setReserved("build","139");
 	} else {
-		_this.h["build"] = "134";
+		_this.h["build"] = "139";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -4702,6 +4702,8 @@ Main.prototype = {
 			}
 			text += "\n}";
 			haxe_Log.trace(text,{ fileName : "Main.hx", lineNumber : 272, className : "Main", methodName : "update"});
+			this.error_text = "Printed text to browser console, press ctrl+shift+J to open it";
+			this.error_timer = 120;
 		}
 		haxegon_Text.align(haxegon_Text.CENTER);
 		var id4 = this.nodes.keys();
@@ -33088,7 +33090,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 684236;
+	this.version = 892720;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
