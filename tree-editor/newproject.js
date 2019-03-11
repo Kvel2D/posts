@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","143");
+		_this.setReserved("build","151");
 	} else {
-		_this.h["build"] = "143";
+		_this.h["build"] = "151";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -4492,7 +4492,7 @@ State.State_SetParent.__enum__ = State;
 var Main = function() {
 	this.error_timer = 0;
 	this.error_text = "";
-	this.canvas_not_initialized = true;
+	this.need_to_update_canvas = true;
 	this.drag_offset = { x : 0, y : 0};
 	this.edited_node_on_canvas = null;
 	this.edited_node = null;
@@ -4515,7 +4515,7 @@ Main.prototype = {
 	,edited_node: null
 	,edited_node_on_canvas: null
 	,drag_offset: null
-	,canvas_not_initialized: null
+	,need_to_update_canvas: null
 	,error_text: null
 	,error_timer: null
 	,free_lowest_node_id: function() {
@@ -4677,6 +4677,7 @@ Main.prototype = {
 		if(haxegon_GUI.auto_text_button("Add node")) {
 			this.state = State.State_Normal;
 			this.edited_node = null;
+			this.need_to_update_canvas = true;
 			var new_id = this.free_lowest_node_id();
 			var v = { x : 100, y : 100, id : new_id, parent : -1, has_sensor : false};
 			this.nodes.h[new_id] = v;
@@ -4706,13 +4707,13 @@ Main.prototype = {
 				text += "\n    HAS_SENSOR[" + node.id + "] = " + (node.has_sensor == null ? "null" : "" + node.has_sensor) + ";";
 			}
 			text += "\n}";
-			haxe_Log.trace(text,{ fileName : "Main.hx", lineNumber : 276, className : "Main", methodName : "update"});
+			haxe_Log.trace(text,{ fileName : "Main.hx", lineNumber : 277, className : "Main", methodName : "update"});
 			this.error_text = "Printed text to browser console, press ctrl+shift+J to open it";
 			this.error_timer = 120;
 		}
-		if(this.edited_node_on_canvas != this.edited_node || this.canvas_not_initialized) {
+		if(this.edited_node_on_canvas != this.edited_node || this.need_to_update_canvas) {
 			this.edited_node_on_canvas = this.edited_node;
-			this.canvas_not_initialized = true;
+			this.need_to_update_canvas = false;
 			haxegon_Gfx.drawtoimage("canvas");
 			haxegon_Gfx.clearscreen(haxegon_Col.DARKGREEN);
 			haxegon_Text.align(haxegon_Text.CENTER);
@@ -4736,6 +4737,7 @@ Main.prototype = {
 				}
 			}
 			haxegon_Text.align(haxegon_Text.LEFT);
+			haxe_Log.trace("huh",{ fileName : "Main.hx", lineNumber : 313, className : "Main", methodName : "update"});
 			haxegon_Gfx.drawtoscreen();
 		}
 		haxegon_Gfx.drawimage(0,0,"canvas");
@@ -33132,7 +33134,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 63462;
+	this.version = 104558;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
