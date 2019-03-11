@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","134");
+		_this.setReserved("build","137");
 	} else {
-		_this.h["build"] = "134";
+		_this.h["build"] = "137";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -4476,253 +4476,15 @@ _$List_ListIterator.prototype = {
 	}
 	,__class__: _$List_ListIterator
 };
-var State = $hxClasses["State"] = { __ename__ : ["State"], __constructs__ : ["State_Normal","State_RightclickMenu","State_Rename","State_SetParent"] };
-State.State_Normal = ["State_Normal",0];
-State.State_Normal.toString = $estr;
-State.State_Normal.__enum__ = State;
-State.State_RightclickMenu = ["State_RightclickMenu",1];
-State.State_RightclickMenu.toString = $estr;
-State.State_RightclickMenu.__enum__ = State;
-State.State_Rename = ["State_Rename",2];
-State.State_Rename.toString = $estr;
-State.State_Rename.__enum__ = State;
-State.State_SetParent = ["State_SetParent",3];
-State.State_SetParent.toString = $estr;
-State.State_SetParent.__enum__ = State;
 var Main = function() {
-	this.error_timer = 0;
-	this.error_text = "";
-	this.drag_offset = { x : 0, y : 0};
-	this.edited_node = null;
-	this.nodes = new haxe_ds_IntMap();
-	this.state = State.State_Normal;
 	haxegon_Gfx.resizescreen(1600,1000);
-	var id1 = this.free_lowest_node_id();
-	var v = { x : 100, y : 100, id : id1, parent : -1, has_sensor : false};
-	this.nodes.h[id1] = v;
-	var id2 = this.free_lowest_node_id();
-	var v1 = { x : 100, y : 400, id : id2, parent : 1, has_sensor : false};
-	this.nodes.h[id2] = v1;
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
 Main.prototype = {
-	state: null
-	,nodes: null
-	,edited_node: null
-	,drag_offset: null
-	,error_text: null
-	,error_timer: null
-	,free_lowest_node_id: function() {
-		var i = 1;
-		while(this.nodes.h.hasOwnProperty(i)) ++i;
-		return i;
-	}
-	,node_under_mouse: function() {
-		var closest_node = null;
-		var closest_dst = 100000.0;
-		var id = this.nodes.keys();
-		while(id.hasNext()) {
-			var id1 = id.next();
-			var node = this.nodes.h[id1];
-			var dst = haxegon_MathExtensions.dst(Math,haxegon_Mouse.x,haxegon_Mouse.y,node.x,node.y);
-			if(dst < closest_dst) {
-				closest_dst = dst;
-				closest_node = node;
-			}
-		}
-		if(closest_dst <= 27.500000000000004) {
-			return closest_node;
-		} else {
-			return null;
-		}
-	}
-	,update_normal: function() {
-		if(this.edited_node == null) {
-			if(haxegon_Mouse.leftheld()) {
-				this.edited_node = this.node_under_mouse();
-				if(this.edited_node != null) {
-					this.drag_offset.x = this.edited_node.x - haxegon_Mouse.x;
-					this.drag_offset.y = this.edited_node.y - haxegon_Mouse.y;
-				}
-			}
-		} else if(haxegon_Mouse.leftheld()) {
-			this.edited_node.x = haxegon_Mouse.x + this.drag_offset.x;
-			this.edited_node.y = haxegon_Mouse.y + this.drag_offset.y;
-		} else {
-			this.edited_node = null;
-		}
-		if(haxegon_Mouse.rightclick()) {
-			this.edited_node = this.node_under_mouse();
-			if(this.edited_node != null) {
-				this.state = State.State_RightclickMenu;
-			}
-		}
-	}
-	,update_rightclick_menu: function() {
-		haxegon_GUI.x = this.edited_node.x + 25;
-		haxegon_GUI.y = this.edited_node.y;
-		if(haxegon_GUI.auto_text_button("Set parent")) {
-			this.state = State.State_SetParent;
-		}
-		if(haxegon_GUI.auto_text_button("Toggle sensor")) {
-			this.edited_node.has_sensor = !this.edited_node.has_sensor;
-			this.edited_node = null;
-			this.state = State.State_Normal;
-		}
-		if(haxegon_GUI.auto_text_button("Rename")) {
-			this.state = State.State_Rename;
-		}
-		if(haxegon_GUI.auto_text_button("Remove")) {
-			var id = this.nodes.keys();
-			while(id.hasNext()) {
-				var id1 = id.next();
-				var node = this.nodes.h[id1];
-				if(node.parent == this.edited_node.id) {
-					node.parent = -1;
-				}
-			}
-			this.nodes.remove(this.edited_node.id);
-			this.edited_node = null;
-			this.state = State.State_Normal;
-		}
-		if(haxegon_GUI.auto_text_button("Cancel") || haxegon_Input.justpressed(haxegon_Key.ESCAPE)) {
-			this.edited_node = null;
-			this.state = State.State_Normal;
-		}
-	}
-	,update_rename: function() {
-		haxegon_Text.display(0,haxegon_Text.height(),"ESCAPE to cancel");
-		if(haxegon_GUI.html5_input(0,0,"Input new id: ")) {
-			var input_id = Std.parseInt(haxegon_GUI.input);
-			haxegon_GUI.input = "";
-			if(!this.nodes.h.hasOwnProperty(input_id)) {
-				var id = this.nodes.keys();
-				while(id.hasNext()) {
-					var id1 = id.next();
-					var node = this.nodes.h[id1];
-					if(node.parent == this.edited_node.id) {
-						node.parent = input_id;
-					}
-				}
-				this.nodes.remove(this.edited_node.id);
-				var v = this.edited_node;
-				this.nodes.h[input_id] = v;
-				this.edited_node.id = input_id;
-			} else {
-				this.error_text = "A node with the same id already exists";
-				this.error_timer = 120;
-			}
-			this.edited_node = null;
-			this.state = State.State_Normal;
-		} else if(haxegon_Input.justpressed(haxegon_Key.ESCAPE)) {
-			this.edited_node = null;
-			this.state = State.State_Normal;
-		}
-	}
-	,draw_arrow: function(x1,y1,x2,y2) {
-		var dst = haxegon_MathExtensions.dst(Math,x1,y1,x2,y2);
-		var start_ratio = 25 / dst;
-		var end_ratio = 1 - 25 / dst;
-		var start_x = x1 + (x2 - x1) * start_ratio;
-		var start_y = y1 + (y2 - y1) * start_ratio;
-		var end_x = x1 + (x2 - x1) * end_ratio;
-		var end_y = y1 + (y2 - y1) * end_ratio;
-		haxegon_Gfx.draw_line(start_x,start_y,end_x,end_y,haxegon_Col.WHITE);
-		var tri = [0,0,5,10,-5,10];
-		var angle = haxegon_MathExtensions.rad_to_deg(Math,Math.atan2(y2 - y1,x2 - x1));
-		haxegon_MathExtensions.rotate_vertices(Math,tri,0,0,angle + 90);
-		haxegon_MathExtensions.translate_vertices(Math,tri,end_x,end_y);
-		haxegon_Gfx.fill_tri_array(tri,haxegon_Col.WHITE);
-	}
-	,update_set_parent: function() {
-		haxegon_Text.display(0,0,"Left-click on node to make it a parent\nESCAPE to cancel");
-		this.draw_arrow(this.edited_node.x,this.edited_node.y,haxegon_Mouse.x,haxegon_Mouse.y);
-		if(haxegon_Mouse.leftclick()) {
-			var parent_node = this.node_under_mouse();
-			if(parent_node != this.edited_node) {
-				this.edited_node.parent = parent_node.id;
-			}
-			this.edited_node = null;
-			this.state = State.State_Normal;
-		} else if(haxegon_Input.justpressed(haxegon_Key.ESCAPE)) {
-			this.edited_node = null;
-			this.state = State.State_Normal;
-		}
-	}
-	,update: function() {
+	update: function() {
 		haxegon_Gfx.clearscreen(haxegon_Col.DARKGREEN);
-		var _g = this.state;
-		switch(_g[1]) {
-		case 0:
-			this.update_normal();
-			break;
-		case 1:
-			this.update_rightclick_menu();
-			break;
-		case 2:
-			this.update_rename();
-			break;
-		case 3:
-			this.update_set_parent();
-			break;
-		}
-		haxegon_GUI.x = 600;
-		haxegon_GUI.y = 0;
-		if(haxegon_GUI.auto_text_button("Add node")) {
-			this.state = State.State_Normal;
-			this.edited_node = null;
-			var new_id = this.free_lowest_node_id();
-			var v = { x : 100, y : 100, id : new_id, parent : -1, has_sensor : false};
-			this.nodes.h[new_id] = v;
-		}
-		if(haxegon_GUI.auto_text_button("Print tree")) {
-			var NODE_ID_MAX = 0;
-			var id = this.nodes.keys();
-			while(id.hasNext()) {
-				var id1 = id.next();
-				if(id1 > NODE_ID_MAX) {
-					NODE_ID_MAX = id1;
-				}
-			}
-			var text = "\nTree = {";
-			text += "\n#define NODE_ID_MAX " + NODE_ID_MAX;
-			text += "\n";
-			text += "\nuint8_t PARENTS[NODE_ID_MAX];";
-			text += "\nuint8_t HAS_SENSOR[NODE_ID_MAX];";
-			text += "\n";
-			text += "\nvoid init_tree() {";
-			var id2 = this.nodes.keys();
-			while(id2.hasNext()) {
-				var id3 = id2.next();
-				var node = this.nodes.h[id3];
-				var parent_id = node.parent == -1 ? 0 : node.parent;
-				text += "\n    PARENTS[" + node.id + "] = " + parent_id + ";";
-				text += "\n    HAS_SENSOR[" + node.id + "] = " + (node.has_sensor == null ? "null" : "" + node.has_sensor) + ";";
-			}
-			text += "\n}";
-			haxe_Log.trace(text,{ fileName : "Main.hx", lineNumber : 272, className : "Main", methodName : "update"});
-		}
-		haxegon_Text.align(haxegon_Text.CENTER);
-		var id4 = this.nodes.keys();
-		while(id4.hasNext()) {
-			var id5 = id4.next();
-			var node1 = this.nodes.h[id5];
-			haxegon_Gfx.draw_circle(node1.x,node1.y,25,haxegon_Col.WHITE);
-			haxegon_Text.display(node1.x,node1.y - 18.75,"" + id5,haxegon_Col.WHITE);
-			if(node1.has_sensor) {
-				haxegon_Text.display(node1.x,node1.y - 18.75 + haxegon_Text.height(),"s",haxegon_Col.WHITE);
-			}
-			if(this.nodes.h.hasOwnProperty(node1.parent)) {
-				var parent = this.nodes.h[node1.parent];
-				this.draw_arrow(node1.x,node1.y,parent.x,parent.y);
-			}
-		}
-		haxegon_Text.align(haxegon_Text.LEFT);
-		if(this.error_timer > 0) {
-			this.error_timer--;
-			haxegon_Text.display(0,0,this.error_text,haxegon_Col.RED);
-		}
+		haxegon_Text.display(0,0,"Hello sailor!",haxegon_Col.RED);
 	}
 	,__class__: Main
 };
@@ -8171,181 +7933,6 @@ haxegon_Debug.showLog = function() {
 			haxegon_Text.display(2,2 + (haxegon_Debug.debuglog.length - 1 - k) * (haxegon_Text.height() + 2) | 0,haxegon_Debug.debuglog[k],haxegon_Col.rgb(255,255,255));
 		}
 	}
-};
-var haxegon_GUI = function() {
-};
-$hxClasses["haxegon.GUI"] = haxegon_GUI;
-haxegon_GUI.__name__ = ["haxegon","GUI"];
-haxegon_GUI.set_pallete = function(off,on,text_off,text_on) {
-	haxegon_GUI.button_off_color = off;
-	haxegon_GUI.slider_background_color = off;
-	haxegon_GUI.button_on_color = on;
-	haxegon_GUI.slider_handle_color = on;
-	haxegon_GUI.button_text_off_color = text_off;
-	haxegon_GUI.button_text_on_color = text_on;
-	haxegon_GUI.slider_text_color = text_off;
-};
-haxegon_GUI.image_button = function(x,y,image,button_function) {
-	var image_width = haxegon_Gfx.imagewidth(image);
-	var image_height = haxegon_Gfx.imageheight(image);
-	var button_width = image_width * 1.1;
-	var button_height = image_height * 1.1;
-	var tmp;
-	if(haxegon_Mouse.leftclick()) {
-		var point_x = haxegon_Mouse.x;
-		var point_y = haxegon_Mouse.y;
-		if(point_x >= x && point_x < x + button_width && point_y >= y) {
-			tmp = point_y < y + button_height;
-		} else {
-			tmp = false;
-		}
-	} else {
-		tmp = false;
-	}
-	if(tmp) {
-		button_function();
-	}
-	haxegon_Gfx.drawimage(x,y,image);
-};
-haxegon_GUI.auto_text_button = function(text,skips) {
-	if(skips == null) {
-		skips = 0;
-	}
-	var text_height = haxegon_Text.height();
-	var button_height = text_height * 1.25;
-	haxegon_GUI.y += (button_height + 2) * skips;
-	var pressed = haxegon_GUI.text_button(haxegon_GUI.x,haxegon_GUI.y,text);
-	haxegon_GUI.y += button_height + 2;
-	return pressed;
-};
-haxegon_GUI.text_button = function(button_x,button_y,text) {
-	var text_width = haxegon_Text.width(text);
-	var text_height = haxegon_Text.height();
-	var button_width = text_width * 1.1;
-	var button_height = text_height * 1.25;
-	var point_x = haxegon_Mouse.x;
-	var point_y = haxegon_Mouse.y;
-	if(point_x >= button_x && point_x < button_x + button_width && point_y >= button_y && point_y < button_y + button_height) {
-		haxegon_Gfx.fillbox(button_x,button_y,button_width,button_height,haxegon_GUI.button_on_color);
-		if(haxegon_Mouse.leftclick()) {
-			return true;
-		}
-		haxegon_Text.display(button_x,button_y,text,haxegon_GUI.button_text_on_color);
-	} else {
-		haxegon_Gfx.fillbox(button_x,button_y,button_width,button_height,haxegon_GUI.button_off_color);
-		haxegon_Text.display(button_x,button_y,text,haxegon_GUI.button_text_off_color);
-	}
-	return false;
-};
-haxegon_GUI.auto_slider = function(text,set_function,current,min,max,handle_width,area_width,skips) {
-	if(skips == null) {
-		skips = 0;
-	}
-	var text_width = haxegon_Text.width(text);
-	var text_height = haxegon_Text.height();
-	var height = text_height * 1.25;
-	haxegon_GUI.y += (height + 2) * skips;
-	haxegon_GUI.slider(haxegon_GUI.x,haxegon_GUI.y,text,set_function,current,min,max,handle_width,area_width);
-	haxegon_GUI.y += height + 2;
-};
-haxegon_GUI.slider = function(slider_x,slider_y,text,set_function,current,min,max,handle_width,area_width,skips) {
-	if(skips == null) {
-		skips = 0;
-	}
-	var text_width = haxegon_Text.width(text);
-	var text_height = haxegon_Text.height();
-	var height = text_height * 1.25;
-	haxegon_Gfx.fillbox(slider_x,slider_y,area_width,height,haxegon_GUI.slider_background_color);
-	haxegon_Gfx.fillbox(slider_x + area_width * (current - min) / (max - min),slider_y + height * 0.05,handle_width,height * 0.9,haxegon_GUI.slider_handle_color);
-	var hash = "" + text + "_" + slider_x + "_" + slider_y;
-	if(haxegon_GUI.slider_cache.hash == hash) {
-		if(haxegon_GUI.slider_cache.dragged && haxegon_Mouse.leftheld()) {
-			var value = current;
-			if(haxegon_Mouse.x < slider_x) {
-				value = min;
-			} else if(haxegon_Mouse.x > slider_x + area_width) {
-				value = max;
-			} else {
-				value = (haxegon_Mouse.x - slider_x) / area_width * (max - min) + min;
-			}
-			set_function(value);
-		} else {
-			haxegon_GUI.slider_cache.hash = "";
-		}
-	} else if(haxegon_Mouse.leftclick() || haxegon_Mouse.rightclick()) {
-		var point_x = haxegon_Mouse.x;
-		var point_y = haxegon_Mouse.y;
-		var box_x = slider_x - area_width * 0.1;
-		var box_y = haxegon_GUI.y - height * 0.5;
-		if(point_x >= box_x && point_x < box_x + area_width * 1.2 && point_y >= box_y && point_y < box_y + height * 1.1) {
-			if(haxegon_Mouse.leftclick()) {
-				haxegon_GUI.slider_cache.hash = hash;
-				haxegon_GUI.slider_cache.dragged = true;
-				var _this = haxegon_GUI.slider_defaults;
-				if(!(__map_reserved[hash] != null ? _this.existsReserved(hash) : _this.h.hasOwnProperty(hash))) {
-					var _this1 = haxegon_GUI.slider_defaults;
-					if(__map_reserved[hash] != null) {
-						_this1.setReserved(hash,current);
-					} else {
-						_this1.h[hash] = current;
-					}
-				}
-			} else if(haxegon_Mouse.rightclick()) {
-				var _this2 = haxegon_GUI.slider_defaults;
-				if(__map_reserved[hash] != null ? _this2.existsReserved(hash) : _this2.h.hasOwnProperty(hash)) {
-					var _this3 = haxegon_GUI.slider_defaults;
-					set_function(__map_reserved[hash] != null ? _this3.getReserved(hash) : _this3.h[hash]);
-				}
-			}
-		}
-	}
-	var value_string = haxegon_MathExtensions.fixed_float(Math,current,3);
-	haxegon_Text.display(slider_x + area_width / 2 - haxegon_Text.width(value_string) / 2,haxegon_GUI.y,value_string,haxegon_Col.WHITE);
-	haxegon_Text.display(slider_x + area_width + handle_width,haxegon_GUI.y,text);
-};
-haxegon_GUI.html5_input = function(x,y,text,col1,col2) {
-	if(col2 == null) {
-		col2 = 13421772;
-	}
-	if(col1 == null) {
-		col1 = 16777215;
-	}
-	haxegon_Text.display(x,y,text,col1);
-	haxegon_Text.display(x + haxegon_Text.width(text),y,haxegon_GUI.input,col2);
-	haxegon_Text.display(x + haxegon_Text.width(text + haxegon_GUI.input),y,"_",col2);
-	if(haxegon_Input.justpressed(haxegon_Key.ENTER)) {
-		return true;
-	} else if(haxegon_Input.justpressed(haxegon_Key.BACKSPACE)) {
-		if(haxegon_GUI.input.length > 0) {
-			haxegon_GUI.input = haxegon_GUI.input.substring(0,haxegon_GUI.input.length - 1);
-		}
-	} else if(haxegon_Input.justpressed(haxegon_Key.ZERO)) {
-		haxegon_GUI.input += "0";
-	} else if(haxegon_Input.justpressed(haxegon_Key.ONE)) {
-		haxegon_GUI.input += "1";
-	} else if(haxegon_Input.justpressed(haxegon_Key.TWO)) {
-		haxegon_GUI.input += "2";
-	} else if(haxegon_Input.justpressed(haxegon_Key.THREE)) {
-		haxegon_GUI.input += "3";
-	} else if(haxegon_Input.justpressed(haxegon_Key.FOUR)) {
-		haxegon_GUI.input += "4";
-	} else if(haxegon_Input.justpressed(haxegon_Key.FIVE)) {
-		haxegon_GUI.input += "5";
-	} else if(haxegon_Input.justpressed(haxegon_Key.SIX)) {
-		haxegon_GUI.input += "6";
-	} else if(haxegon_Input.justpressed(haxegon_Key.SEVEN)) {
-		haxegon_GUI.input += "7";
-	} else if(haxegon_Input.justpressed(haxegon_Key.EIGHT)) {
-		haxegon_GUI.input += "8";
-	} else if(haxegon_Input.justpressed(haxegon_Key.NINE)) {
-		haxegon_GUI.input += "9";
-	} else if(haxegon_Input.justpressed(haxegon_Key.PERIOD)) {
-		haxegon_GUI.input += ".";
-	}
-	return false;
-};
-haxegon_GUI.prototype = {
-	__class__: haxegon_GUI
 };
 var lime_math_Matrix3 = function(a,b,c,d,tx,ty) {
 	if(ty == null) {
@@ -33088,7 +32675,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 684236;
+	this.version = 651065;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
@@ -80314,7 +79901,6 @@ openfl_display_DisplayObject.__tempStack = new lime_utils_ObjectPool(function() 
 },function(stack) {
 	stack.set_length(0);
 });
-Main.NODE_DRAW_RADIUS = 25;
 openfl_text_Font.__fontByName = new haxe_ds_StringMap();
 openfl_text_Font.__registeredFonts = [];
 Xml.Element = 0;
@@ -80392,19 +79978,6 @@ haxegon_Col.hslval = [0.0,0.0,0.0];
 haxegon_Data.width = 0;
 haxegon_Data.height = 0;
 haxegon_Debug.debuglog = [];
-haxegon_GUI.x = 0;
-haxegon_GUI.y = 0;
-haxegon_GUI.slider_cache = { hash : "", dragged : false};
-haxegon_GUI.slider_defaults = new haxe_ds_StringMap();
-haxegon_GUI.editable_cache = { hash : "", editing : false};
-haxegon_GUI.button_off_color = haxegon_Col.GRAY;
-haxegon_GUI.button_on_color = haxegon_Col.PINK;
-haxegon_GUI.button_text_off_color = haxegon_Col.WHITE;
-haxegon_GUI.button_text_on_color = haxegon_Col.WHITE;
-haxegon_GUI.slider_background_color = haxegon_Col.GRAY;
-haxegon_GUI.slider_handle_color = haxegon_Col.PINK;
-haxegon_GUI.slider_text_color = haxegon_Col.WHITE;
-haxegon_GUI.input = "";
 lime_math_Matrix3.__identity = new lime_math_Matrix3();
 openfl_geom_Matrix.__identity = new openfl_geom_Matrix();
 openfl_geom_Matrix.__pool = new lime_utils_ObjectPool(function() {
