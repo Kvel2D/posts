@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","151");
+		_this.setReserved("build","166");
 	} else {
-		_this.h["build"] = "151";
+		_this.h["build"] = "166";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -4476,7 +4476,7 @@ _$List_ListIterator.prototype = {
 	}
 	,__class__: _$List_ListIterator
 };
-var State = $hxClasses["State"] = { __ename__ : ["State"], __constructs__ : ["State_Normal","State_RightclickMenu","State_Rename","State_SetParent"] };
+var State = $hxClasses["State"] = { __ename__ : ["State"], __constructs__ : ["State_Normal","State_RightclickMenu","State_Rename","State_SetParent","State_Frequency"] };
 State.State_Normal = ["State_Normal",0];
 State.State_Normal.toString = $estr;
 State.State_Normal.__enum__ = State;
@@ -4489,6 +4489,9 @@ State.State_Rename.__enum__ = State;
 State.State_SetParent = ["State_SetParent",3];
 State.State_SetParent.toString = $estr;
 State.State_SetParent.__enum__ = State;
+State.State_Frequency = ["State_Frequency",4];
+State.State_Frequency.toString = $estr;
+State.State_Frequency.__enum__ = State;
 var Main = function() {
 	this.error_timer = 0;
 	this.error_text = "";
@@ -4501,10 +4504,10 @@ var Main = function() {
 	haxegon_Gfx.resizescreen(1600,1000);
 	haxegon_Gfx.createimage("canvas",1600,1000);
 	var id1 = this.free_lowest_node_id();
-	var v = { x : 100, y : 100, id : id1, parent : -1, has_sensor : false};
+	var v = { x : 100, y : 100, id : id1, parent : -1, has_sensor : false, frequency : 433.4};
 	this.nodes.h[id1] = v;
 	var id2 = this.free_lowest_node_id();
-	var v1 = { x : 100, y : 400, id : id2, parent : 1, has_sensor : false};
+	var v1 = { x : 100, y : 400, id : id2, parent : 1, has_sensor : false, frequency : 434.5};
 	this.nodes.h[id2] = v1;
 };
 $hxClasses["Main"] = Main;
@@ -4578,6 +4581,9 @@ Main.prototype = {
 		if(haxegon_GUI.auto_text_button("Rename")) {
 			this.state = State.State_Rename;
 		}
+		if(haxegon_GUI.auto_text_button("Change frequency")) {
+			this.state = State.State_Frequency;
+		}
 		if(haxegon_GUI.auto_text_button("Remove")) {
 			var id = this.nodes.keys();
 			while(id.hasNext()) {
@@ -4625,6 +4631,19 @@ Main.prototype = {
 			this.state = State.State_Normal;
 		}
 	}
+	,update_frequency: function() {
+		haxegon_Text.display(0,haxegon_Text.height(),"ESCAPE to cancel");
+		if(haxegon_GUI.html5_input(0,0,"Input frequency: ")) {
+			var input_frequency = parseFloat(haxegon_GUI.input);
+			haxegon_GUI.input = "";
+			this.edited_node.frequency = input_frequency;
+			this.edited_node = null;
+			this.state = State.State_Normal;
+		} else if(haxegon_Input.justpressed(haxegon_Key.ESCAPE)) {
+			this.edited_node = null;
+			this.state = State.State_Normal;
+		}
+	}
 	,draw_arrow: function(x1,y1,x2,y2) {
 		var dst = haxegon_MathExtensions.dst(Math,x1,y1,x2,y2);
 		var start_ratio = 25 / dst;
@@ -4655,6 +4674,49 @@ Main.prototype = {
 			this.state = State.State_Normal;
 		}
 	}
+	,print_tree: function() {
+		var NODE_ID_MAX = 0;
+		var id = this.nodes.keys();
+		while(id.hasNext()) {
+			var id1 = id.next();
+			if(id1 > NODE_ID_MAX) {
+				NODE_ID_MAX = id1;
+			}
+		}
+		var text = "\ntree = {";
+		var _g1 = 0;
+		var _g = NODE_ID_MAX + 1;
+		while(_g1 < _g) {
+			var id2 = _g1++;
+			var parent = "NO_ID";
+			var frequency = "400.00f";
+			var has_sensor = "false";
+			if(this.nodes.h.hasOwnProperty(id2)) {
+				var node = this.nodes.h[id2];
+				if(node.parent != -1) {
+					parent = "" + node.parent;
+				}
+				if(node.has_sensor) {
+					has_sensor = "true";
+				} else {
+					has_sensor = "false";
+				}
+				var before_dot = Math.floor(node.frequency) | 0;
+				var after_dot = (Math.floor(node.frequency * 100) | 0) % 100;
+				frequency = "" + before_dot + "." + after_dot + "f";
+			}
+			text += "\n// " + id2;
+			text += "\n{";
+			text += "\n    .rx_frequency = " + frequency;
+			text += "\n    .parent = " + parent;
+			text += "\n    .has_sensor = " + has_sensor;
+			text += "\n},";
+		}
+		text += "\n}";
+		haxe_Log.trace(text,{ fileName : "Main.hx", lineNumber : 282, className : "Main", methodName : "print_tree"});
+		this.error_text = "Printed text to browser console, press ctrl+shift+J to open it";
+		this.error_timer = 120;
+	}
 	,update: function() {
 		haxegon_Gfx.clearscreen(haxegon_Col.DARKGREEN);
 		var _g = this.state;
@@ -4671,6 +4733,9 @@ Main.prototype = {
 		case 3:
 			this.update_set_parent();
 			break;
+		case 4:
+			this.update_frequency();
+			break;
 		}
 		haxegon_GUI.x = 800;
 		haxegon_GUI.y = 0;
@@ -4679,37 +4744,11 @@ Main.prototype = {
 			this.edited_node = null;
 			this.need_to_update_canvas = true;
 			var new_id = this.free_lowest_node_id();
-			var v = { x : 100, y : 100, id : new_id, parent : -1, has_sensor : false};
+			var v = { x : 100, y : 100, id : new_id, parent : -1, has_sensor : false, frequency : 400.0};
 			this.nodes.h[new_id] = v;
 		}
 		if(haxegon_GUI.auto_text_button("Print tree")) {
-			var NODE_ID_MAX = 0;
-			var id = this.nodes.keys();
-			while(id.hasNext()) {
-				var id1 = id.next();
-				if(id1 > NODE_ID_MAX) {
-					NODE_ID_MAX = id1;
-				}
-			}
-			var text = "\nTree = {";
-			text += "\n#define NODE_ID_MAX " + NODE_ID_MAX;
-			text += "\n";
-			text += "\nuint8_t PARENTS[NODE_ID_MAX];";
-			text += "\nuint8_t HAS_SENSOR[NODE_ID_MAX];";
-			text += "\n";
-			text += "\nvoid init_tree() {";
-			var id2 = this.nodes.keys();
-			while(id2.hasNext()) {
-				var id3 = id2.next();
-				var node = this.nodes.h[id3];
-				var parent_id = node.parent == -1 ? 0 : node.parent;
-				text += "\n    PARENTS[" + node.id + "] = " + parent_id + ";";
-				text += "\n    HAS_SENSOR[" + node.id + "] = " + (node.has_sensor == null ? "null" : "" + node.has_sensor) + ";";
-			}
-			text += "\n}";
-			haxe_Log.trace(text,{ fileName : "Main.hx", lineNumber : 277, className : "Main", methodName : "update"});
-			this.error_text = "Printed text to browser console, press ctrl+shift+J to open it";
-			this.error_timer = 120;
+			this.print_tree();
 		}
 		if(this.edited_node_on_canvas != this.edited_node || this.need_to_update_canvas) {
 			this.edited_node_on_canvas = this.edited_node;
@@ -4717,50 +4756,49 @@ Main.prototype = {
 			haxegon_Gfx.drawtoimage("canvas");
 			haxegon_Gfx.clearscreen(haxegon_Col.DARKGREEN);
 			haxegon_Text.align(haxegon_Text.CENTER);
-			var id4 = this.nodes.keys();
-			while(id4.hasNext()) {
-				var id5 = id4.next();
-				var node1 = this.nodes.h[id5];
-				if(node1 == this.edited_node_on_canvas) {
+			var id = this.nodes.keys();
+			while(id.hasNext()) {
+				var id1 = id.next();
+				var node = this.nodes.h[id1];
+				if(node == this.edited_node_on_canvas) {
 					continue;
 				}
-				haxegon_Gfx.draw_circle(node1.x,node1.y,25,haxegon_Col.WHITE);
-				haxegon_Text.display(node1.x,node1.y - 18.75,"" + id5,haxegon_Col.WHITE);
-				if(node1.has_sensor) {
-					haxegon_Text.display(node1.x,node1.y - 18.75 + haxegon_Text.height(),"s",haxegon_Col.WHITE);
+				haxegon_Gfx.draw_circle(node.x,node.y,25,haxegon_Col.WHITE);
+				haxegon_Text.display(node.x,node.y - 18.75,"\n" + id1 + ",   " + node.frequency,haxegon_Col.YELLOW);
+				if(node.has_sensor) {
+					haxegon_Text.display(node.x,node.y - 18.75 + haxegon_Text.height(),"s",haxegon_Col.WHITE);
 				}
-				if(this.nodes.h.hasOwnProperty(node1.parent)) {
-					var parent = this.nodes.h[node1.parent];
+				if(this.nodes.h.hasOwnProperty(node.parent)) {
+					var parent = this.nodes.h[node.parent];
 					if(parent != this.edited_node_on_canvas) {
-						this.draw_arrow(node1.x,node1.y,parent.x,parent.y);
+						this.draw_arrow(node.x,node.y,parent.x,parent.y);
 					}
 				}
 			}
 			haxegon_Text.align(haxegon_Text.LEFT);
-			haxe_Log.trace("huh",{ fileName : "Main.hx", lineNumber : 313, className : "Main", methodName : "update"});
 			haxegon_Gfx.drawtoscreen();
 		}
 		haxegon_Gfx.drawimage(0,0,"canvas");
 		haxegon_Text.align(haxegon_Text.CENTER);
-		var id6 = this.nodes.keys();
-		while(id6.hasNext()) {
-			var id7 = id6.next();
-			var node2 = this.nodes.h[id7];
-			if(node2 == this.edited_node_on_canvas) {
-				haxegon_Gfx.draw_circle(node2.x,node2.y,25,haxegon_Col.WHITE);
-				haxegon_Text.display(node2.x,node2.y - 18.75,"" + id7,haxegon_Col.WHITE);
-				if(node2.has_sensor) {
-					haxegon_Text.display(node2.x,node2.y - 18.75 + haxegon_Text.height(),"s",haxegon_Col.WHITE);
+		var id2 = this.nodes.keys();
+		while(id2.hasNext()) {
+			var id3 = id2.next();
+			var node1 = this.nodes.h[id3];
+			if(node1 == this.edited_node_on_canvas) {
+				haxegon_Gfx.draw_circle(node1.x,node1.y,25,haxegon_Col.WHITE);
+				haxegon_Text.display(node1.x,node1.y - 18.75,"\n" + id3 + ",   " + node1.frequency,haxegon_Col.YELLOW);
+				if(node1.has_sensor) {
+					haxegon_Text.display(node1.x,node1.y - 18.75 + haxegon_Text.height(),"s",haxegon_Col.WHITE);
 				}
-				if(this.nodes.h.hasOwnProperty(node2.parent)) {
-					var parent1 = this.nodes.h[node2.parent];
-					this.draw_arrow(node2.x,node2.y,parent1.x,parent1.y);
+				if(this.nodes.h.hasOwnProperty(node1.parent)) {
+					var parent1 = this.nodes.h[node1.parent];
+					this.draw_arrow(node1.x,node1.y,parent1.x,parent1.y);
 				}
 			}
-			if(this.nodes.h.hasOwnProperty(node2.parent)) {
-				var parent2 = this.nodes.h[node2.parent];
+			if(this.nodes.h.hasOwnProperty(node1.parent)) {
+				var parent2 = this.nodes.h[node1.parent];
 				if(parent2 == this.edited_node_on_canvas) {
-					this.draw_arrow(node2.x,node2.y,parent2.x,parent2.y);
+					this.draw_arrow(node1.x,node1.y,parent2.x,parent2.y);
 				}
 			}
 		}
@@ -33134,7 +33172,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 104558;
+	this.version = 649362;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
