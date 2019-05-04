@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","617");
+		_this.setReserved("build","619");
 	} else {
-		_this.h["build"] = "617";
+		_this.h["build"] = "619";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -923,9 +923,9 @@ ApplicationMain.create = function(config) {
 	}
 	var _this5 = app.meta;
 	if(__map_reserved["version"] != null) {
-		_this5.setReserved("version","0.2.5");
+		_this5.setReserved("version","0.2.6");
 	} else {
-		_this5.h["version"] = "0.2.5";
+		_this5.h["version"] = "0.2.6";
 	}
 	var attributes = { allowHighDPI : true, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 0, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "Katabot", width : 0, x : null, y : null};
 	attributes.context = { antialiasing : 0, background : 0, colorDepth : 32, depth : true, hardware : true, stencil : true, type : null, vsync : true};
@@ -7710,7 +7710,7 @@ Main.prototype = {
 		var drop = drop_entity.drop_func(pos.x,pos.y);
 		Main.current_level_mod = 0;
 		if(drop != -1) {
-			this.add_message("" + this.entity_name(e,"Enemy") + " drops " + this.entity_name(e,"a thing") + ".");
+			this.add_message("" + this.entity_name(e,"Enemy") + " drops " + this.entity_name(drop,"a thing") + ".");
 		}
 	}
 	,try_open_entity: function(e) {
@@ -39956,7 +39956,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 41046;
+	this.version = 234263;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
