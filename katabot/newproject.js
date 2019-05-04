@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","1");
+		_this.setReserved("build","617");
 	} else {
-		_this.h["build"] = "1";
+		_this.h["build"] = "617";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -923,9 +923,9 @@ ApplicationMain.create = function(config) {
 	}
 	var _this5 = app.meta;
 	if(__map_reserved["version"] != null) {
-		_this5.setReserved("version","0.2.1");
+		_this5.setReserved("version","0.2.5");
 	} else {
-		_this5.h["version"] = "0.2.1";
+		_this5.h["version"] = "0.2.5";
 	}
 	var attributes = { allowHighDPI : true, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 0, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "Katabot", width : 0, x : null, y : null};
 	attributes.context = { antialiasing : 0, background : 0, colorDepth : 32, depth : true, hardware : true, stencil : true, type : null, vsync : true};
@@ -4474,6 +4474,8 @@ Entities.generate_name = function() {
 	while(Entities.generated_names.indexOf(name) != -1 || Entities.generated_first_chars.indexOf(name.charAt(0)) != -1 || name == "") name = Entities.generate_name_markov();
 	Entities.generated_names.push(name);
 	Entities.generated_first_chars.push(name.charAt(0));
+	var first_char = name.charAt(0);
+	name = first_char.toUpperCase() + HxOverrides.substr(name,1,null);
 	return name;
 };
 Entities.generate_name_markov = function() {
@@ -4546,10 +4548,12 @@ Entities.key = function(x,y,color) {
 	Entity.item.h[e] = v;
 	var v1 = color == 12461619 ? 90 : color == 15436081 ? 91 : color == 4491546 ? 92 : color == 3252978 ? 93 : 0;
 	Entity.draw_tile.h[e] = v1;
-	var v2 = { color : color};
-	Entity.unlocker.h[e] = v2;
-	var v3 = { color : color, seen : false};
-	Entity.draw_on_minimap.h[e] = v3;
+	var v2 = { 'char' : "K", color : color};
+	Entity.draw_char.h[e] = v2;
+	var v3 = { color : color};
+	Entity.unlocker.h[e] = v3;
+	var v4 = { color : color, seen : false};
+	Entity.draw_on_minimap.h[e] = v4;
 	Entity.validate(e);
 	return e;
 };
@@ -4560,14 +4564,16 @@ Entities.unlocked_chest = function(x,y) {
 	var color = Entities.unlocked_color;
 	Entity.description.h[e] = "An unlocked chest.";
 	Entity.draw_tile.h[e] = 46;
-	var v = { color : color, locked : false};
-	Entity.container.h[e] = v;
-	var v1 = { drop_func : function(x1,y1) {
-		return (haxegon_Random.pick_chance([{ v : Entities.random_weapon, c : GenerateWorld.weapon_bad_streak_mod()},{ v : Entities.random_armor, c : 6.0},{ v : Entities.random_potion, c : 2.0},{ v : Entities.random_ring, c : 2.0}]))(x1,y1);
+	var v = { 'char' : "C", color : 10773538};
+	Entity.draw_char.h[e] = v;
+	var v1 = { color : color, locked : false};
+	Entity.container.h[e] = v1;
+	var v2 = { drop_func : function(x1,y1) {
+		return (haxegon_Random.pick_chance([{ v : Entities.random_weapon, c : GenerateWorld.weapon_bad_streak_mod()},{ v : Entities.random_armor, c : 6.0},{ v : Entities.random_potion, c : 1.0},{ v : Entities.random_orb, c : 1.0},{ v : Entities.random_ring, c : 2.0}]))(x1,y1);
 	}};
-	Entity.drop_entity.h[e] = v1;
-	var v2 = { color : color, seen : false};
-	Entity.draw_on_minimap.h[e] = v2;
+	Entity.drop_entity.h[e] = v2;
+	var v3 = { color : color, seen : false};
+	Entity.draw_on_minimap.h[e] = v3;
 	return e;
 };
 Entities.locked_chest = function(x,y) {
@@ -4595,14 +4601,16 @@ Entities.locked_chest = function(x,y) {
 		v = 0;
 	}
 	this1.h[e] = v;
-	var v1 = { color : color, locked : true};
-	Entity.container.h[e] = v1;
-	var v2 = { drop_func : function(x1,y1) {
-		return (haxegon_Random.pick_chance([{ v : Entities.random_weapon, c : GenerateWorld.weapon_bad_streak_mod()},{ v : Entities.random_armor, c : 6.0},{ v : Entities.random_ring, c : 1.0}]))(x1,y1);
+	var v1 = { 'char' : "C", color : color};
+	Entity.draw_char.h[e] = v1;
+	var v2 = { color : color, locked : true};
+	Entity.container.h[e] = v2;
+	var v3 = { drop_func : function(x1,y1) {
+		return (haxegon_Random.pick_chance([{ v : Entities.random_weapon, c : GenerateWorld.weapon_bad_streak_mod()},{ v : Entities.random_armor, c : 6.0},{ v : Entities.random_ring, c : 1.0},{ v : Entities.random_orb, c : 1.0}]))(x1,y1);
 	}};
-	Entity.drop_entity.h[e] = v2;
-	var v3 = { color : color, seen : false};
-	Entity.draw_on_minimap.h[e] = v3;
+	Entity.drop_entity.h[e] = v3;
+	var v4 = { color : color, seen : false};
+	Entity.draw_on_minimap.h[e] = v4;
 	return e;
 };
 Entities.locked_door = function(x,y) {
@@ -4626,11 +4634,13 @@ Entities.stairs = function(x,y) {
 	var color = haxegon_Random.pick(Entities.locked_colors);
 	Entity.description.h[e] = "Stairs to the next level.";
 	Entity.draw_tile.h[e] = 18;
-	var v = { color : 11721967, seen : false};
-	Entity.draw_on_minimap.h[e] = v;
+	var v = { 'char' : "S", color : 3252978};
+	Entity.draw_char.h[e] = v;
+	var v1 = { color : 11721967, seen : false};
+	Entity.draw_on_minimap.h[e] = v1;
 	var this1 = Entity["use"];
-	var v1 = { spells : [Spells.next_floor()], charges : 1, consumable : false, flavor_text : "You ascend the stairs.", need_target : false, draw_charges : false};
-	this1.h[e] = v1;
+	var v2 = { spells : [Spells.next_floor()], charges : 1, consumable : false, flavor_text : "You ascend the stairs.", need_target : false, draw_charges : false};
+	this1.h[e] = v2;
 	return e;
 };
 Entities.test_potion = function(x,y) {
@@ -4655,25 +4665,13 @@ Entities.random_weapon = function(x,y) {
 	var tile_index = Math.floor(Math.min(Tile.Head.length - 1,level / 2));
 	var v = Tile.Sword[tile_index];
 	Entity.draw_tile.h[e] = v;
+	var v1 = { 'char' : "W", color : 3252978};
+	Entity.draw_char.h[e] = v1;
 	Entity.$name.h[e] = "Sword";
 	var attack_buff_value = Stats.get_unrounded({ min : 1, max : 1, scaling : 1.0},level);
 	var equip_plus_use_spells = Spells.random_equipment_spells(EquipmentType.EquipmentType_Weapon);
 	var equip_spells = equip_plus_use_spells[0];
 	var use_spells = equip_plus_use_spells[1];
-	var spells_weight = 0;
-	var _g = 0;
-	while(_g < equip_spells.length) {
-		var s = equip_spells[_g];
-		++_g;
-		spells_weight += Spells.get_weapon_equip_spell_weight(s);
-	}
-	var _g1 = 0;
-	while(_g1 < use_spells.length) {
-		var s1 = use_spells[_g1];
-		++_g1;
-		spells_weight += Spells.get_weapon_use_spell_weight(s1);
-	}
-	attack_buff_value -= spells_weight;
 	attack_buff_value = Math.round(attack_buff_value);
 	if(attack_buff_value < 0) {
 		attack_buff_value = 0;
@@ -4682,11 +4680,11 @@ Entities.random_weapon = function(x,y) {
 	equip_spells.splice(0,0,x1);
 	if(use_spells.length > 0) {
 		var this1 = Entity["use"];
-		var v1 = { spells : use_spells, charges : Spells.get_spells_min_use_charges(use_spells), consumable : false, flavor_text : "You use weapon's spell.", need_target : false, draw_charges : true};
-		this1.h[e] = v1;
+		var v2 = { spells : use_spells, charges : Spells.get_spells_min_use_charges(use_spells), consumable : false, flavor_text : "You use weapon's spell.", need_target : Spells.need_target(use_spells[0].type), draw_charges : true};
+		this1.h[e] = v2;
 	}
-	var v2 = { type : EquipmentType.EquipmentType_Weapon, spells : equip_spells};
-	Entity.equipment.h[e] = v2;
+	var v3 = { type : EquipmentType.EquipmentType_Weapon, spells : equip_spells};
+	Entity.equipment.h[e] = v3;
 	Entity.validate(e);
 	return e;
 };
@@ -4740,24 +4738,27 @@ Entities.random_armor = function(x,y) {
 		break;
 	}
 	this1.h[e] = v;
+	var this2 = Entity.draw_char;
+	var v1 = { 'char' : "" + Entity.$name.h[e].charAt(0), color : 3252978};
+	this2.h[e] = v1;
 	var tile_index = Math.floor(Math.min(Tile.Head.length - 1,1 + level));
-	var this2 = Entity.draw_tile;
-	var v1;
+	var this3 = Entity.draw_tile;
+	var v2;
 	switch(armor_type[1]) {
 	case 0:
-		v1 = 0;
+		v2 = 0;
 		break;
 	case 1:
-		v1 = Tile.Head[tile_index];
+		v2 = Tile.Head[tile_index];
 		break;
 	case 2:
-		v1 = Tile.Chest[tile_index];
+		v2 = Tile.Chest[tile_index];
 		break;
 	case 3:
-		v1 = Tile.Legs[tile_index];
+		v2 = Tile.Legs[tile_index];
 		break;
 	}
-	this2.h[e] = v1;
+	this3.h[e] = v2;
 	var defense_total = Stats.get({ min : 1, max : 2, scaling : 1.0},level);
 	var equip_plus_use_spells = Spells.random_equipment_spells(armor_type);
 	var equip_spells = equip_plus_use_spells[0];
@@ -4765,12 +4766,12 @@ Entities.random_armor = function(x,y) {
 	var x1 = Spells.defense_buff(defense_total);
 	equip_spells.splice(0,0,x1);
 	if(use_spells.length > 0) {
-		var this3 = Entity["use"];
-		var v2 = { spells : use_spells, charges : Spells.get_spells_min_use_charges(use_spells), consumable : false, flavor_text : "You use armor's spell.", need_target : false, draw_charges : true};
-		this3.h[e] = v2;
+		var this4 = Entity["use"];
+		var v3 = { spells : use_spells, charges : Spells.get_spells_min_use_charges(use_spells), consumable : false, flavor_text : "You use armor's spell.", need_target : Spells.need_target(use_spells[0].type), draw_charges : true};
+		this4.h[e] = v3;
 	}
-	var v3 = { type : armor_type, spells : equip_spells};
-	Entity.equipment.h[e] = v3;
+	var v4 = { type : armor_type, spells : equip_spells};
+	Entity.equipment.h[e] = v4;
 	Entity.validate(e);
 	return e;
 };
@@ -4786,6 +4787,9 @@ Entities.random_ring = function(x,y) {
 	var spell_color = Spells.get_color(spell);
 	var v1 = Tile.Ring[spell_color == SpellColor.SpellColor_Gray ? 0 : spell_color == SpellColor.SpellColor_Purple ? 1 : spell_color == SpellColor.SpellColor_Yellow ? 2 : spell_color == SpellColor.SpellColor_Red ? 3 : spell_color == SpellColor.SpellColor_Blue ? 4 : spell_color == SpellColor.SpellColor_Green ? 5 : 0];
 	Entity.draw_tile.h[e] = v1;
+	var this1 = Entity.draw_char;
+	var v2 = { 'char' : "R", color : Spells.spell_color_to_color(spell_color)};
+	this1.h[e] = v2;
 	Entity.validate(e);
 	return e;
 };
@@ -4802,6 +4806,9 @@ Entities.random_potion = function(x,y,force_spell) {
 	var spell_color = Spells.get_color(spell);
 	var v2 = Tile.Potion[spell_color == SpellColor.SpellColor_Gray ? 0 : spell_color == SpellColor.SpellColor_Purple ? 1 : spell_color == SpellColor.SpellColor_Yellow ? 2 : spell_color == SpellColor.SpellColor_Red ? 3 : spell_color == SpellColor.SpellColor_Blue ? 4 : spell_color == SpellColor.SpellColor_Green ? 5 : 0];
 	Entity.draw_tile.h[e] = v2;
+	var this1 = Entity.draw_char;
+	var v3 = { 'char' : "P", color : Spells.spell_color_to_color(spell_color)};
+	this1.h[e] = v3;
 	Entity.validate(e);
 	return e;
 };
@@ -4819,6 +4826,9 @@ Entities.random_scroll = function(x,y) {
 	var spell_color = Spells.get_color(spell);
 	var v2 = Tile.Scroll[spell_color == SpellColor.SpellColor_Gray ? 0 : spell_color == SpellColor.SpellColor_Purple ? 1 : spell_color == SpellColor.SpellColor_Yellow ? 2 : spell_color == SpellColor.SpellColor_Red ? 3 : spell_color == SpellColor.SpellColor_Blue ? 4 : spell_color == SpellColor.SpellColor_Green ? 5 : 0];
 	Entity.draw_tile.h[e] = v2;
+	var this2 = Entity.draw_char;
+	var v3 = { 'char' : "S", color : Spells.spell_color_to_color(spell_color)};
+	this2.h[e] = v3;
 	Entity.validate(e);
 	return e;
 };
@@ -4836,19 +4846,21 @@ Entities.random_orb = function(x,y) {
 	var spell_color = Spells.get_color(spell);
 	var v2 = Tile.Orb[spell_color == SpellColor.SpellColor_Gray ? 0 : spell_color == SpellColor.SpellColor_Purple ? 1 : spell_color == SpellColor.SpellColor_Yellow ? 2 : spell_color == SpellColor.SpellColor_Red ? 3 : spell_color == SpellColor.SpellColor_Blue ? 4 : spell_color == SpellColor.SpellColor_Green ? 5 : 0];
 	Entity.draw_tile.h[e] = v2;
+	var this2 = Entity.draw_char;
+	var v3 = { 'char' : "O", color : Spells.spell_color_to_color(spell_color)};
+	this2.h[e] = v3;
 	Entity.validate(e);
 	return e;
 };
-Entities.random_enemy_type = function() {
+Entities.random_enemy_type = function(type_number) {
 	var name = Entities.generate_name();
 	var level = Main.current_level();
 	var range = 2;
-	var range_factor = range == 2 ? 1.0 : range <= 8 ? 0.5 : 0.25;
-	var attack = Stats.get({ min : range_factor, max : 1.5 * range_factor, scaling : 1.0},level);
+	var attack = Stats.get({ min : 1, max : 1.5, scaling : 1.0},level);
 	if(attack == 0) {
 		attack = 1;
 	}
-	var health = Stats.get({ min : 4 * range_factor, max : 5 * range_factor, scaling : 2.0},level);
+	var health = Stats.get({ min : 4, max : 5, scaling : 3.0},level);
 	if(Main.current_floor == 0) {
 		attack = 1;
 		health = Math.round(health / 2);
@@ -4882,17 +4894,19 @@ Entities.random_enemy_type = function() {
 		var this1 = Entity.draw_char;
 		var v1 = { 'char' : name.charAt(0), color : color};
 		this1.h[e] = v1;
-		var v2 = { health : health, health_max : health, attack : attack, message : message, aggression : aggression_type, attacked_by_player : false, range_squared : range, target : CombatTarget.CombatTarget_FriendlyThenPlayer};
-		Entity.combat.h[e] = v2;
-		var v3 = { drop_func : function(x1,y1) {
+		var v2 = Tile.Enemy[type_number];
+		Entity.draw_tile.h[e] = v2;
+		var v3 = { health : health, health_max : health, attack : attack, message : message, aggression : aggression_type, attacked_by_player : false, range_squared : range, target : CombatTarget.CombatTarget_FriendlyThenPlayer};
+		Entity.combat.h[e] = v3;
+		var v4 = { drop_func : function(x1,y1) {
 			return (haxegon_Random.pick_chance([{ v : haxegon_Random.pick_chance([{ v : Entities.random_weapon, c : 1.0},{ v : Entities.random_armor, c : 6.0},{ v : Entities.random_potion, c : 3.0},{ v : Entities.random_ring, c : 2.0}]), c : 25 + Player.dropchance_mod},{ v : Entities.copper, c : 35 + Player.copper_drop_mod},{ v : function(x2,y2) {
 				return -1;
 			}, c : 40}]))(x1,y1);
 		}};
-		Entity.drop_entity.h[e] = v3;
+		Entity.drop_entity.h[e] = v4;
 		if(move != null) {
-			var v4 = { type : move.type, cant_move : move.cant_move, successive_moves : move.successive_moves, chase_dst : move.chase_dst, target : move.target};
-			Entity.move.h[e] = v4;
+			var v5 = { type : move.type, cant_move : move.cant_move, successive_moves : move.successive_moves, chase_dst : move.chase_dst, target : move.target};
+			Entity.move.h[e] = v5;
 		}
 		return e;
 	};
@@ -4981,10 +4995,13 @@ Entities.random_statue = function(x,y) {
 	}
 	var v4 = Tile.Statue[color == SpellColor.SpellColor_Gray ? 0 : color == SpellColor.SpellColor_Purple ? 1 : color == SpellColor.SpellColor_Yellow ? 2 : color == SpellColor.SpellColor_Red ? 3 : color == SpellColor.SpellColor_Blue ? 4 : color == SpellColor.SpellColor_Green ? 5 : 0];
 	Entity.draw_tile.h[e] = v4;
+	var this3 = Entity.draw_char;
+	var v5 = { 'char' : "T", color : Spells.spell_color_to_color(color)};
+	this3.h[e] = v5;
 	if(statue_god == StatueGod.StatueGod_Sera) {
-		var this3 = Entity.cost;
-		var v5 = Stats.get({ min : 2, max : 3, scaling : 1.0},level);
-		this3.h[e] = v5;
+		var this4 = Entity.cost;
+		var v6 = Stats.get({ min : 2, max : 3, scaling : 1.0},level);
+		this4.h[e] = v6;
 	}
 	Entity.validate(e);
 	return e;
@@ -4997,13 +5014,69 @@ Entities.merchant = function(x,y) {
 	Entity.description.h[e] = "It's a merchant.";
 	Entity.talk.h[e] = "Merchant says: \"I've got kids to feed\".";
 	Entity.draw_tile.h[e] = 47;
-	var health = Stats.get({ min : 15, max : 20, scaling : 8.0},level);
+	var v = { 'char' : "M", color : 14708619};
+	Entity.draw_char.h[e] = v;
+	var health = Stats.get({ min : 15, max : 20, scaling : 10.0},level);
 	var this1 = Entity.combat;
-	var v = { health : health, health_max : health, attack : Stats.get({ min : 4, max : 6, scaling : 1.5},level), message : "Merchant says: \"You will regret this\".", aggression : AggressionType.AggressionType_NeutralToAggressive, attacked_by_player : false, range_squared : 2, target : CombatTarget.CombatTarget_FriendlyThenPlayer};
-	this1.h[e] = v;
-	var v1 = { color : 14708619, seen : false};
-	Entity.draw_on_minimap.h[e] = v1;
+	var v1 = { health : health, health_max : health, attack : Stats.get({ min : 4, max : 6, scaling : 2.0},level), message : "Merchant says: \"You will regret this\".", aggression : AggressionType.AggressionType_NeutralToAggressive, attacked_by_player : false, range_squared : 2, target : CombatTarget.CombatTarget_FriendlyThenPlayer};
+	this1.h[e] = v1;
+	var v2 = { color : 14708619, seen : false};
+	Entity.draw_on_minimap.h[e] = v2;
 	Entity.merchant.h[e] = true;
+	Entity.validate(e);
+	return e;
+};
+Entities.loop_talker = function(x,y) {
+	var e = Entity.make();
+	var level = Main.current_level();
+	Entity.set_position(e,x,y);
+	Entity.$name.h[e] = "Person";
+	Entity.talk.h[e] = "Person says: \"Did you come here from the top floor?\nAll the monsters came back and they are only getting stronger.\nIf I were you I would leave the tower.\"";
+	Entity.draw_tile.h[e] = 47;
+	var v = { 'char' : "P", color : 14708619};
+	Entity.draw_char.h[e] = v;
+	Entity.validate(e);
+	return e;
+};
+Entities.talk_talker = function(x,y,copy_one) {
+	var e = Entity.make();
+	var level = Main.current_level();
+	Entity.set_position(e,x,y);
+	Entity.$name.h[e] = "Skeleton";
+	if(copy_one) {
+		Entity.talk.h[e] = "Skeleton says: \"Copy spell can copy ANYTHING. Amazing!\"";
+	} else if(Math.floor(101 * Math.random()) <= 10) {
+		var power_level = 30 * (Player.defense + Player.defense_mod) + 100 * (Player.attack + Player.attack_mod) + 10 * Player.copper_count + 20 * Player.health_max + 60 * Player.pure_absorb;
+		var judgement = haxegon_Random.pick(["I think you will survive!","You might struggle soon.","Get better items.","I can't help you, sorry."]);
+		var this1 = Entity.talk;
+		var v = haxegon_Random.pick(["Skeleton says: \"This is floor " + Main.current_floor + " of the tower.\n I wonder how many more there are?\"","Skeleton says: \"Your power level is " + power_level + ".\n" + judgement + "\""]);
+		this1.h[e] = v;
+	} else {
+		var unseen_talks = [];
+		var _g1 = 0;
+		var _g = Entities.talk_talker_talks.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(Main.seen_talks.indexOf(i) == -1) {
+				unseen_talks.push(Entities.talk_talker_talks[i]);
+			}
+		}
+		var picked_talk = "Hi";
+		if(unseen_talks.length == 0) {
+			Main.seen_talks = [];
+			picked_talk = haxegon_Random.pick(Entities.talk_talker_talks);
+		} else {
+			picked_talk = haxegon_Random.pick(unseen_talks);
+		}
+		var index = Entities.talk_talker_talks.indexOf(picked_talk);
+		Entity.talk.h[e] = picked_talk;
+		Main.seen_talks.push(index);
+		Main.obj.data.seen_talks = Main.seen_talks;
+		Main.obj.flush();
+	}
+	Entity.draw_tile.h[e] = 27;
+	var v1 = { 'char' : "S", color : 10329501};
+	Entity.draw_char.h[e] = v1;
 	Entity.validate(e);
 	return e;
 };
@@ -5014,12 +5087,14 @@ Entities.golem = function(level,x,y) {
 	Entity.description.h[e] = "It's a golem.";
 	Entity.talk.h[e] = "Golem says: \"Protect you\"";
 	Entity.draw_tile.h[e] = 17;
+	var v = { 'char' : "g", color : 15436081};
+	Entity.draw_char.h[e] = v;
 	var health = Stats.get({ min : 4, max : 7, scaling : 1.0},level);
 	var this1 = Entity.combat;
-	var v = { health : health, health_max : health, attack : Stats.get({ min : 1, max : 2, scaling : 1.0},level), message : "Golem says: \"Why?\"", aggression : AggressionType.AggressionType_Aggressive, attacked_by_player : false, range_squared : 1, target : CombatTarget.CombatTarget_Enemy};
-	this1.h[e] = v;
-	var v1 = { type : MoveType.MoveType_Astar, cant_move : false, successive_moves : 0, chase_dst : 14, target : MoveTarget.MoveTarget_EnemyThenPlayer};
-	Entity.move.h[e] = v1;
+	var v1 = { health : health, health_max : health, attack : Stats.get({ min : 1, max : 2, scaling : 1.0},level), message : "Golem says: \"Why?\"", aggression : AggressionType.AggressionType_Aggressive, attacked_by_player : false, range_squared : 1, target : CombatTarget.CombatTarget_Enemy};
+	this1.h[e] = v1;
+	var v2 = { type : MoveType.MoveType_Astar, cant_move : false, successive_moves : 0, chase_dst : 14, target : MoveTarget.MoveTarget_EnemyThenPlayer};
+	Entity.move.h[e] = v2;
 	Entity.validate(e);
 	return e;
 };
@@ -5030,13 +5105,15 @@ Entities.skeleton = function(level,x,y) {
 	Entity.description.h[e] = "It's a skeleton.";
 	Entity.talk.h[e] = "Skeleton says: \"Click clack\"";
 	Entity.draw_tile.h[e] = 27;
+	var v = { 'char' : "s", color : 10329501};
+	Entity.draw_char.h[e] = v;
 	var health = Stats.get({ min : 1, max : 2, scaling : 1.0},level);
 	var this1 = Entity.combat;
-	var v = { health : health, health_max : health, attack : Stats.get({ min : 1, max : 1, scaling : 1.0},level), message : "Skeleton attacks.", aggression : AggressionType.AggressionType_Aggressive, attacked_by_player : false, range_squared : 1, target : CombatTarget.CombatTarget_Enemy};
-	this1.h[e] = v;
+	var v1 = { health : health, health_max : health, attack : Stats.get({ min : 1, max : 1, scaling : 1.0},level), message : "Skeleton attacks.", aggression : AggressionType.AggressionType_Aggressive, attacked_by_player : false, range_squared : 1, target : CombatTarget.CombatTarget_Enemy};
+	this1.h[e] = v1;
 	var this2 = Entity.move;
-	var v1 = { type : MoveType.MoveType_Straight, cant_move : false, successive_moves : 0, chase_dst : 7 + Math.floor(8 * Math.random()), target : MoveTarget.MoveTarget_EnemyOnly};
-	this2.h[e] = v1;
+	var v2 = { type : MoveType.MoveType_Straight, cant_move : false, successive_moves : 0, chase_dst : 7 + Math.floor(8 * Math.random()), target : MoveTarget.MoveTarget_EnemyOnly};
+	this2.h[e] = v2;
 	Entity.validate(e);
 	return e;
 };
@@ -5047,10 +5124,12 @@ Entities.imp = function(level,x,y) {
 	Entity.description.h[e] = "It's an imp.";
 	Entity.talk.h[e] = "Imp grins at you.";
 	Entity.draw_tile.h[e] = 37;
+	var v = { 'char' : "i", color : 14708619};
+	Entity.draw_char.h[e] = v;
 	var health = Stats.get({ min : 2, max : 3, scaling : 1.0},level);
 	var this1 = Entity.combat;
-	var v = { health : health, health_max : health, attack : Stats.get({ min : 1, max : 1, scaling : 0.5},level), message : "Imp attacks.", aggression : AggressionType.AggressionType_Aggressive, attacked_by_player : false, range_squared : 9, target : CombatTarget.CombatTarget_Enemy};
-	this1.h[e] = v;
+	var v1 = { health : health, health_max : health, attack : Stats.get({ min : 1, max : 1, scaling : 0.5},level), message : "Imp attacks.", aggression : AggressionType.AggressionType_Aggressive, attacked_by_player : false, range_squared : 9, target : CombatTarget.CombatTarget_Enemy};
+	this1.h[e] = v1;
 	Entity.validate(e);
 	return e;
 };
@@ -5059,11 +5138,13 @@ Entities.copper = function(x,y) {
 	var level = Main.current_level();
 	Entity.set_position(e,x,y);
 	Entity.$name.h[e] = "Copper";
+	var v = { 'char' : "C", color : 16245355};
+	Entity.draw_char.h[e] = v;
 	Entity.description.h[e] = "A bunch of copper pieces";
 	Entity.draw_tile.h[e] = 94;
 	var this1 = Entity["use"];
-	var v = { spells : [Spells.mod_copper(Stats.get({ min : 1, max : 2, scaling : 1.0},level))], charges : 1, consumable : true, flavor_text : "You pick up the copper.", need_target : false, draw_charges : false};
-	this1.h[e] = v;
+	var v1 = { spells : [Spells.mod_copper(Stats.get({ min : 1, max : 2, scaling : 1.0},level))], charges : 1, consumable : true, flavor_text : "You pick up the copper.", need_target : false, draw_charges : false};
+	this1.h[e] = v1;
 	Entity.validate(e);
 	return e;
 };
@@ -5542,9 +5623,12 @@ var GenerateWorld = function() {
 };
 $hxClasses["GenerateWorld"] = GenerateWorld;
 GenerateWorld.__name__ = ["GenerateWorld"];
+GenerateWorld.ENEMY_TYPES_PER_LEVEL = function() {
+	return 2 + Math.floor(2 * Math.random());
+};
 GenerateWorld.MERCHANT_ITEM_COST = function() {
 	var tmp = Main.current_level();
-	return Stats.get({ min : 4, max : 6, scaling : 2.5},tmp);
+	return Stats.get({ min : 4, max : 6, scaling : 3.0},tmp);
 };
 GenerateWorld.room_free_positions_shuffled = function(r) {
 	var free_map = Main.get_free_map(r.x,r.y,r.x + r.width,r.y + r.height);
@@ -5605,25 +5689,24 @@ GenerateWorld.weapon_bad_streak_mod = function() {
 	}
 };
 GenerateWorld.statue_chance = function() {
-	if(GenerateWorld.statues_on_floor.h[Main.current_floor]) {
-		return 0.0;
-	} else if(GenerateWorld.get_streak(GenerateWorld.statues_on_floor) >= 2) {
-		return 10.0;
+	if(GenerateWorld.get_streak(GenerateWorld.statues_on_floor) >= 2) {
+		return 50;
 	} else {
-		return 1.0;
+		return 10;
 	}
 };
 GenerateWorld.fill_rooms_with_entities = function() {
 	GenerateWorld.weapons_on_floor.h[Main.current_floor] = false;
 	GenerateWorld.statues_on_floor.h[Main.current_floor] = false;
+	GenerateWorld.healthmax_on_floor.h[Main.current_floor] = false;
 	Entities.generated_first_chars = [];
-	var enemy_types_per_level = 2 + Math.floor(4 * Math.random());
+	var enemy_types_per_level = GenerateWorld.ENEMY_TYPES_PER_LEVEL();
 	var _g = [];
 	var _g2 = 0;
 	var _g1 = enemy_types_per_level;
 	while(_g2 < _g1) {
 		var i = _g2++;
-		_g.push(Entities.random_enemy_type());
+		_g.push(Entities.random_enemy_type(i));
 	}
 	var enemy_types = _g;
 	var random_enemy = function(x,y) {
@@ -5652,7 +5735,7 @@ GenerateWorld.fill_rooms_with_entities = function() {
 	};
 	var tally_health_potions = function(is_health_potion) {
 		GenerateWorld.health_potion_tally.push(is_health_potion);
-		if(GenerateWorld.health_potion_tally.length > 10) {
+		if(GenerateWorld.health_potion_tally.length > 15) {
 			GenerateWorld.health_potion_tally.shift();
 		}
 	};
@@ -5667,7 +5750,7 @@ GenerateWorld.fill_rooms_with_entities = function() {
 				++tally;
 			}
 		}
-		if(tally / GenerateWorld.health_potion_tally.length < 0.1) {
+		if(tally == 0) {
 			return 3.0;
 		} else {
 			return 1.0;
@@ -5713,14 +5796,10 @@ GenerateWorld.fill_rooms_with_entities = function() {
 					var pos1 = positions1[0].pop();
 					var f = 3.0 * health_potion_bad_streak_mod();
 					var f1 = { v : health_potion, c : f};
-					var f2 = { v : Entities.random_weapon, c : 0.5 * GenerateWorld.weapon_bad_streak_mod()};
-					var f3 = GenerateWorld.statue_chance();
-					var f4 = haxegon_Random.pick_chance([{ v : Entities.unlocked_chest, c : 12.0},f1,{ v : Entities.random_potion, c : 2.0},{ v : Entities.random_armor, c : 3.0},{ v : Entities.random_scroll, c : 4.0},{ v : Entities.random_orb, c : 1.5},f2,{ v : Entities.random_ring, c : 0.5},{ v : Entities.locked_chest, c : 2.0},{ v : Entities.random_statue, c : f3}]);
-					var e2 = f4(pos1.x,pos1.y);
-					tally_health_potions(f4 == health_potion);
-					if(f4 == Entities.random_statue) {
-						GenerateWorld.statues_on_floor.h[Main.current_floor] = true;
-					}
+					var f2 = 0.25 * GenerateWorld.weapon_bad_streak_mod();
+					var f3 = haxegon_Random.pick_chance([{ v : Entities.unlocked_chest, c : 12.0},f1,{ v : Entities.random_potion, c : 2.0},{ v : Entities.random_armor, c : 1.0},{ v : Entities.random_scroll, c : 4.0},{ v : Entities.random_orb, c : 1.0},{ v : Entities.random_weapon, c : f2},{ v : Entities.random_ring, c : 0.5},{ v : Entities.locked_chest, c : 2.0}]);
+					var e2 = f3(pos1.x,pos1.y);
+					tally_health_potions(f3 == health_potion);
 					items.push(e2);
 				}
 				GenerateWorld.enemy_rooms_this_floor++;
@@ -5756,7 +5835,7 @@ GenerateWorld.fill_rooms_with_entities = function() {
 					var _g42 = Math.min(3,item_positions.length) | 0;
 					while(_g52 < _g42) {
 						var i5 = _g52++;
-						sell_items.push((haxegon_Random.pick_chance([{ v : health_max_potion, c : 2.0},{ v : Entities.random_potion, c : 2.0},{ v : Entities.random_armor, c : 1.0},{ v : Entities.random_scroll, c : 1.0},{ v : Entities.random_orb, c : 0.5},{ v : Entities.random_weapon, c : 0.5},{ v : Entities.random_ring, c : 0.5}]))(item_positions[i5].x,item_positions[i5].y));
+						sell_items.push((haxegon_Random.pick_chance([{ v : health_max_potion, c : 2.0},{ v : Entities.random_potion, c : 2.0},{ v : Entities.random_armor, c : 1.5},{ v : Entities.random_scroll, c : 1.0},{ v : Entities.random_orb, c : 0.5},{ v : Entities.random_weapon, c : 0.5},{ v : Entities.random_ring, c : 0.5}]))(item_positions[i5].x,item_positions[i5].y));
 					}
 					Main.current_level_mod = 0;
 					var _g43 = 0;
@@ -5765,7 +5844,7 @@ GenerateWorld.fill_rooms_with_entities = function() {
 						++_g43;
 						var this1 = Entity.cost;
 						var v = Main.current_level();
-						var v1 = Stats.get({ min : 4, max : 6, scaling : 2.5},v);
+						var v1 = Stats.get({ min : 4, max : 6, scaling : 3.0},v);
 						this1.h[e3] = v1;
 					}
 				}
@@ -5773,7 +5852,7 @@ GenerateWorld.fill_rooms_with_entities = function() {
 		})(r);
 		var item_room = (function(positions3,r2) {
 			return function() {
-				var amount2 = 1 + Math.floor((Math.round(r2[0].width * r2[0].height / 225 * 2) - 1 + 1) * Math.random());
+				var amount2 = 1 + Math.floor((Math.round(r2[0].width * r2[0].height / (GenerateWorld.ROOM_SIZE_MAX * GenerateWorld.ROOM_SIZE_MAX) * 2) - 1 + 1) * Math.random());
 				var _g53 = 0;
 				var _g44 = amount2;
 				while(_g53 < _g44) {
@@ -5782,16 +5861,11 @@ GenerateWorld.fill_rooms_with_entities = function() {
 						break;
 					}
 					var pos2 = positions3[0].pop();
-					var f5 = { v : Entities.random_weapon, c : 0.5 * GenerateWorld.weapon_bad_streak_mod()};
-					var f6 = 3.0 * health_potion_bad_streak_mod();
-					var f7 = { v : health_potion, c : f6};
-					var f8 = GenerateWorld.statue_chance();
-					var f9 = haxegon_Random.pick_chance([{ v : Entities.random_armor, c : 3.0},f5,f7,{ v : Entities.random_potion, c : 2.0},{ v : Entities.random_scroll, c : 3.0},{ v : Entities.random_orb, c : 1.5},{ v : Entities.locked_chest, c : 2.0},{ v : Entities.random_ring, c : 1.0},{ v : Entities.random_statue, c : f8}]);
-					var e4 = f9(pos2.x,pos2.y);
-					tally_health_potions(f9 == health_potion);
-					if(f9 == Entities.random_statue) {
-						GenerateWorld.statues_on_floor.h[Main.current_floor] = true;
-					}
+					var f4 = { v : Entities.random_weapon, c : 0.25 * GenerateWorld.weapon_bad_streak_mod()};
+					var f5 = 3.0 * health_potion_bad_streak_mod();
+					var f6 = haxegon_Random.pick_chance([{ v : Entities.random_armor, c : 1.5},f4,{ v : health_potion, c : f5},{ v : Entities.random_potion, c : 2.0},{ v : Entities.random_scroll, c : 3.0},{ v : Entities.random_orb, c : 1.5},{ v : Entities.locked_chest, c : 2.0},{ v : Entities.random_ring, c : 1.0}]);
+					var e4 = f6(pos2.x,pos2.y);
+					tally_health_potions(f6 == health_potion);
 					items.push(e4);
 				}
 				GenerateWorld.item_rooms_this_floor++;
@@ -5825,7 +5899,7 @@ GenerateWorld.fill_rooms_with_entities = function() {
 						Main.walls[x3][door_pos.y] = true;
 					}
 				}
-				var amount3 = 1 + Math.floor((Math.round(r3[0].width * r3[0].height / 225 * 2) - 1 + 1) * Math.random());
+				var amount3 = 1 + Math.floor((Math.round(r3[0].width * r3[0].height / (GenerateWorld.ROOM_SIZE_MAX * GenerateWorld.ROOM_SIZE_MAX) * 2) - 1 + 1) * Math.random());
 				var _g56 = 0;
 				var _g47 = amount3;
 				while(_g56 < _g47) {
@@ -5834,7 +5908,7 @@ GenerateWorld.fill_rooms_with_entities = function() {
 						break;
 					}
 					var pos3 = positions4[0].pop();
-					(haxegon_Random.pick_chance([{ v : Entities.random_armor, c : 3.0},{ v : Entities.random_ring, c : 3.0},{ v : Entities.random_weapon, c : 1.0},{ v : Entities.random_statue, c : 1.0}]))(pos3.x,pos3.y);
+					(haxegon_Random.pick_chance([{ v : Entities.random_armor, c : 3.0},{ v : Entities.random_ring, c : 3.0},{ v : Entities.random_weapon, c : 1.0}]))(pos3.x,pos3.y);
 				}
 			};
 		})(positions,r);
@@ -5850,13 +5924,13 @@ GenerateWorld.fill_rooms_with_entities = function() {
 		haxegon_Random.shuffle(items);
 		var enemy_item_ratio = 1.0 * enemies.length / items.length;
 		var item_enemy_ratio = 1.0 * items.length / enemies.length;
-		if(enemy_item_ratio > 0.6) {
-			while(enemy_item_ratio > 0.6) {
+		if(enemy_item_ratio > 0.7) {
+			while(enemy_item_ratio > 0.7) {
 				Entity.remove(enemies.pop());
 				enemy_item_ratio = 1.0 * enemies.length / items.length;
 			}
-		} else if(item_enemy_ratio > 1.6666666666666667) {
-			while(item_enemy_ratio > 1.6666666666666667) {
+		} else if(item_enemy_ratio > 1.4285714285714286) {
+			while(item_enemy_ratio > 1.4285714285714286) {
 				Entity.remove(items.pop());
 				item_enemy_ratio = 1.0 * items.length / enemies.length;
 			}
@@ -5896,7 +5970,7 @@ GenerateWorld.fill_rooms_with_entities = function() {
 				return function(room_i,depth) {
 					var room = Main.rooms[room_i];
 					var max_dimension = Math.max(room.width,room.height);
-					if(!room_has_location_spell[room_i] && max_dimension <= 16.5) {
+					if(!room_has_location_spell[room_i] && max_dimension <= GenerateWorld.ROOM_SIZE_MAX * 1.1) {
 						room_has_location_spell[room_i] = true;
 						var _g7 = room.x;
 						var _g6 = room.x + room.width;
@@ -6007,22 +6081,105 @@ GenerateWorld.fill_rooms_with_entities = function() {
 			}
 		}
 	}
+	var n = GenerateWorld.statue_chance();
+	if(Math.floor(101 * Math.random()) <= n) {
+		GenerateWorld.statues_on_floor.h[Main.current_floor] = true;
+		var statue_rooms = [];
+		var start_room = Main.rooms[Player.room];
+		statue_rooms.push(start_room);
+		var _g37 = 0;
+		var _g412 = start_room.adjacent_rooms;
+		while(_g37 < _g412.length) {
+			var i12 = _g412[_g37];
+			++_g37;
+			var r6 = Main.rooms[i12];
+			var _g510 = 0;
+			var _g63 = r6.adjacent_rooms;
+			while(_g510 < _g63.length) {
+				var j = _g63[_g510];
+				++_g510;
+				var adj_r = Main.rooms[j];
+				if(adj_r != start_room) {
+					statue_rooms.push(adj_r);
+				}
+			}
+		}
+		haxegon_Random.shuffle(statue_rooms);
+		var room1 = statue_rooms.pop();
+		var positions7 = GenerateWorld.room_free_positions_shuffled(room1);
+		var pos6 = positions7.pop();
+		Entities.random_statue(pos6.x,pos6.y);
+	}
+	var random_pos = function() {
+		var random_room = haxegon_Random.pick(Main.rooms);
+		var positions8 = GenerateWorld.room_free_positions_shuffled(random_room);
+		if(positions8.length > 0) {
+			return positions8.pop();
+		} else {
+			return null;
+		}
+	};
+	if(Math.floor(101 * Math.random()) <= 10) {
+		var pos7 = random_pos();
+		if(pos7 != null) {
+			var tmp1;
+			var tmp2;
+			if(Math.floor(101 * Math.random()) <= 5) {
+				var x6 = pos7.x;
+				var y6 = pos7.y;
+				tmp2 = !(x6 < 0 || y6 < 0 || x6 >= 125 || y6 >= 125);
+			} else {
+				tmp2 = false;
+			}
+			if(tmp2) {
+				tmp1 = !Main.walls[pos7.x + 1][pos7.y];
+			} else {
+				tmp1 = false;
+			}
+			if(tmp1) {
+				Entities.talk_talker(pos7.x,pos7.y,true);
+				Entities.talk_talker(pos7.x + 1,pos7.y,true);
+			} else {
+				Entities.talk_talker(pos7.x,pos7.y,false);
+			}
+		}
+	}
 };
-GenerateWorld.generate_via_digging = function() {
-	var width_max = 92;
-	var height_max = 92;
+GenerateWorld.generate_rooms = function() {
+	if(Math.floor(101 * Math.random()) <= 25) {
+		GenerateWorld.ROOM_SIZE_MAX = 10;
+	} else {
+		GenerateWorld.ROOM_SIZE_MAX = 15;
+	}
+	var width_multiplier = 1.0;
+	var height_multiplier = 1.0;
+	(haxegon_Random.pick_chance([{ v : function() {
+		width_multiplier = 0.75;
+		height_multiplier = 0.75;
+	}, c : 2.0},{ v : function() {
+		width_multiplier = 0.6;
+		height_multiplier = 0.6;
+	}, c : 1.0},{ v : function() {
+		width_multiplier = 0.95;
+		height_multiplier = 0.5;
+	}, c : 1.0},{ v : function() {
+		width_multiplier = 0.5;
+		height_multiplier = 0.95;
+	}, c : 1.0}]))();
+	var width_max = Math.floor(123 * width_multiplier);
+	var height_max = Math.floor(123 * height_multiplier);
 	var from = width_max - 25;
 	var world_width = from + Math.floor((width_max - from + 1) * Math.random());
 	var from1 = height_max - 25;
 	var world_height = from1 + Math.floor((height_max - from1 + 1) * Math.random());
 	var rooms = [];
 	var _g = 0;
-	while(_g < 300) {
+	while(_g < 1000) {
 		var i = _g++;
 		if(rooms.length >= 15) {
 			break;
 		}
-		var new_room = { x : 1 + Math.floor((world_width - 15 - 1 - 1 + 1) * Math.random()), y : 1 + Math.floor((world_height - 15 - 1 - 1 + 1) * Math.random()), width : 5 + Math.floor(10 * Math.random()), height : 5 + Math.floor(10 * Math.random()), is_connection : false, adjacent_rooms : [], is_locked : false, is_horizontal : false};
+		var new_room = { x : 1 + Math.floor((world_width - GenerateWorld.ROOM_SIZE_MAX - 1 - 1 + 1) * Math.random()), y : 1 + Math.floor((world_height - GenerateWorld.ROOM_SIZE_MAX - 1 - 1 + 1) * Math.random()), width : 5 + Math.floor((GenerateWorld.ROOM_SIZE_MAX - 1 - 5 + 1) * Math.random()), height : 5 + Math.floor((GenerateWorld.ROOM_SIZE_MAX - 1 - 5 + 1) * Math.random()), is_connection : false, adjacent_rooms : [], is_locked : false, is_horizontal : false};
 		var no_intersections = true;
 		var _g1 = 0;
 		while(_g1 < rooms.length) {
@@ -6212,7 +6369,7 @@ GenerateWorld.connect_rooms = function(rooms,disconnect_factor) {
 	while(_g10 < connections.length) {
 		var c = connections[_g10];
 		++_g10;
-		if(haxegon_MathExtensions.dst(Math,c.x1,c.y1,c.x2,c.y2) > 15 || Math.floor(101 * Math.random()) <= 10) {
+		if(haxegon_MathExtensions.dst(Math,c.x1,c.y1,c.x2,c.y2) > GenerateWorld.ROOM_SIZE_MAX || Math.floor(101 * Math.random()) <= 10) {
 			connected[c.i][c.j] = false;
 			connected[c.j][c.i] = false;
 			if(all_connected()) {
@@ -6269,12 +6426,12 @@ GenerateWorld.connect_rooms = function(rooms,disconnect_factor) {
 		var from1 = height_max - 25;
 		var world_height = from1 + Math.floor((height_max - from1 + 1) * Math.random());
 		var _g25 = 0;
-		while(_g25 < 300) {
+		while(_g25 < 1000) {
 			var i6 = _g25++;
 			if(disconnected_count == 0) {
 				break;
 			}
-			var new_room = { x : 1 + Math.floor((world_width - 15 - 1 - 1 + 1) * Math.random()), y : 1 + Math.floor((world_height - 15 - 1 - 1 + 1) * Math.random()), width : 5 + Math.floor(10 * Math.random()), height : 5 + Math.floor(10 * Math.random()), is_connection : false, adjacent_rooms : [], is_locked : false, is_horizontal : false};
+			var new_room = { x : 1 + Math.floor((world_width - GenerateWorld.ROOM_SIZE_MAX - 1 - 1 + 1) * Math.random()), y : 1 + Math.floor((world_height - GenerateWorld.ROOM_SIZE_MAX - 1 - 1 + 1) * Math.random()), width : 5 + Math.floor((GenerateWorld.ROOM_SIZE_MAX - 1 - 5 + 1) * Math.random()), height : 5 + Math.floor((GenerateWorld.ROOM_SIZE_MAX - 1 - 5 + 1) * Math.random()), is_connection : false, adjacent_rooms : [], is_locked : false, is_horizontal : false};
 			var no_intersections = true;
 			var _g110 = 0;
 			while(_g110 < rooms.length) {
@@ -6370,29 +6527,27 @@ GenerateWorld.decorate_rooms_with_walls = function() {
 			Main.walls[x_mid][y] = true;
 		}
 	};
-	var columns = function(r2) {
-		var spacing = 3 + Math.floor(2 * Math.random());
-		var _g12 = r2.x + 1;
-		var _g3 = r2.x + r2.width - 1;
+	var thin_ring = function(r2) {
+		var _g12 = r2.x + 2;
+		var _g3 = r2.x + r2.width - 2;
 		while(_g12 < _g3) {
 			var x1 = _g12++;
-			var _g31 = r2.y + 1;
-			var _g21 = r2.y + r2.height - 1;
+			var _g31 = r2.y + 2;
+			var _g21 = r2.y + r2.height - 2;
 			while(_g31 < _g21) {
 				var y1 = _g31++;
-				if(x1 % spacing == 0 && y1 % spacing == 0) {
-					Main.walls[x1][y1] = true;
-				}
+				Main.walls[x1][y1] = true;
+				Main.tiles[x1][y1] = 79;
 			}
 		}
 	};
-	var thin_ring = function(r3) {
-		var _g13 = r3.x + 2;
-		var _g4 = r3.x + r3.width - 2;
+	var fat_ring = function(r3) {
+		var _g13 = r3.x + 3;
+		var _g4 = r3.x + r3.width - 3;
 		while(_g13 < _g4) {
 			var x2 = _g13++;
-			var _g32 = r3.y + 2;
-			var _g22 = r3.y + r3.height - 2;
+			var _g32 = r3.y + 3;
+			var _g22 = r3.y + r3.height - 3;
 			while(_g32 < _g22) {
 				var y2 = _g32++;
 				Main.walls[x2][y2] = true;
@@ -6400,55 +6555,14 @@ GenerateWorld.decorate_rooms_with_walls = function() {
 			}
 		}
 	};
-	var fat_ring = function(r4) {
-		var _g14 = r4.x + 3;
-		var _g5 = r4.x + r4.width - 3;
-		while(_g14 < _g5) {
-			var x3 = _g14++;
-			var _g33 = r4.y + 3;
-			var _g23 = r4.y + r4.height - 3;
-			while(_g33 < _g23) {
-				var y3 = _g33++;
-				Main.walls[x3][y3] = true;
-				Main.tiles[x3][y3] = 79;
-			}
-		}
-	};
-	var wall_protrustion = function(r5) {
-		var _g15 = r5.x + 3;
-		var _g6 = r5.x + r5.width - 3;
-		while(_g15 < _g6) {
-			var x4 = _g15++;
-			var _g34 = r5.y + 3;
-			var _g24 = r5.y + r5.height - 3;
-			while(_g34 < _g24) {
-				var y4 = _g34++;
-				Main.walls[x4][y4] = true;
-				Main.tiles[x4][y4] = 79;
-			}
-		}
-		var width = 3;
-		var x11 = r5.x;
-		var x21 = Math.min(x11 + width,r5.x + r5.width) | 0;
-		var _g16 = x11;
-		var _g7 = x21;
-		while(_g16 < _g7) {
-			var x5 = _g16++;
-			var _g25 = 0;
-			while(_g25 < 3) {
-				var dy = _g25++;
-				Main.walls[x5][r5.y + r5.height - dy] = true;
-				Main.tiles[x5][r5.y + r5.height - dy] = 79;
-			}
-		}
-	};
-	var _g8 = 0;
-	var _g17 = Main.rooms;
-	while(_g8 < _g17.length) {
-		var r6 = _g17[_g8];
-		++_g8;
-		if(!r6.is_connection) {
-			(haxegon_Random.pick_chance([{ v : no_walls, c : 10.0},{ v : thin_ring, c : 0.5},{ v : fat_ring, c : 1.0}]))(r6);
+	var start_room = Main.rooms[Player.room];
+	var _g5 = 0;
+	var _g14 = Main.rooms;
+	while(_g5 < _g14.length) {
+		var r4 = _g14[_g5];
+		++_g5;
+		if(!r4.is_connection && r4 != start_room) {
+			(haxegon_Random.pick_chance([{ v : no_walls, c : 10.0},{ v : fat_ring, c : 1.0},{ v : thin_ring, c : 0.5}]))(r4);
 		}
 	}
 };
@@ -6541,7 +6655,7 @@ LOS.ray = function(x1,y1,x2,y2) {
 	}
 	return points;
 };
-LOS.calculate_rays = function() {
+LOS.init_rays = function() {
 	var center_x = 15;
 	var center_y = 15;
 	var _g = 0;
@@ -6668,10 +6782,22 @@ GameState.GameState_Dead = ["GameState_Dead",1];
 GameState.GameState_Dead.toString = $estr;
 GameState.GameState_Dead.__enum__ = GameState;
 GameState.__empty_constructs__ = [GameState.GameState_Normal,GameState.GameState_Dead];
+var TargetingState = $hxClasses["TargetingState"] = { __ename__ : ["TargetingState"], __constructs__ : ["TargetingState_NotTargeting","TargetingState_Targeting","TargetingState_TargetingDone"] };
+TargetingState.TargetingState_NotTargeting = ["TargetingState_NotTargeting",0];
+TargetingState.TargetingState_NotTargeting.toString = $estr;
+TargetingState.TargetingState_NotTargeting.__enum__ = TargetingState;
+TargetingState.TargetingState_Targeting = ["TargetingState_Targeting",1];
+TargetingState.TargetingState_Targeting.toString = $estr;
+TargetingState.TargetingState_Targeting.__enum__ = TargetingState;
+TargetingState.TargetingState_TargetingDone = ["TargetingState_TargetingDone",2];
+TargetingState.TargetingState_TargetingDone.toString = $estr;
+TargetingState.TargetingState_TargetingDone.__enum__ = TargetingState;
+TargetingState.__empty_constructs__ = [TargetingState.TargetingState_NotTargeting,TargetingState.TargetingState_Targeting,TargetingState.TargetingState_TargetingDone];
 var Main = function() {
 	this.can_restart_timer = 0;
 	this.move_timer_max = 5;
 	this.move_timer = 0;
+	this.enemy_tile_colors = [[10329501,16777215,12461619,14708619,10773538,15436081,16245355,4491546,10735143,11721967],[10329501,16777215,12461619,14708619,10773538,15436081,16245355,4491546,10735143,3252978,11721967],[0,10329501,16777215,12461619,14708619,10773538,15436081,16245355,10735143],[0,16777215,12461619,14708619,4799531,10773538,15436081,3098702,4491546,10735143,1779250,22404,3252978,11721967],[0,10329501,16777215,14708619,15436081,16245355,3098702,4491546,10735143,1779250,22404,3252978,11721967]];
 	this.inventory_render_cache = haxegon_Data.create2darray(4,2,null);
 	var _g = new haxe_ds_EnumValueMap();
 	_g.set(EquipmentType.EquipmentType_Head,null);
@@ -6688,8 +6814,7 @@ var Main = function() {
 	this.game_stats = [];
 	this.use_target = -1;
 	this.use_entity_that_needs_target = -1;
-	this.targeting_for_use = false;
-	this.start_targeting = false;
+	this.targeting_state = TargetingState.TargetingState_NotTargeting;
 	this.added_message_this_turn = false;
 	var _g1 = [];
 	var _g11 = 0;
@@ -6708,7 +6833,9 @@ var Main = function() {
 		_g2.push([]);
 	}
 	this.spells_this_turn = _g2;
-	this.TILE_PATTERNS = true;
+	this.USER_draw_chars_only = false;
+	this.USER_tile_patterns = true;
+	this.USER_show_buttons = false;
 	this.DEV_show_enemies = false;
 	this.DEV_nodeath = false;
 	this.DEV_frametime_graph = false;
@@ -6721,6 +6848,19 @@ var Main = function() {
 	this.los = haxegon_Data.create2darray(31,31,false);
 	this.tiles_render_cache = haxegon_Data.create2darray(31,31,0);
 	this.game_state = GameState.GameState_Normal;
+	Main.obj = openfl_net_SharedObject.getLocal("options");
+	if(Main.obj.data.USER_tile_patterns != null) {
+		this.USER_tile_patterns = Main.obj.data.USER_tile_patterns;
+	}
+	if(Main.obj.data.USER_long_spell_descriptions != null) {
+		Main.USER_long_spell_descriptions = Main.obj.data.USER_long_spell_descriptions;
+	}
+	if(Main.obj.data.USER_draw_chars_only != null) {
+		this.USER_draw_chars_only = Main.obj.data.USER_draw_chars_only;
+	}
+	if(Main.obj.data.seen_talks != null) {
+		Main.seen_talks = Main.obj.data.seen_talks;
+	}
 	haxegon_Gfx.resizescreen(1600,1000);
 	haxegon_Text.setfont("pixelfj8");
 	haxegon_Gfx.loadtiles("tiles",8,8);
@@ -6732,6 +6872,7 @@ var Main = function() {
 	haxegon_Gfx.createimage("minimap_canvas_rooms",500,500);
 	haxegon_Gfx.createimage("minimap_canvas_full",500,500);
 	haxegon_Gfx.createimage("ui_items_canvas",128,1000);
+	haxegon_Gfx.createtiles("test_enemy_tiles",8,8,100);
 	haxegon_Gfx.changetileset("tiles");
 	haxegon_Gfx.createimage("ui_canvas",600,1000);
 	haxegon_Gfx.drawtoimage("ui_canvas");
@@ -6767,9 +6908,18 @@ var Main = function() {
 	}
 	haxegon_Gfx.drawtoscreen();
 	Entities.read_name_corpus();
-	LOS.calculate_rays();
+	LOS.init_rays();
 	this.restart_game();
 	this.generate_level();
+	this.print_tutorial();
+	haxegon_Gfx.changetileset("test_enemy_tiles");
+	var _g121 = 0;
+	var _g31 = haxegon_Gfx.numberoftiles();
+	while(_g121 < _g31) {
+		var i2 = _g121++;
+		this.generate_enemy_tile(i2);
+	}
+	haxegon_Gfx.changetileset("tiles");
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
@@ -6800,7 +6950,7 @@ Main.timer_start = function() {
 };
 Main.timer_end = function() {
 	var new_stamp = new Date().getTime() / 1000;
-	haxe_Log.trace("" + (new_stamp - Main.time_stamp),{ fileName : "Main.hx", lineNumber : 593, className : "Main", methodName : "timer_end"});
+	haxe_Log.trace("" + (new_stamp - Main.time_stamp),{ fileName : "Main.hx", lineNumber : 718, className : "Main", methodName : "timer_end"});
 	Main.time_stamp = new_stamp;
 };
 Main.get_view_x = function() {
@@ -6821,10 +6971,7 @@ Main.current_level = function() {
 };
 Main.get_level_tile_index = function() {
 	var level_tile_index = Math.round(Main.current_floor / 3);
-	if(level_tile_index >= 5) {
-		level_tile_index = 0;
-	}
-	return level_tile_index;
+	return level_tile_index % 5;
 };
 Main.get_room_index = function(x,y) {
 	var _g1 = 0;
@@ -6939,9 +7086,11 @@ Main.get_entity_render_data = function(e) {
 	if(Entity.draw_char.h.hasOwnProperty(e)) {
 		draw_char = Entity.draw_char.h[e]["char"];
 		draw_char_color = Entity.draw_char.h[e].color;
-	} else if(Entity.draw_tile.h.hasOwnProperty(e)) {
+	}
+	if(Entity.draw_tile.h.hasOwnProperty(e)) {
 		draw_tile = Entity.draw_tile.h[e];
-	} else {
+	}
+	if(!Entity.draw_char.h.hasOwnProperty(e) && !Entity.draw_tile.h.hasOwnProperty(e)) {
 		draw_tile = 0;
 	}
 	var charges = -1;
@@ -6971,7 +7120,9 @@ Main.prototype = {
 	,DEV_frametime_graph: null
 	,DEV_nodeath: null
 	,DEV_show_enemies: null
-	,TILE_PATTERNS: null
+	,USER_show_buttons: null
+	,USER_tile_patterns: null
+	,USER_draw_chars_only: null
 	,spells_this_turn: null
 	,attack_target: null
 	,interact_target: null
@@ -6979,8 +7130,7 @@ Main.prototype = {
 	,interact_target_y: null
 	,messages: null
 	,added_message_this_turn: null
-	,start_targeting: null
-	,targeting_for_use: null
+	,targeting_state: null
 	,use_entity_that_needs_target: null
 	,use_target: null
 	,game_stats: null
@@ -6992,6 +7142,86 @@ Main.prototype = {
 	,defense_count_this_level: null
 	,equipment_render_cache: null
 	,inventory_render_cache: null
+	,enemy_tile_colors: null
+	,generate_enemy_tile: function(tile) {
+		haxegon_Gfx.scale(1);
+		haxegon_Gfx.drawtotile(tile);
+		haxegon_Gfx.clearscreentransparent();
+		var color = haxegon_Random.pick(this.enemy_tile_colors[Main.get_level_tile_index()]);
+		var half_width = 3;
+		var half_height = 3;
+		(haxegon_Random.pick_chance([{ v : function() {
+			half_width = 3;
+			half_height = 3;
+		}, c : 1.0},{ v : function() {
+			half_width = 3;
+			half_height = 2;
+		}, c : 1.0},{ v : function() {
+			half_width = 2;
+			half_height = 3;
+		}, c : 1.0},{ v : function() {
+			half_width = 2;
+			half_height = 2;
+		}, c : 1.0}]))();
+		var area = half_width * 2 * half_height * 2;
+		var max_pixels = Math.floor((20 + Math.floor(9 * Math.random())) / 32 * area);
+		var pixel_chance = 25 + Math.floor((Math.floor(100 * max_pixels / area) - 25 + 1) * Math.random());
+		var _g = 0;
+		while(_g < 8) {
+			var x = _g++;
+			var _g1 = 0;
+			while(_g1 < 8) {
+				var y = _g1++;
+				haxegon_Gfx.set_pixel(x,y,0,0.0);
+			}
+		}
+		var pixels_placed = 0;
+		var center_pixels = false;
+		while(pixels_placed <= 4 || pixels_placed / area < 0.25 && pixels_placed < max_pixels && !center_pixels) {
+			var _g2 = 4 - half_width;
+			while(_g2 < 4) {
+				var x1 = _g2++;
+				var _g21 = 4 - half_height;
+				var _g11 = 4 + half_height;
+				while(_g21 < _g11) {
+					var y1 = _g21++;
+					if(Math.floor(101 * Math.random()) <= pixel_chance) {
+						haxegon_Gfx.set_pixel(x1,y1,color);
+						haxegon_Gfx.set_pixel(7 - x1,y1,color);
+						pixels_placed += 2;
+						if(x1 == 4) {
+							center_pixels = true;
+						}
+						if(pixels_placed >= max_pixels) {
+							break;
+						}
+					}
+				}
+				if(pixels_placed >= max_pixels) {
+					break;
+				}
+			}
+		}
+		haxegon_Gfx.drawtoscreen();
+	}
+	,print_tutorial: function() {
+		var tutorial_text = ["CONTROLS","------------------------------","WASD to move.","SPACE to skip a turn.","ESCAPE to open options menu.","------------------------------","Right-click on things to interact with them.","You can interact with things on the map if they are next to you.","You can interact with your equipment and items.","------------------------------","Left-clicking performs some default interactions:","Left-click on enemies to attack them.","Left-click on items and equipment on the ground to pick them up.","Left-click on items in inventory to use them."];
+		var _g = [];
+		var _g1 = 0;
+		while(_g1 < 20) {
+			var i = _g1++;
+			_g.push("------------------------------");
+		}
+		this.messages = _g;
+		var tutorial_i = tutorial_text.length;
+		var _g11 = 0;
+		while(_g11 < tutorial_text.length) {
+			var line = tutorial_text[_g11];
+			++_g11;
+			this.messages[tutorial_i] = line;
+			--tutorial_i;
+		}
+	}
 	,restart_game: function() {
 		this.damage_numbers = [];
 		var _g = 0;
@@ -7018,22 +7248,6 @@ Main.prototype = {
 		Player.damage_shield = 0;
 		Player.attack = 1;
 		Player.defense = 0;
-		var tutorial_text = ["TUTORIAL","------------------------------","WASD to move","SPACE to skip a turn","------------------------------","Right-click on things to interact with them.","You can interact with things on the map if they are next to you.","You can interact with your equipment and items.","------------------------------","Left-click on enemies to attack them.","Left-click on items and equipment on the ground to pick them up.","Left-click on items in inventory to use them.","------------------------------","PLAYTEST NOTES","Press F to toggle frametime graph. Let me know if the","perfomance is bad!(above 16ms is bad)","Press L to print game log. It's printed to the browser console,","which is opened by ctrl+shift+J. I would appreciate if you copied","and sent me that log after you are done playing.","Press T to toggle tile patterns(updates on level change)."];
-		var _g12 = [];
-		var _g22 = 0;
-		while(_g22 < 20) {
-			var i1 = _g22++;
-			_g12.push("------------------------------");
-		}
-		this.messages = _g12;
-		var tutorial_i = tutorial_text.length;
-		var _g23 = 0;
-		while(_g23 < tutorial_text.length) {
-			var line = tutorial_text[_g23];
-			++_g23;
-			this.messages[tutorial_i] = line;
-			--tutorial_i;
-		}
 		Entities.generated_names = [];
 	}
 	,random_pattern: function(chance) {
@@ -7136,7 +7350,7 @@ Main.prototype = {
 		haxegon_Gfx.fillbox(0,0,8,8,shadow);
 		haxegon_Gfx.drawtotile(Tile.Wall);
 		haxegon_Gfx.fillbox(0,0,8,8,wall);
-		if(this.TILE_PATTERNS) {
+		if(this.USER_tile_patterns) {
 			var pattern = (haxegon_Random.pick([$bind(this,this.horizontal_reflected_pattern),$bind(this,this.vertical_reflected_pattern),$bind(this,this.four_reflected_pattern),$bind(this,this.random_pattern)]))(Math.floor(76 * Math.random()));
 			var _g = 0;
 			while(_g < 8) {
@@ -7148,6 +7362,34 @@ Main.prototype = {
 						haxegon_Gfx.fillbox(x,y,1,1,shadow);
 					}
 				}
+			}
+		}
+		haxegon_Gfx.drawtoscreen();
+	}
+	,redraw_screen_tiles: function() {
+		LOS.update_los(this.los);
+		var view_x = Player.x - 15;
+		var view_y = Player.y - 15;
+		haxegon_Gfx.scale(1);
+		haxegon_Gfx.drawtoimage("tiles_canvas");
+		var _g = 0;
+		while(_g < 31) {
+			var x = _g++;
+			var _g1 = 0;
+			while(_g1 < 31) {
+				var y = _g1++;
+				var map_x = view_x + x;
+				var map_y = view_y + y;
+				var new_tile = 0;
+				if(map_x < 0 || map_y < 0 || map_x >= 125 || map_y >= 125 || Main.walls[map_x][map_y]) {
+					new_tile = Tile.Wall;
+				} else if(!this.los[x][y] || Player.nolos || this.DEV_nolos) {
+					new_tile = Main.tiles[map_x][map_y];
+				} else {
+					new_tile = Tile.Shadow;
+				}
+				haxegon_Gfx.drawtile((map_x - Player.x + 15) * 8,(map_y - Player.y + 15) * 8,new_tile);
+				this.tiles_render_cache[x][y] = new_tile;
 			}
 		}
 		haxegon_Gfx.drawtoscreen();
@@ -7206,8 +7448,8 @@ Main.prototype = {
 					Main.tiles[x1][y1] = Tile.Wall;
 				}
 			}
-			Main.rooms = GenerateWorld.generate_via_digging();
-			GenerateWorld.connect_rooms(Main.rooms,0.5 + 1.5 * Math.random());
+			Main.rooms = GenerateWorld.generate_rooms();
+			GenerateWorld.connect_rooms(Main.rooms,haxegon_Random.pick([0.1,0.5,2.0]));
 			var _g6 = 0;
 			var _g15 = Main.rooms;
 			while(_g6 < _g15.length) {
@@ -7381,32 +7623,21 @@ Main.prototype = {
 		this.attack_count_this_level = 0;
 		this.total_defense_this_level = 0;
 		this.defense_count_this_level = 0;
-		LOS.update_los(this.los);
-		var view_x = Player.x - 15;
-		var view_y = Player.y - 15;
-		haxegon_Gfx.scale(1);
-		haxegon_Gfx.drawtoimage("tiles_canvas");
-		var _g20 = 0;
-		while(_g20 < 31) {
-			var x3 = _g20++;
-			var _g111 = 0;
-			while(_g111 < 31) {
-				var y3 = _g111++;
-				var map_x = view_x + x3;
-				var map_y = view_y + y3;
-				var new_tile = 0;
-				if(map_x < 0 || map_y < 0 || map_x >= 125 || map_y >= 125 || Main.walls[map_x][map_y]) {
-					new_tile = Tile.Wall;
-				} else if(!this.los[x3][y3] || Player.nolos || this.DEV_nolos) {
-					new_tile = Main.tiles[map_x][map_y];
-				} else {
-					new_tile = Tile.Shadow;
-				}
-				haxegon_Gfx.drawtile((map_x - Player.x + 15) * 8,(map_y - Player.y + 15) * 8,new_tile);
-				this.tiles_render_cache[x3][y3] = new_tile;
+		this.redraw_screen_tiles();
+		if(Main.current_floor > 0 && (Main.current_floor + 1) % 15 == 0) {
+			var positions = GenerateWorld.room_free_positions_shuffled(Main.rooms[Player.room]);
+			if(positions.length > 0) {
+				var pos = positions.pop();
+				Entities.loop_talker(pos.x,pos.y);
 			}
 		}
-		haxegon_Gfx.drawtoscreen();
+		var _g20 = 0;
+		var _g111 = Tile.Enemy;
+		while(_g20 < _g111.length) {
+			var enemy_tile = _g111[_g20];
+			++_g20;
+			this.generate_enemy_tile(enemy_tile);
+		}
 	}
 	,screen_x: function(x) {
 		return (x - Player.x + 15) * 8 * 4;
@@ -7435,7 +7666,17 @@ Main.prototype = {
 		}
 	}
 	,add_message: function(new_message) {
-		this.messages.splice(0,0,new_message);
+		var msg_newlined = new_message.split("\n");
+		if(msg_newlined.length > 1) {
+			var _g = 0;
+			while(_g < msg_newlined.length) {
+				var m = msg_newlined[_g];
+				++_g;
+				this.messages.splice(0,0,m);
+			}
+		} else {
+			this.messages.splice(0,0,new_message);
+		}
 		this.added_message_this_turn = true;
 		this.need_to_update_messages_canvas = true;
 	}
@@ -7469,15 +7710,13 @@ Main.prototype = {
 		var drop = drop_entity.drop_func(pos.x,pos.y);
 		Main.current_level_mod = 0;
 		if(drop != -1) {
-			var drop_name = Entity.$name.h.hasOwnProperty(drop) ? Entity.$name.h[drop] : "unnamed_drop";
-			var dropping_entity_name = Entity.$name.h.hasOwnProperty(e) ? Entity.$name.h[e] : "unnamed_dropping_entity";
-			this.add_message("" + dropping_entity_name + " drops " + drop_name + ".");
+			this.add_message("" + this.entity_name(e,"Enemy") + " drops " + this.entity_name(e,"a thing") + ".");
 		}
 	}
 	,try_open_entity: function(e) {
 		var _gthis = this;
 		var locked = Entity.container.h[e];
-		var locked_name = Entity.$name.h.hasOwnProperty(e) ? Entity.$name.h[e] : "unnamed_locked";
+		var locked_name = this.entity_name(e,"locked thing");
 		var drop_from_locked = function() {
 			if(Entity.drop_entity.h.hasOwnProperty(e) && Entity.position.h.hasOwnProperty(e)) {
 				_gthis.drop_entity_from_entity(e);
@@ -7539,7 +7778,7 @@ Main.prototype = {
 			while(_g < _g1.length) {
 				var spell = _g1[_g];
 				++_g;
-				spell.origin_name = Entity.$name.h.hasOwnProperty(e) ? Entity.$name.h[e] : "unnamed_origin";
+				spell.origin_name = this.entity_name(e,"unnamed_origin");
 				Player.spells.push(Spells.copy(spell));
 				if(Player.spells.length > 10) {
 					this.add_message("Too many active spells, an old spell was removed.");
@@ -7558,16 +7797,14 @@ Main.prototype = {
 		var e_equipment = Entity.equipment.h[e];
 		var old_e = Player.equipment.get(e_equipment.type);
 		if(Entity.equipment.h.hasOwnProperty(old_e) && !Entity.position.h.hasOwnProperty(old_e)) {
-			var unequip_name = Entity.$name.h.hasOwnProperty(old_e) ? Entity.$name.h[old_e] : "unnamed_unequip";
-			this.add_message("You unequip " + unequip_name + ".");
+			this.add_message("You unequip " + this.entity_name(old_e,"old equipment") + ".");
 			var e_pos = Entity.position.h[e];
 			Entity.remove_position(e);
 			Entity.set_position(old_e,e_pos.x,e_pos.y);
 		} else {
 			Entity.remove_position(e);
 		}
-		var equip_name = Entity.$name.h.hasOwnProperty(e) ? Entity.$name.h[e] : "unnamed_equip";
-		this.add_message("You equip " + Entity.$name.h[e] + ".");
+		this.add_message("You equip " + this.entity_name(e,"new equipment") + ".");
 		Player.equipment.set(e_equipment.type,e);
 	}
 	,move_entity_into_inventory: function(e) {
@@ -7615,7 +7852,7 @@ Main.prototype = {
 				var not_in_inventory = Entity.item.h.hasOwnProperty(Player.inventory[x2][y2]) && Entity.position.h.hasOwnProperty(Player.inventory[x2][y2]);
 				if(doesnt_exist || not_in_inventory) {
 					Player.inventory[x2][y2] = e;
-					this.add_message("You pick up " + Entity.$name.h[e] + ".");
+					this.add_message("You pick up " + this.entity_name(e,"a thing") + ".");
 					Entity.remove_position(e);
 					return;
 				}
@@ -7645,8 +7882,7 @@ Main.prototype = {
 	,drop_entity_from_player: function(e) {
 		var pos = this.free_position_around_player();
 		if(pos.x != -1 && pos.y != -1) {
-			var drop_name = Entity.$name.h.hasOwnProperty(e) ? Entity.$name.h[e] : "unnamed_drop_from_player";
-			this.add_message("You drop " + drop_name + ".");
+			this.add_message("You drop " + this.entity_name(e,"a thing") + ".");
 			Entity.set_position(e,pos.x,pos.y);
 		} else {
 			this.add_message("No space to drop item.");
@@ -7886,10 +8122,8 @@ Main.prototype = {
 		}
 		target_combat.health -= combat.attack;
 		this.add_message(combat.message);
-		var e_name = Entity.$name.h.hasOwnProperty(e) ? Entity.$name.h[e] : "unnamed_e";
-		var target_name = Entity.$name.h.hasOwnProperty(target) ? Entity.$name.h[target] : "unnamed_target_of_e";
 		if(combat.attack != 0) {
-			this.add_message("" + e_name + " attacks " + target_name + " for " + combat.attack + " damage.");
+			this.add_message("" + this.entity_name(e,"Monster") + " attacks " + this.entity_name(target,"something") + " for " + combat.attack + " damage.");
 		}
 		if(Entity.move.h.hasOwnProperty(e)) {
 			var move = Entity.move.h[e];
@@ -7915,11 +8149,6 @@ Main.prototype = {
 		}
 		if(tmp) {
 			return false;
-		}
-		if(combat.aggression == AggressionType.AggressionType_NeutralToAggressive && combat.attacked_by_player) {
-			combat.aggression = AggressionType.AggressionType_Aggressive;
-			var v = { type : MoveType.MoveType_Astar, cant_move : false, successive_moves : 0, chase_dst : 31, target : MoveTarget.MoveTarget_FriendlyThenPlayer};
-			Entity.move.h[e] = v;
 		}
 		var should_attack;
 		var _g = combat.aggression;
@@ -7951,8 +8180,7 @@ Main.prototype = {
 		var absorb1 = absorb;
 		var damage = Math.max(0,combat.attack - absorb1) | 0;
 		this.add_message(combat.message);
-		var target_name = Entity.$name.h.hasOwnProperty(e) ? Entity.$name.h[e] : "unnamed_target";
-		this.damage_player(damage," from " + target_name);
+		this.damage_player(damage," from " + this.entity_name(e,"something"));
 		if(Entity.move.h.hasOwnProperty(e)) {
 			var move = Entity.move.h[e];
 			move.cant_move = true;
@@ -8020,7 +8248,12 @@ Main.prototype = {
 		}
 		combat.health -= attack;
 		combat.attacked_by_player = true;
-		var target_name = Entity.$name.h.hasOwnProperty(e) ? Entity.$name.h[e] : "unnamed_target";
+		if(combat.aggression == AggressionType.AggressionType_NeutralToAggressive) {
+			combat.aggression = AggressionType.AggressionType_Aggressive;
+			var v = { type : MoveType.MoveType_Astar, cant_move : false, successive_moves : 0, chase_dst : 31, target : MoveTarget.MoveTarget_FriendlyThenPlayer};
+			Entity.move.h[e] = v;
+		}
+		var target_name = this.entity_name(e,"something");
 		this.add_message("You attack " + target_name + " for " + attack + ".");
 		var tmp1;
 		if(Player.health_leech > 0) {
@@ -8059,7 +8292,7 @@ Main.prototype = {
 		if(render_data == null) {
 			render_data = Main.get_entity_render_data(e);
 		}
-		if(render_data.draw_char != "null") {
+		if(render_data.draw_char != "null" && (render_data.draw_tile == -1 || this.USER_draw_chars_only)) {
 			haxegon_Text.change_size(32);
 			haxegon_Text.display(x,y,render_data.draw_char,render_data.draw_char_color);
 		} else if(render_data.draw_tile != -1) {
@@ -8094,6 +8327,13 @@ Main.prototype = {
 		}
 		if(absorb_amount > 0) {
 			this.add_message("You absorb " + absorb_amount + " damage" + from_text + ".");
+		}
+	}
+	,entity_name: function(e,default_name) {
+		if(Entity.$name.h.hasOwnProperty(e)) {
+			return Entity.$name.h[e];
+		} else {
+			return default_name;
 		}
 	}
 	,do_spell: function(spell,effect_message) {
@@ -8253,30 +8493,32 @@ Main.prototype = {
 			}
 			break;
 		case 15:
-			var target_pos = Entity.position.get(this.use_target);
-			var combust_dst2 = 18;
-			if(haxegon_MathExtensions.dst2(Math,Player.x,Player.y,target_pos.x,target_pos.y) <= combust_dst2) {
-				this.damage_player(spell.value," from Combustion blast");
-			}
-			var view_x1 = Player.x - 15;
-			var view_y1 = Player.y - 15;
-			var _g5 = 0;
-			var _g13 = Main.entities_with(Entity.combat);
-			while(_g5 < _g13.length) {
-				var e1 = _g13[_g5];
-				++_g5;
-				if(Entity.position.exists(e1)) {
-					var pos2 = Entity.position.get(e1);
-					var tmp1;
-					var x1 = pos2.x;
-					var y1 = pos2.y;
-					if(!(x1 < Player.x - 15 || y1 < Player.y - 15 || x1 > Player.x + 15 || y1 > Player.y + 15)) {
-						tmp1 = haxegon_MathExtensions.dst2(Math,pos2.x,pos2.y,target_pos.x,target_pos.y) <= combust_dst2;
-					} else {
-						tmp1 = false;
-					}
-					if(tmp1) {
-						this.player_attack_entity(e1,spell.value);
+			if(Entity.position.exists(this.use_target)) {
+				var target_pos = Entity.position.get(this.use_target);
+				var combust_dst2 = 18;
+				if(haxegon_MathExtensions.dst2(Math,Player.x,Player.y,target_pos.x,target_pos.y) <= combust_dst2) {
+					this.damage_player(spell.value," from Combustion blast");
+				}
+				var view_x1 = Player.x - 15;
+				var view_y1 = Player.y - 15;
+				var _g5 = 0;
+				var _g13 = Main.entities_with(Entity.combat);
+				while(_g5 < _g13.length) {
+					var e1 = _g13[_g5];
+					++_g5;
+					if(Entity.position.exists(e1)) {
+						var pos2 = Entity.position.get(e1);
+						var tmp1;
+						var x1 = pos2.x;
+						var y1 = pos2.y;
+						if(!(x1 < Player.x - 15 || y1 < Player.y - 15 || x1 > Player.x + 15 || y1 > Player.y + 15)) {
+							tmp1 = haxegon_MathExtensions.dst2(Math,pos2.x,pos2.y,target_pos.x,target_pos.y) <= combust_dst2;
+						} else {
+							tmp1 = false;
+						}
+						if(tmp1) {
+							this.player_attack_entity(e1,spell.value);
+						}
 					}
 				}
 			}
@@ -8329,6 +8571,7 @@ Main.prototype = {
 			};
 			var do_chain1 = do_chain;
 			do_chain1({ x : Player.x, y : Player.y},Main.entities_with(Entity.combat),spell.value);
+			this.add_message("Light chain jumps from your pinky finger.");
 			break;
 		case 21:
 			Player.health_leech += spell.value;
@@ -8345,7 +8588,7 @@ Main.prototype = {
 			while(_g7 < _g14.length) {
 				var e3 = _g14[_g7];
 				++_g7;
-				Entity.combat.get(e3).health += spell.value;
+				Entity.combat.get(e3).health = Math.round((1.0 + spell.value / 100.0) * Entity.combat.get(e3).health);
 				if(Entity.combat.get(e3).health <= 0) {
 					Entity.combat.get(e3).health = 1;
 				}
@@ -8357,23 +8600,26 @@ Main.prototype = {
 			while(_g8 < _g15.length) {
 				var e4 = _g15[_g8];
 				++_g8;
-				Entity.combat.get(e4).attack += spell.value;
-				if(Entity.combat.get(e4).attack < 0) {
-					Entity.combat.get(e4).attack = 0;
+				Entity.combat.get(e4).attack = Math.round((1.0 + spell.value / 100.0) * Entity.combat.get(e4).attack);
+				if(Entity.combat.get(e4).attack <= 0) {
+					Entity.combat.get(e4).attack = 1;
 				}
 			}
 			break;
 		case 26:
 			if(Entity["use"].exists(this.use_target)) {
 				Entity["use"].get(this.use_target).charges += spell.value;
+				this.add_message("You add charge to " + this.entity_name(this.use_target,"an item") + ".");
 			}
 			break;
 		case 27:
-			var pos4 = this.free_position_around_player();
-			if(pos4.x != -1 && pos4.y != -1) {
-				var copy = Entity.copy(this.use_target,pos4.x,pos4.y);
-			} else {
-				this.add_message("No space to drop copied item, it disappears into the Void.");
+			if(Entity.position.exists(this.use_target) || Entity.item.exists(this.use_target) || Entity.equipment.exists(this.use_target)) {
+				var pos4 = this.free_position_around_player();
+				if(pos4.x != -1 && pos4.y != -1) {
+					var copy = Entity.copy(this.use_target,pos4.x,pos4.y);
+				} else {
+					this.add_message("No space to drop copied item, it disappears into the Void.");
+				}
 			}
 			break;
 		case 28:
@@ -8383,11 +8629,23 @@ Main.prototype = {
 				while(_g9 < _g16.length) {
 					var s = _g16[_g9];
 					++_g9;
+					var improve_mod;
+					var _g21 = s.type;
+					switch(_g21[1]) {
+					case 2:
+						improve_mod = 0.1;
+						break;
+					case 3:
+						improve_mod = 0.2;
+						break;
+					default:
+						improve_mod = 0.0;
+					}
 					if(s.type == SpellType.SpellType_ModAttack || s.type == SpellType.SpellType_ModDefense) {
-						s.value += Math.max(1,Math.round(spell.value * 0.1)) | 0;
+						s.value += Math.max(1,Math.round(spell.value * improve_mod)) | 0;
 					}
 				}
-				this.add_message("You improve equipment.");
+				this.add_message("You improve " + this.entity_name(this.use_target,"equipment") + ".");
 			}
 			break;
 		case 29:
@@ -8395,20 +8653,20 @@ Main.prototype = {
 				var equipment = Entity.equipment.get(this.use_target);
 				var spell1 = Spells.random_equipment_spell_equip(equipment.type);
 				equipment.spells.push(spell1);
-				this.add_message("You enchant equipment.");
+				this.add_message("You enchant " + this.entity_name(this.use_target,"equipment") + ".");
 			}
 			break;
 		case 30:
 			if(Entity.combat.exists(this.use_target)) {
 				Entity.combat.get(this.use_target).aggression = AggressionType.AggressionType_Passive;
-				this.add_message("You passify the enemy.");
+				this.add_message("You passify " + this.entity_name(this.use_target,"the enemy") + ".");
 			}
 			break;
 		case 31:
 			if(Entity.combat.exists(this.use_target)) {
 				Entity.combat.get(this.use_target).aggression = AggressionType.AggressionType_NeutralToAggressive;
 				Entity.move.remove(this.use_target);
-				this.add_message("You put the enemy to sleep.");
+				this.add_message("You put " + this.entity_name(this.use_target,"the enemy") + " to sleep.");
 			}
 			break;
 		case 32:
@@ -8418,7 +8676,7 @@ Main.prototype = {
 				Entity.move.get(this.use_target).type = MoveType.MoveType_Astar;
 				Entity.move.get(this.use_target).target = MoveTarget.MoveTarget_EnemyThenPlayer;
 				Entity.move.get(this.use_target).chase_dst = 14;
-				this.add_message("You charm an enemy.");
+				this.add_message("You charm " + this.entity_name(this.use_target,"the enemy") + ".");
 			}
 			break;
 		case 33:
@@ -8430,7 +8688,7 @@ Main.prototype = {
 					Player.health = Player.health_max;
 				}
 				combat.health = temp;
-				this.add_message("You swap yours and enemy health.");
+				this.add_message("You swap health with " + this.entity_name(this.use_target,"an enemy") + ".");
 			}
 			break;
 		case 34:
@@ -8463,12 +8721,10 @@ Main.prototype = {
 					break;
 				}
 			}
-			if(summon_count == 3) {
+			if(summon_count > 0) {
 				this.add_message("You summon skeletons. Spooky!.");
-			} else if(summon_count == 0) {
-				this.add_message("No space to summon skeletons, spell fails!");
 			} else {
-				this.add_message("You summon skeletons but there was not enough space for all three.");
+				this.add_message("No space to summon skeletons, spell fails!");
 			}
 			break;
 		case 36:
@@ -8479,7 +8735,7 @@ Main.prototype = {
 					++level2;
 				}
 				Entities.imp(level2,free_pos2.x,free_pos2.y);
-				this.add_message("You summon a imp, it grins at you.");
+				this.add_message("You summon an imp, it grins at you.");
 			} else {
 				this.add_message("No space to summon imp, spell fails!");
 			}
@@ -8490,6 +8746,7 @@ Main.prototype = {
 			if(Player.copper_count < 0) {
 				Player.copper_count = 0;
 			}
+			this.add_message("You gain " + spell.value + " copper.");
 			break;
 		case 38:
 			Player.spell_damage_mod += spell.value;
@@ -8503,13 +8760,6 @@ Main.prototype = {
 			break;
 		}
 	}
-	,can_use_entity_on_target: function(e) {
-		if(Entity["use"].h.hasOwnProperty(this.use_entity_that_needs_target)) {
-			return Spells.spell_can_be_used_on_target(Entity["use"].h[this.use_entity_that_needs_target].spells[0].type,e);
-		} else {
-			return false;
-		}
-	}
 	,print_game_stats: function() {
 		var total_string = "\n\nGAME STATS:";
 		var _g1 = 0;
@@ -8521,7 +8771,7 @@ Main.prototype = {
 				total_string += "\ncopper_gained=" + this.copper_gains[i + 1] + "\n\n";
 			}
 		}
-		haxe_Log.trace(total_string,{ fileName : "Main.hx", lineNumber : 1937, className : "Main", methodName : "print_game_stats"});
+		haxe_Log.trace(total_string,{ fileName : "Main.hx", lineNumber : 2028, className : "Main", methodName : "print_game_stats"});
 	}
 	,render_world: function() {
 		var _gthis = this;
@@ -8578,45 +8828,50 @@ Main.prototype = {
 				this.draw_entity(e,(pos.x - Player.x + 15) * 8 * 4,(pos.y - Player.y + 15) * 8 * 4);
 			}
 		}
-		var _g3 = 0;
-		var _g12 = EquipmentType.__empty_constructs__;
-		while(_g3 < _g12.length) {
-			var equipment_type = _g12[_g3];
-			++_g3;
-			var e1 = Player.equipment.get(equipment_type);
-			var equipment_tile;
-			if(Entity.equipment.h.hasOwnProperty(e1) && !Entity.position.h.hasOwnProperty(e1) && Entity.draw_tile.h.hasOwnProperty(e1)) {
-				equipment_tile = Entity.draw_tile.h[e1];
-			} else {
+		if(this.USER_draw_chars_only) {
+			haxegon_Text.change_size(32);
+			haxegon_Text.display((Player.x - Player.x + 15) * 8 * 4,(Player.y - Player.y + 15) * 8 * 4,"@",16245355);
+		} else {
+			var _g3 = 0;
+			var _g12 = EquipmentType.__empty_constructs__;
+			while(_g3 < _g12.length) {
+				var equipment_type = _g12[_g3];
+				++_g3;
+				var e1 = Player.equipment.get(equipment_type);
+				var equipment_tile;
+				if(Entity.equipment.h.hasOwnProperty(e1) && !Entity.position.h.hasOwnProperty(e1) && Entity.draw_tile.h.hasOwnProperty(e1)) {
+					equipment_tile = Entity.draw_tile.h[e1];
+				} else {
+					switch(equipment_type[1]) {
+					case 0:
+						equipment_tile = 0;
+						break;
+					case 1:
+						equipment_tile = Tile.Head[0];
+						break;
+					case 2:
+						equipment_tile = Tile.Chest[0];
+						break;
+					case 3:
+						equipment_tile = Tile.Legs[0];
+						break;
+					}
+				}
+				var x_offset = equipment_type == EquipmentType.EquipmentType_Weapon ? 9.6 : 0;
+				var y_offset;
 				switch(equipment_type[1]) {
-				case 0:
-					equipment_tile = 0;
-					break;
 				case 1:
-					equipment_tile = Tile.Head[0];
-					break;
-				case 2:
-					equipment_tile = Tile.Chest[0];
+					y_offset = -8;
 					break;
 				case 3:
-					equipment_tile = Tile.Legs[0];
+					y_offset = 12;
 					break;
+				default:
+					y_offset = 0;
 				}
-			}
-			var x_offset = equipment_type == EquipmentType.EquipmentType_Weapon ? 9.6 : 0;
-			var y_offset;
-			switch(equipment_type[1]) {
-			case 1:
-				y_offset = -8;
-				break;
-			case 3:
-				y_offset = 12;
-				break;
-			default:
-				y_offset = 0;
-			}
-			if(equipment_tile != 0) {
-				haxegon_Gfx.drawtile((Player.x - Player.x + 15) * 8 * 4 + x_offset,(Player.y - Player.y + 15) * 8 * 4 + y_offset,equipment_tile);
+				if(equipment_tile != 0) {
+					haxegon_Gfx.drawtile((Player.x - Player.x + 15) * 8 * 4 + x_offset,(Player.y - Player.y + 15) * 8 * 4 + y_offset,equipment_tile);
+				}
 			}
 		}
 		haxegon_Gfx.scale(1);
@@ -8709,7 +8964,7 @@ Main.prototype = {
 		}
 		haxegon_Text.wordwrap = 600;
 		haxegon_Text.display(1005,300,active_spells);
-		if(this.targeting_for_use) {
+		if(this.targeting_state == TargetingState.TargetingState_Targeting) {
 			haxegon_Text.display(haxegon_Mouse.x,haxegon_Mouse.y,"LEFT CLICK TARGET");
 		}
 		while(this.messages.length > 20) this.messages.pop();
@@ -8904,7 +9159,7 @@ Main.prototype = {
 		var hovered_anywhere_y = 0;
 		if(Entity.position.h.hasOwnProperty(hovered_map)) {
 			var pos = Entity.position.h[hovered_map];
-			if(!this.los[pos.x - view_x][pos.y - view_y]) {
+			if(!this.los[pos.x - view_x][pos.y - view_y] || Player.nolos || this.DEV_nolos) {
 				hovered_anywhere = hovered_map;
 				hovered_anywhere_x = (pos.x - Player.x + 15) * 8 * 4;
 				hovered_anywhere_y = (pos.y - Player.y + 15) * 8 * 4;
@@ -8942,25 +9197,22 @@ Main.prototype = {
 		haxegon_Text.wordwrap = 400;
 		var get_tooltip = function(e) {
 			var tooltip = "";
-			if(Entity.$name.h.hasOwnProperty(e)) {
-				tooltip += "" + Entity.$name.h[e];
-			}
+			var get_tooltip1 = Entity.$name.h.hasOwnProperty(e);
 			if(Entity.combat.h.hasOwnProperty(e)) {
 				var entity_combat = Entity.combat.h[e];
-				tooltip += "\nHealth: " + entity_combat.health;
-				tooltip += "\nAttack: " + entity_combat.attack;
+				tooltip += "Health: " + entity_combat.health + "\n";
+				tooltip += "Attack: " + entity_combat.attack + "\n";
 			}
-			var get_tooltip1 = Entity.description.h.hasOwnProperty(e);
+			var get_tooltip2 = Entity.description.h.hasOwnProperty(e);
 			if(Entity.equipment.h.hasOwnProperty(e)) {
 				var equipment = Entity.equipment.h[e];
 				if(equipment.spells.length > 0) {
-					tooltip += "\n";
 					var _g3 = 0;
 					var _g12 = equipment.spells;
 					while(_g3 < _g12.length) {
 						var s = _g12[_g3];
 						++_g3;
-						tooltip += "\n" + Spells.get_description(s);
+						tooltip += Spells.get_description(s) + "\n";
 					}
 				}
 			}
@@ -8971,25 +9223,22 @@ Main.prototype = {
 				while(_g4 < _g13.length) {
 					var s1 = _g13[_g4];
 					++_g4;
-					tooltip += "\n" + Spells.get_description(s1);
+					tooltip += Spells.get_description(s1) + "\n";
 				}
 			}
 			if(Entity["use"].h.hasOwnProperty(e)) {
 				var $use = Entity["use"].h[e];
-				tooltip += "\nUse";
-				if($use.consumable) {
-					tooltip += " (consumable)";
-				}
+				tooltip += "Use:\n";
 				var _g5 = 0;
 				var _g14 = $use.spells;
 				while(_g5 < _g14.length) {
 					var s2 = _g14[_g5];
 					++_g5;
-					tooltip += "\n" + Spells.get_description(s2);
+					tooltip += Spells.get_description(s2) + "\n";
 				}
 			}
 			if(Entity.cost.h.hasOwnProperty(e)) {
-				tooltip += "\nCost: " + Entity.cost.h[e] + " copper.";
+				tooltip += "Cost: " + Entity.cost.h[e] + " copper\n";
 			}
 			return tooltip;
 		};
@@ -9002,8 +9251,11 @@ Main.prototype = {
 				}
 			}
 			if(entity_tooltip != "" && !Entity.combat.h.hasOwnProperty(hovered_anywhere)) {
-				haxegon_Gfx.fillbox(hovered_anywhere_x + 32,hovered_anywhere_y,haxegon_Text.width(entity_tooltip) + 10,haxegon_Text.height(entity_tooltip),4799531);
-				haxegon_Text.display(hovered_anywhere_x + 32,hovered_anywhere_y,entity_tooltip,16777215);
+				var border = 10;
+				haxegon_Gfx.fillbox(hovered_anywhere_x + 32,hovered_anywhere_y,haxegon_Text.width(entity_tooltip) + border * 2,haxegon_Text.height(entity_tooltip) + border * 2,10329501);
+				border = 5;
+				haxegon_Gfx.fillbox(hovered_anywhere_x + 32 + border,hovered_anywhere_y + border,haxegon_Text.width(entity_tooltip) + border * 2,haxegon_Text.height(entity_tooltip) + border * 2,4799531);
+				haxegon_Text.display(hovered_anywhere_x + 32 + border * 2,hovered_anywhere_y + border * 2,entity_tooltip,16777215);
 			}
 		}
 		if(!turn_ended && haxegon_Mouse.rightclick()) {
@@ -9015,6 +9267,13 @@ Main.prototype = {
 			var pos1 = Entity.position.h[this.interact_target];
 			if(!this.player_next_to(Entity.position.h[this.interact_target]) || !(!this.los[pos1.x - view_x][pos1.y - view_y] || Player.nolos || this.DEV_nolos)) {
 				this.interact_target = -1;
+			}
+		}
+		if(this.targeting_state == TargetingState.TargetingState_Targeting && !turn_ended && haxegon_Mouse.leftclick() && hovered_anywhere != this.use_entity_that_needs_target) {
+			if(Entity["use"].h.hasOwnProperty(this.use_entity_that_needs_target) && Spells.spell_can_be_used_on_target(Entity["use"].h[this.use_entity_that_needs_target].spells[0].type,hovered_anywhere)) {
+				this.targeting_state = TargetingState.TargetingState_TargetingDone;
+				this.use_target = hovered_anywhere;
+				turn_ended = true;
 			}
 		}
 		if(!turn_ended) {
@@ -9031,8 +9290,8 @@ Main.prototype = {
 				if(haxegon_GUI.auto_text_button("Use")) {
 					if(Entity["use"].h[this.interact_target].need_target) {
 						this.use_entity_that_needs_target = this.interact_target;
-						this.start_targeting = true;
-						done_interaction = true;
+						this.targeting_state = TargetingState.TargetingState_Targeting;
+						this.interact_target = -1;
 					} else {
 						this.use_entity(this.interact_target);
 						done_interaction = true;
@@ -9087,16 +9346,10 @@ Main.prototype = {
 				this.interact_target = -1;
 			}
 		}
-		if(this.targeting_for_use && !turn_ended && haxegon_Mouse.leftclick() && hovered_anywhere != this.use_entity_that_needs_target) {
-			if(this.can_use_entity_on_target(hovered_anywhere)) {
-				this.use_target = hovered_anywhere;
-				turn_ended = true;
-			}
-		}
 		if(!turn_ended && haxegon_Mouse.leftclick()) {
 			if(Entity.position.h.hasOwnProperty(hovered_anywhere)) {
 				var pos2 = Entity.position.h[hovered_anywhere];
-				if(this.player_next_to(Entity.position.h[hovered_anywhere]) && !this.los[pos2.x - view_x][pos2.y - view_y]) {
+				if(this.player_next_to(Entity.position.h[hovered_anywhere]) && (!this.los[pos2.x - view_x][pos2.y - view_y] || Player.nolos || this.DEV_nolos)) {
 					var can_attack = Entity.combat.h.hasOwnProperty(hovered_anywhere);
 					var can_pickup = Entity.item.h.hasOwnProperty(hovered_anywhere) && !Entity.cost.h.hasOwnProperty(hovered_anywhere);
 					var can_equip = Entity.equipment.h.hasOwnProperty(hovered_anywhere) && !Entity.cost.h.hasOwnProperty(hovered_anywhere);
@@ -9121,11 +9374,10 @@ Main.prototype = {
 				}
 			} else {
 				var can_use1 = Entity["use"].h.hasOwnProperty(hovered_anywhere);
-				if(can_use1 && !this.targeting_for_use) {
+				if(can_use1 && this.targeting_state == TargetingState.TargetingState_NotTargeting) {
 					if(Entity["use"].h[hovered_anywhere].need_target) {
 						this.use_entity_that_needs_target = hovered_anywhere;
-						this.start_targeting = true;
-						turn_ended = true;
+						this.targeting_state = TargetingState.TargetingState_Targeting;
 					} else {
 						this.use_entity(hovered_anywhere);
 						turn_ended = true;
@@ -9176,14 +9428,11 @@ Main.prototype = {
 		}
 		if(turn_ended) {
 			this.interact_target = -1;
-			if(this.start_targeting) {
-				this.start_targeting = false;
-				this.targeting_for_use = true;
-			} else {
-				this.targeting_for_use = false;
-			}
-			if(this.can_use_entity_on_target(this.use_target)) {
+			if(this.targeting_state == TargetingState.TargetingState_TargetingDone) {
 				this.use_entity(this.use_entity_that_needs_target);
+				this.targeting_state = TargetingState.TargetingState_NotTargeting;
+			} else if(this.targeting_state == TargetingState.TargetingState_Targeting) {
+				this.targeting_state = TargetingState.TargetingState_NotTargeting;
 			}
 			if(Player.room != -1) {
 				var old_room = Main.rooms[Player.room];
@@ -9237,7 +9486,16 @@ Main.prototype = {
 				var spell_over = false;
 				var active = false;
 				var decrement_duration = function() {
-					spell.interval_current++;
+					if(spell.duration_type == SpellDuration.SpellDuration_EveryAttackChance) {
+						var n = spell.interval;
+						if(Math.floor(101 * Math.random()) <= n) {
+							spell.interval_current = spell.interval;
+						} else {
+							spell.interval_current = 0;
+						}
+					} else {
+						spell.interval_current++;
+					}
 					if(spell.interval_current >= spell.interval) {
 						spell.interval_current = 0;
 						active = true;
@@ -9266,6 +9524,11 @@ Main.prototype = {
 						active = true;
 					}
 					break;
+				case 3:
+					if(_gthis.attack_target != -1) {
+						decrement_duration();
+					}
+					break;
 				}
 				if(active) {
 					if(Spells.prios.exists(spell.type)) {
@@ -9275,7 +9538,7 @@ Main.prototype = {
 							spell.interval *= 4;
 						}
 					} else {
-						haxe_Log.trace("no prio defined for " + Std.string(spell.type),{ fileName : "Main.hx", lineNumber : 2796, className : "Main", methodName : "update_normal"});
+						haxe_Log.trace("no prio defined for " + Std.string(spell.type),{ fileName : "Main.hx", lineNumber : 2910, className : "Main", methodName : "update_normal"});
 					}
 				}
 				return spell_over;
@@ -9298,9 +9561,6 @@ Main.prototype = {
 				while(_g19 < expired_spells.length) {
 					var spell2 = expired_spells[_g19];
 					++_g19;
-					if(spell2.duration_type != SpellDuration.SpellDuration_Permanent) {
-						_gthis.add_message("Spell " + Std.string(spell2.type) + " wore off.");
-					}
 					if(remove_from_list) {
 						HxOverrides.remove(list,spell2);
 					}
@@ -9342,7 +9602,6 @@ Main.prototype = {
 					this.do_spell(spell3);
 				}
 			}
-			this.use_target = -1;
 			if(Player.health > Player.health_max + Player.health_max_mod) {
 				Player.health = Player.health_max + Player.health_max_mod;
 			}
@@ -9371,23 +9630,22 @@ Main.prototype = {
 				}
 			}
 			if(Main.walls[Player.x][Player.y] && !(Player.noclip || this.DEV_noclip)) {
-				var closest_room = null;
-				var closest_dst2 = 100000000.0;
 				var _g115 = 0;
 				var _g26 = Main.rooms;
 				while(_g115 < _g26.length) {
 					var r = _g26[_g115];
 					++_g115;
-					var dst2 = haxegon_MathExtensions.dst2(Math,Player.x,Player.y,r.x,r.y);
-					if(dst2 < closest_dst2) {
-						closest_dst2 = dst2;
-						closest_room = r;
+					var positions = GenerateWorld.room_free_positions_shuffled(r);
+					if(positions.length > 0) {
+						var pos3 = positions[0];
+						if(Path.astar_map(pos3.x,pos3.y,Main.stairs_x,Main.stairs_y).length != 0) {
+							Player.x = pos3.x;
+							Player.y = pos3.y;
+							Player.room = Main.get_room_index(Player.x,Player.y);
+							break;
+						}
 					}
 				}
-				var pos3 = GenerateWorld.room_free_positions_shuffled(closest_room)[0];
-				Player.x = pos3.x;
-				Player.y = pos3.y;
-				Player.room = Main.get_room_index(Player.x,Player.y);
 			}
 			if(Player.health <= 0) {
 				this.add_message("You died.");
@@ -9471,8 +9729,43 @@ Main.prototype = {
 		if(haxegon_Input.pressed(haxegon_Key.P) && haxegon_Input.pressed(haxegon_Key.O) && haxegon_Input.pressed(haxegon_Key.I)) {
 			this.DEV_show_buttons = true;
 		}
-		if(haxegon_Input.justpressed(haxegon_Key.T)) {
-			this.TILE_PATTERNS = !this.TILE_PATTERNS;
+		if(haxegon_Input.justpressed(haxegon_Key.ESCAPE) || haxegon_Input.justpressed(haxegon_Key.TAB)) {
+			this.USER_show_buttons = !this.USER_show_buttons;
+		}
+		haxegon_GUI.x = 0;
+		haxegon_GUI.y = 0;
+		if(this.USER_show_buttons) {
+			if(haxegon_GUI.auto_text_button("Long spell descriptions: " + (Main.USER_long_spell_descriptions ? "ON" : "OFF"))) {
+				Main.USER_long_spell_descriptions = !Main.USER_long_spell_descriptions;
+				Main.obj.data.USER_long_spell_descriptions = Main.USER_long_spell_descriptions;
+				Main.obj.flush();
+			}
+			if(haxegon_GUI.auto_text_button("Patterned tiles: " + (this.USER_tile_patterns ? "ON" : "OFF"))) {
+				this.USER_tile_patterns = !this.USER_tile_patterns;
+				Main.obj.data.USER_tile_patterns = this.USER_tile_patterns;
+				Main.obj.flush();
+				this.color_tiles();
+				this.redraw_screen_tiles();
+			}
+			if(haxegon_GUI.auto_text_button("Graphics: " + (this.USER_draw_chars_only ? "OFF" : "ON"))) {
+				this.USER_draw_chars_only = !this.USER_draw_chars_only;
+				Main.obj.data.USER_draw_chars_only = this.USER_draw_chars_only;
+				Main.obj.flush();
+				this.inventory_render_cache = haxegon_Data.create2darray(4,2,null);
+				var _g1 = new haxe_ds_EnumValueMap();
+				_g1.set(EquipmentType.EquipmentType_Head,null);
+				_g1.set(EquipmentType.EquipmentType_Chest,null);
+				_g1.set(EquipmentType.EquipmentType_Legs,null);
+				_g1.set(EquipmentType.EquipmentType_Weapon,null);
+				this.equipment_render_cache = _g1;
+			}
+			if(haxegon_GUI.auto_text_button("Controls")) {
+				this.print_tutorial();
+				this.need_to_update_messages_canvas = true;
+			}
+			if(haxegon_GUI.auto_text_button("Close menu")) {
+				this.USER_show_buttons = false;
+			}
 		}
 	}
 	,__class__: Main
@@ -9496,7 +9789,7 @@ ManifestResources.init = function(config) {
 	var data;
 	var manifest;
 	var library;
-	data = "{\"name\":null,\"assets\":\"aoy4:pathy37:data%2Ffonts%2Fopensans%2FLICENSE.txty4:sizei11560y4:typey4:TEXTy2:idR1y7:preloadtgoR0y38:data%2Ffonts%2Fopensans%2Fopensans.eotR2i217534R3y6:BINARYR5R7R6tgoR0y38:data%2Ffonts%2Fopensans%2Fopensans.svgR2i255450R3R4R5R9R6tgoR2i217360R3y4:FONTy9:classNamey41:__ASSET__data_fonts_opensans_opensans_ttfR5y38:data%2Ffonts%2Fopensans%2Fopensans.ttfR6tgoR0y39:data%2Ffonts%2Fopensans%2Fopensans.woffR2i112572R3R8R5R14R6tgoR0y40:data%2Ffonts%2Fopensans%2Fopensans.woff2R2i18780R3R8R5R15R6tgoR2i28836R3R10R11y41:__ASSET__data_fonts_pixelfj8_pixelfj8_ttfR5y38:data%2Ffonts%2Fpixelfj8%2Fpixelfj8.ttfR6tgoR0y27:data%2Fgraphics%2Ftiles.pngR2i1965R3y5:IMAGER5R18R6tgoR0y34:data%2Fhow%20to%20add%20assets.txtR2i6838R3R4R5R20R6tgoR0y15:data%2Ficon.pngR2i110630R3R19R5R21R6tgoR0y29:data%2Ftext%2Fname_corpus.txtR2i701R3R4R5R22R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
+	data = "{\"name\":null,\"assets\":\"aoy4:pathy37:data%2Ffonts%2Fopensans%2FLICENSE.txty4:sizei11560y4:typey4:TEXTy2:idR1y7:preloadtgoR0y38:data%2Ffonts%2Fopensans%2Fopensans.eotR2i217534R3y6:BINARYR5R7R6tgoR0y38:data%2Ffonts%2Fopensans%2Fopensans.svgR2i255450R3R4R5R9R6tgoR2i217360R3y4:FONTy9:classNamey41:__ASSET__data_fonts_opensans_opensans_ttfR5y38:data%2Ffonts%2Fopensans%2Fopensans.ttfR6tgoR0y39:data%2Ffonts%2Fopensans%2Fopensans.woffR2i112572R3R8R5R14R6tgoR0y40:data%2Ffonts%2Fopensans%2Fopensans.woff2R2i18780R3R8R5R15R6tgoR2i28836R3R10R11y41:__ASSET__data_fonts_pixelfj8_pixelfj8_ttfR5y38:data%2Ffonts%2Fpixelfj8%2Fpixelfj8.ttfR6tgoR0y27:data%2Fgraphics%2Ftiles.pngR2i2018R3y5:IMAGER5R18R6tgoR0y34:data%2Fhow%20to%20add%20assets.txtR2i6838R3R4R5R20R6tgoR0y15:data%2Ficon.pngR2i110630R3R19R5R21R6tgoR0y29:data%2Ftext%2Fname_corpus.txtR2i701R3R4R5R22R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
 	manifest = lime_utils_AssetManifest.parse(data,ManifestResources.rootPath);
 	library = lime_utils_AssetLibrary.fromManifest(manifest);
 	lime_utils_Assets.registerLibrary("default",library);
@@ -10198,7 +10491,7 @@ SpellType.SpellType_ModDefenseByCopper = ["SpellType_ModDefenseByCopper",40];
 SpellType.SpellType_ModDefenseByCopper.toString = $estr;
 SpellType.SpellType_ModDefenseByCopper.__enum__ = SpellType;
 SpellType.__empty_constructs__ = [SpellType.SpellType_ModHealth,SpellType.SpellType_ModHealthMax,SpellType.SpellType_ModAttack,SpellType.SpellType_ModDefense,SpellType.SpellType_UncoverMap,SpellType.SpellType_RandomTeleport,SpellType.SpellType_SafeTeleport,SpellType.SpellType_Nolos,SpellType.SpellType_Noclip,SpellType.SpellType_ShowThings,SpellType.SpellType_NextFloor,SpellType.SpellType_ModMoveSpeed,SpellType.SpellType_ModDropChance,SpellType.SpellType_ModCopperChance,SpellType.SpellType_AoeDamage,SpellType.SpellType_Combust,SpellType.SpellType_ModDropLevel,SpellType.SpellType_Invisibility,SpellType.SpellType_EnergyShield,SpellType.SpellType_DamageShield,SpellType.SpellType_ChainDamage,SpellType.SpellType_HealthLeech,SpellType.SpellType_LuckyCharge,SpellType.SpellType_Critical,SpellType.SpellType_ModLevelHealth,SpellType.SpellType_ModLevelAttack,SpellType.SpellType_ModUseCharges,SpellType.SpellType_CopyEntity,SpellType.SpellType_ImproveEquipment,SpellType.SpellType_EnchantEquipment,SpellType.SpellType_Passify,SpellType.SpellType_Sleep,SpellType.SpellType_Charm,SpellType.SpellType_SwapHealth,SpellType.SpellType_SummonGolem,SpellType.SpellType_SummonSkeletons,SpellType.SpellType_SummonImp,SpellType.SpellType_ModCopper,SpellType.SpellType_ModSpellDamage,SpellType.SpellType_ModAttackByCopper,SpellType.SpellType_ModDefenseByCopper];
-var SpellDuration = $hxClasses["SpellDuration"] = { __ename__ : ["SpellDuration"], __constructs__ : ["SpellDuration_Permanent","SpellDuration_EveryTurn","SpellDuration_EveryAttack"] };
+var SpellDuration = $hxClasses["SpellDuration"] = { __ename__ : ["SpellDuration"], __constructs__ : ["SpellDuration_Permanent","SpellDuration_EveryTurn","SpellDuration_EveryAttack","SpellDuration_EveryAttackChance"] };
 SpellDuration.SpellDuration_Permanent = ["SpellDuration_Permanent",0];
 SpellDuration.SpellDuration_Permanent.toString = $estr;
 SpellDuration.SpellDuration_Permanent.__enum__ = SpellDuration;
@@ -10208,7 +10501,10 @@ SpellDuration.SpellDuration_EveryTurn.__enum__ = SpellDuration;
 SpellDuration.SpellDuration_EveryAttack = ["SpellDuration_EveryAttack",2];
 SpellDuration.SpellDuration_EveryAttack.toString = $estr;
 SpellDuration.SpellDuration_EveryAttack.__enum__ = SpellDuration;
-SpellDuration.__empty_constructs__ = [SpellDuration.SpellDuration_Permanent,SpellDuration.SpellDuration_EveryTurn,SpellDuration.SpellDuration_EveryAttack];
+SpellDuration.SpellDuration_EveryAttackChance = ["SpellDuration_EveryAttackChance",3];
+SpellDuration.SpellDuration_EveryAttackChance.toString = $estr;
+SpellDuration.SpellDuration_EveryAttackChance.__enum__ = SpellDuration;
+SpellDuration.__empty_constructs__ = [SpellDuration.SpellDuration_Permanent,SpellDuration.SpellDuration_EveryTurn,SpellDuration.SpellDuration_EveryAttack,SpellDuration.SpellDuration_EveryAttackChance];
 var StatueGod = $hxClasses["StatueGod"] = { __ename__ : ["StatueGod"], __constructs__ : ["StatueGod_Sera","StatueGod_Subere","StatueGod_Ollopa","StatueGod_Suthaephes","StatueGod_Enohik"] };
 StatueGod.StatueGod_Sera = ["StatueGod_Sera",0];
 StatueGod.StatueGod_Sera.toString = $estr;
@@ -10254,6 +10550,7 @@ $hxClasses["Spells"] = Spells;
 Spells.__name__ = ["Spells"];
 Spells.get_description = function(spell) {
 	var sign = spell.value > 0 ? "+" : "";
+	var $long = Main.USER_long_spell_descriptions;
 	var effect;
 	var _g = spell.type;
 	switch(_g[1]) {
@@ -10270,25 +10567,25 @@ Spells.get_description = function(spell) {
 		effect = "" + sign + spell.value + " defense";
 		break;
 	case 4:
-		effect = "uncover map";
+		effect = "Uncover map";
 		break;
 	case 5:
-		effect = "random teleport";
+		effect = "Random teleport";
 		break;
 	case 6:
-		effect = "safe teleport";
+		effect = "Safe teleport";
 		break;
 	case 7:
-		effect = "see everything";
+		effect = "See everything";
 		break;
 	case 8:
-		effect = "go through walls";
+		effect = "Go through walls";
 		break;
 	case 9:
-		effect = "see treasure on the map";
+		effect = "See treasure on the map";
 		break;
 	case 10:
-		effect = "go to next floor";
+		effect = "Go to next floor";
 		break;
 	case 11:
 		effect = "" + sign + spell.value + " move speed";
@@ -10304,88 +10601,176 @@ Spells.get_description = function(spell) {
 		effect = "+copper drop chance";
 		break;
 	case 14:
-		effect = "Inferno: deal " + spell.value + " damage to all visible enemies";
+		if($long) {
+			effect = "Inferno: deal " + spell.value + " damage to all visible enemies";
+		} else {
+			effect = "Inferno " + spell.value;
+		}
 		break;
 	case 15:
-		effect = "Combust: blow up an enemy dealing " + spell.value + " damage to everything nearby";
+		if($long) {
+			effect = "Combust: blow up an enemy dealing " + spell.value + " damage to everything nearby";
+		} else {
+			effect = "Combust " + spell.value;
+		}
 		break;
 	case 16:
-		effect = "increase item drop power";
+		effect = "+item drop power";
 		break;
 	case 17:
-		effect = "turn invisible";
+		effect = "Turn invisible";
 		break;
 	case 18:
-		effect = "Energy Shield: get energy shield that absorbs " + spell.value + " damage";
+		if($long) {
+			effect = "Shield: get shield that absorbs " + spell.value + " damage (not additive)";
+		} else {
+			effect = "Shield " + spell.value;
+		}
 		break;
 	case 19:
-		effect = "Damaging Shield: deal " + spell.value + " damage to attackers";
+		if($long) {
+			effect = "Damaging shield: deal " + spell.value + " damage to attackers";
+		} else {
+			effect = "Damaging shield " + spell.value;
+		}
 		break;
 	case 20:
-		effect = "Light Chain: deals " + spell.value + " damage to an enemy near to you, then jumps to nearby enemies, doubling the damage with each jump";
+		if($long) {
+			effect = "Light chain: deals " + spell.value + " damage to an enemy near to you, then jumps to nearby enemies, doubling the damage with each jump";
+		} else {
+			effect = "Light chain " + spell.value;
+		}
 		break;
 	case 21:
-		effect = "Health Leech: damage dealt to enemies has a chance to heal you";
+		if($long) {
+			effect = "Health leech: damage dealt to enemies has a chance to heal you";
+		} else {
+			effect = "Health leech";
+		}
 		break;
 	case 22:
-		effect = "Lucky Use: chance of preserving a charge when using anything";
+		if($long) {
+			effect = "Lucky use: chance of preserving a charge when using anything";
+		} else {
+			effect = "Lucky use";
+		}
 		break;
 	case 23:
-		effect = "Critical: chance of dealing double damage";
+		if($long) {
+			effect = "Critical: chance of dealing double damage";
+		} else {
+			effect = "Critical";
+		}
 		break;
 	case 24:
-		effect = "" + sign + spell.value + " health to all enemies on the current floor";
+		effect = "" + sign + spell.value + "% health to all enemies on the current floor";
 		break;
 	case 25:
-		effect = "" + sign + spell.value + " attack to all enemies on the current floor";
+		effect = "" + sign + spell.value + "% attack to all enemies on the current floor";
 		break;
 	case 26:
-		effect = "add " + spell.value + " charges to item in your inventory";
+		if($long) {
+			effect = "Add " + spell.value + " charges to item in your inventory";
+		} else {
+			effect = "Add " + spell.value + " charges";
+		}
 		break;
 	case 27:
-		effect = "Copy: copy anything (copy is placed on the ground, must have free space around you or the spell fails and orb disappears)";
+		if($long) {
+			effect = "Copy: copy anything (copy is placed on the ground, must have free space around you)";
+		} else {
+			effect = "Copy";
+		}
 		break;
 	case 28:
-		effect = "Improve equipment: make armor or weapons more powerful";
+		if($long) {
+			effect = "Improve equipment: make armor or a weapon more powerful";
+		} else {
+			effect = "Improve equipment";
+		}
 		break;
 	case 29:
-		effect = "Enchant Equipment: enchant weapon or armor with a random equip spell";
+		if($long) {
+			effect = "Enchant equipment: enchant weapon or armor with a random equip spell";
+		} else {
+			effect = "Enchant equipment";
+		}
 		break;
 	case 30:
-		effect = "Passify: passify an enemy";
+		if($long) {
+			effect = "Passify: passify an enemy";
+		} else {
+			effect = "Passify";
+		}
 		break;
 	case 31:
-		effect = "Sleep: put an enemy to sleep";
+		if($long) {
+			effect = "Sleep: put an enemy to sleep";
+		} else {
+			effect = "Sleep";
+		}
 		break;
 	case 32:
-		effect = "Charm: turn an enemy into an ally";
+		if($long) {
+			effect = "Charm: turn an enemy into an ally";
+		} else {
+			effect = "Charm";
+		}
 		break;
 	case 33:
-		effect = "Swap Health: swaps yours and target enemy's current health";
+		if($long) {
+			effect = "Swap health: swaps yours and target enemy's current health";
+		} else {
+			effect = "Swap health";
+		}
 		break;
 	case 34:
-		effect = "Summon Golem";
+		if($long) {
+			effect = "Summon Golem that follows and protects you";
+		} else {
+			effect = "Summon Golem";
+		}
 		break;
 	case 35:
-		effect = "Summon Skeletons";
+		if($long) {
+			effect = "Summon Skeletons that attack nearby enemies";
+		} else {
+			effect = "Summon Skeletons";
+		}
 		break;
 	case 36:
-		effect = "Summon Imp";
+		if($long) {
+			effect = "Summon Imp that can't move but will throw fireballs at enemies";
+		} else {
+			effect = "Summon Imp";
+		}
 		break;
 	case 37:
 		effect = "" + sign + " " + spell.value + " copper";
 		break;
 	case 38:
-		effect = "increases all spell damage by " + spell.value + ", also increase power of summons";
+		if($long) {
+			effect = "Increases all spell damage by " + spell.value + ", also increase power of summons";
+		} else {
+			effect = "+Spell power " + spell.value;
+		}
 		break;
 	case 39:
-		effect = "+ to attack based on copper count";
+		if($long) {
+			effect = "Copper attack: + to attack based on copper count";
+		} else {
+			effect = "Copper attack";
+		}
 		break;
 	case 40:
-		effect = "+ to defense based on copper count";
+		if($long) {
+			effect = "Copper defense: + to defense based on copper count";
+		} else {
+			effect = "Copper defense";
+		}
 		break;
 	}
-	var interval = spell.interval > 1 ? spell.duration_type == SpellDuration.SpellDuration_EveryTurn ? " every " + spell.interval + " turns" : spell.duration_type == SpellDuration.SpellDuration_EveryAttack ? " every " + spell.interval + " attacks" : " BAD INTERVAL" : spell.duration_type == SpellDuration.SpellDuration_Permanent ? "" : spell.duration_type == SpellDuration.SpellDuration_EveryTurn ? "" : spell.duration_type == SpellDuration.SpellDuration_EveryAttack ? "" : " BAD INTERVAL";
+	var interval = spell.interval > 1 ? spell.duration_type == SpellDuration.SpellDuration_EveryTurn ? " every " + spell.interval + " turns" : spell.duration_type == SpellDuration.SpellDuration_EveryAttack ? " every " + spell.interval + " attacks" : spell.duration_type == SpellDuration.SpellDuration_EveryAttackChance ? " sometimes" : " BAD INTERVAL" : spell.duration_type == SpellDuration.SpellDuration_Permanent ? "" : spell.duration_type == SpellDuration.SpellDuration_EveryTurn ? "" : spell.duration_type == SpellDuration.SpellDuration_EveryAttack ? "" : " BAD INTERVAL";
 	var duration;
 	if(spell.duration == -1) {
 		duration = "";
@@ -10403,9 +10788,30 @@ Spells.get_description = function(spell) {
 		case 2:
 			duration = " for " + spell.duration + " attacks";
 			break;
+		case 3:
+			duration = " for " + spell.duration + " attacks";
+			break;
 		}
 	}
 	return "" + effect + interval + duration;
+};
+Spells.spell_color_to_color = function(spell_color) {
+	switch(spell_color[1]) {
+	case 0:
+		return 16777215;
+	case 1:
+		return 10329501;
+	case 2:
+		return 3252978;
+	case 3:
+		return 16245355;
+	case 4:
+		return 22404;
+	case 5:
+		return 12461619;
+	case 6:
+		return 4491546;
+	}
 };
 Spells.get_color = function(spell) {
 	var _g = spell.type;
@@ -10524,7 +10930,12 @@ Spells.spell_can_be_used_on_target = function(type,target) {
 	}
 	switch(type[1]) {
 	case 15:
-		return Entity.combat.exists(target);
+		if(Entity.combat.exists(target)) {
+			return Entity.position.exists(target);
+		} else {
+			return false;
+		}
+		break;
 	case 26:
 		if(Entity.item.exists(target) && !Entity.position.exists(target)) {
 			return !copy_or_charges_spell;
@@ -10675,7 +11086,25 @@ Spells.mod_copper = function(amount) {
 	return { type : SpellType.SpellType_ModCopper, duration_type : SpellDuration.SpellDuration_Permanent, duration : 0, interval : 0, interval_current : 0, value : amount, origin_name : "noname"};
 };
 Spells.random_potion_spell = function(level,force_spell) {
-	var type = force_spell != null ? force_spell : haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModAttack, c : 1.0},{ v : SpellType.SpellType_ModDefense, c : 1.0},{ v : SpellType.SpellType_Critical, c : 0.5},{ v : SpellType.SpellType_ModSpellDamage, c : 0.5},{ v : SpellType.SpellType_UncoverMap, c : 0.25},{ v : SpellType.SpellType_ShowThings, c : 0.25},{ v : SpellType.SpellType_ModMoveSpeed, c : 0.25},{ v : SpellType.SpellType_Invisibility, c : 0.25},{ v : SpellType.SpellType_ModCopperChance, c : 1.0},{ v : SpellType.SpellType_ModHealthMax, c : 2.0}]);
+	var healthmax_chance = function() {
+		var curr = GenerateWorld.healthmax_on_floor.h[Main.current_floor];
+		var prev = Main.current_floor > 0 && GenerateWorld.healthmax_on_floor.h[Main.current_floor - 1];
+		if(!curr && !prev) {
+			return 3.0;
+		} else {
+			return 0.0;
+		}
+	};
+	var type;
+	if(force_spell != null) {
+		type = force_spell;
+	} else {
+		var type1 = healthmax_chance();
+		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModAttack, c : 1.0},{ v : SpellType.SpellType_ModDefense, c : 1.0},{ v : SpellType.SpellType_Critical, c : 0.5},{ v : SpellType.SpellType_ModSpellDamage, c : 0.5},{ v : SpellType.SpellType_UncoverMap, c : 0.25},{ v : SpellType.SpellType_ShowThings, c : 0.25},{ v : SpellType.SpellType_ModMoveSpeed, c : 0.25},{ v : SpellType.SpellType_Invisibility, c : 0.25},{ v : SpellType.SpellType_ModCopperChance, c : 1.0},{ v : SpellType.SpellType_ModHealthMax, c : type1}]);
+	}
+	if(type == SpellType.SpellType_ModHealthMax && force_spell != SpellType.SpellType_ModHealthMax) {
+		GenerateWorld.healthmax_on_floor.h[Main.current_floor] = true;
+	}
 	var duration_type = SpellDuration.SpellDuration_Permanent;
 	var duration = 0;
 	var value = 0;
@@ -10683,12 +11112,12 @@ Spells.random_potion_spell = function(level,force_spell) {
 	case 0:
 		duration_type = SpellDuration.SpellDuration_Permanent;
 		duration = 0;
-		value = Stats.get({ min : 5, max : 5, scaling : 1.0},level);
+		value = Stats.get({ min : 5, max : 5, scaling : 0.5},level);
 		break;
 	case 1:
 		duration_type = SpellDuration.SpellDuration_Permanent;
 		duration = 0;
-		value = Stats.get({ min : 2, max : 3, scaling : 1.0},level);
+		value = Stats.get({ min : 2, max : 3, scaling : 0.25},level);
 		break;
 	case 2:
 		duration_type = SpellDuration.SpellDuration_EveryAttack;
@@ -10712,7 +11141,7 @@ Spells.random_potion_spell = function(level,force_spell) {
 		break;
 	case 11:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
-		duration = 4 + Math.floor(3 * Math.random());
+		duration = 5 + Math.floor(6 * Math.random());
 		value = 1 + Math.floor(2 * Math.random());
 		break;
 	case 13:
@@ -10736,12 +11165,12 @@ Spells.random_potion_spell = function(level,force_spell) {
 		value = Stats.get({ min : 1, max : 1, scaling : 1.0},level);
 		break;
 	default:
-		haxe_Log.trace("Unhandled potion spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 771, className : "Spells", methodName : "random_potion_spell"});
+		haxe_Log.trace("Unhandled potion spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 871, className : "Spells", methodName : "random_potion_spell"});
 	}
 	return { type : type, duration_type : duration_type, duration : duration, interval : 1, interval_current : 0, value : value, origin_name : "noname"};
 };
 Spells.random_scroll_spell = function(level) {
-	var type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_Passify, c : 0.5},{ v : SpellType.SpellType_Sleep, c : 0.5},{ v : SpellType.SpellType_Charm, c : 0.5},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_DamageShield, c : 1.0},{ v : SpellType.SpellType_RandomTeleport, c : 0.5},{ v : SpellType.SpellType_Nolos, c : 0.25},{ v : SpellType.SpellType_Noclip, c : 0.5},{ v : SpellType.SpellType_SummonGolem, c : 1.0},{ v : SpellType.SpellType_SummonSkeletons, c : 1.0},{ v : SpellType.SpellType_SummonImp, c : 1.0},{ v : SpellType.SpellType_AoeDamage, c : 1.0},{ v : SpellType.SpellType_Combust, c : 1.0},{ v : SpellType.SpellType_ChainDamage, c : 1.0},{ v : SpellType.SpellType_SwapHealth, c : 0.25},{ v : SpellType.SpellType_HealthLeech, c : 0.5}]);
+	var type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_Passify, c : 0.5},{ v : SpellType.SpellType_Sleep, c : 0.5},{ v : SpellType.SpellType_Charm, c : 0.5},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_DamageShield, c : 1.0},{ v : SpellType.SpellType_RandomTeleport, c : 0.5},{ v : SpellType.SpellType_Nolos, c : 0.25},{ v : SpellType.SpellType_Noclip, c : 0.75},{ v : SpellType.SpellType_SummonGolem, c : 1.0},{ v : SpellType.SpellType_SummonSkeletons, c : 1.0},{ v : SpellType.SpellType_SummonImp, c : 1.0},{ v : SpellType.SpellType_AoeDamage, c : 1.0},{ v : SpellType.SpellType_Combust, c : 1.0},{ v : SpellType.SpellType_ChainDamage, c : 1.0},{ v : SpellType.SpellType_SwapHealth, c : 0.25},{ v : SpellType.SpellType_HealthLeech, c : 0.5}]);
 	var duration_type = SpellDuration.SpellDuration_Permanent;
 	var duration = 0;
 	var value = 0;
@@ -10808,7 +11237,7 @@ Spells.random_scroll_spell = function(level) {
 		value = level;
 		break;
 	default:
-		haxe_Log.trace("Unhandled scroll spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 878, className : "Spells", methodName : "random_scroll_spell"});
+		haxe_Log.trace("Unhandled scroll spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 978, className : "Spells", methodName : "random_scroll_spell"});
 	}
 	return { type : type, duration_type : duration_type, duration : duration, interval : 1, interval_current : 0, value : value, origin_name : "noname"};
 };
@@ -10820,9 +11249,9 @@ Spells.random_ring_spell = function(level) {
 	var interval = 1;
 	switch(type[1]) {
 	case 0:
-		duration_type = SpellDuration.SpellDuration_EveryAttack;
+		duration_type = SpellDuration.SpellDuration_EveryAttackChance;
 		value = Stats.get({ min : 1, max : 1, scaling : 1.0},level);
-		interval = 5;
+		interval = 20;
 		break;
 	case 2:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
@@ -10847,9 +11276,9 @@ Spells.random_ring_spell = function(level) {
 		value = 10;
 		break;
 	case 18:
-		duration_type = SpellDuration.SpellDuration_EveryAttack;
+		duration_type = SpellDuration.SpellDuration_EveryAttackChance;
 		value = Stats.get({ min : 1, max : 2, scaling : 1.0},level);
-		interval = 4;
+		interval = 25;
 		break;
 	case 21:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
@@ -10864,16 +11293,16 @@ Spells.random_ring_spell = function(level) {
 		value = 10;
 		break;
 	case 37:
-		duration_type = SpellDuration.SpellDuration_EveryAttack;
+		duration_type = SpellDuration.SpellDuration_EveryAttackChance;
 		value = Stats.get({ min : 1, max : 1, scaling : 1.0},level);
-		interval = 5;
+		interval = 20;
 		break;
 	case 38:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
 		value = Stats.get({ min : 1, max : 2, scaling : 1.0},level);
 		break;
 	default:
-		haxe_Log.trace("Unhandled ring spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 979, className : "Spells", methodName : "random_ring_spell"});
+		haxe_Log.trace("Unhandled ring spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 1079, className : "Spells", methodName : "random_ring_spell"});
 	}
 	return { type : type, duration_type : duration_type, duration : -1, interval : interval, interval_current : 0, value : value, origin_name : "noname"};
 };
@@ -10894,7 +11323,7 @@ Spells.random_orb_spell = function(level) {
 	case 29:
 		break;
 	default:
-		haxe_Log.trace("Unhandled orb spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 1018, className : "Spells", methodName : "random_orb_spell"});
+		haxe_Log.trace("Unhandled orb spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 1118, className : "Spells", methodName : "random_orb_spell"});
 	}
 	return { type : type, duration_type : duration_type, duration : duration, interval : 1, interval_current : 0, value : value, origin_name : "noname"};
 };
@@ -10905,10 +11334,10 @@ Spells.enemy_buff_spell = function(avoid_type) {
 	var value;
 	switch(type[1]) {
 	case 24:
-		value = Stats.get({ min : 2, max : 3, scaling : 0.5},level);
+		value = haxegon_Random.pick([25,40,50]);
 		break;
 	case 25:
-		value = Stats.get({ min : 1, max : 1, scaling : 0.5},level);
+		value = haxegon_Random.pick([25,40,50]);
 		break;
 	default:
 		value = 100;
@@ -10918,8 +11347,8 @@ Spells.enemy_buff_spell = function(avoid_type) {
 Spells.player_stat_buff_spell = function() {
 	var level = Main.current_level();
 	var type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModAttack, c : 3.0},{ v : SpellType.SpellType_ModDefense, c : 3.0},{ v : SpellType.SpellType_AoeDamage, c : 1.0}]);
-	var duration_type = type[1] == 14 ? SpellDuration.SpellDuration_EveryAttack : SpellDuration.SpellDuration_EveryTurn;
-	var interval = type[1] == 14 ? 10 + Math.floor(6 * Math.random()) : 1;
+	var duration_type = type[1] == 14 ? SpellDuration.SpellDuration_EveryAttackChance : SpellDuration.SpellDuration_EveryTurn;
+	var interval = type[1] == 14 ? 15 : 1;
 	var value;
 	switch(type[1]) {
 	case 2:
@@ -10945,10 +11374,10 @@ Spells.statue_subere = function(level) {
 	var value;
 	switch(type[1]) {
 	case 24:
-		value = -1 * Stats.get({ min : 2, max : 3, scaling : 0.5},level1);
+		value = -haxegon_Random.pick([25,40,50]);
 		break;
 	case 25:
-		value = -1 * Stats.get({ min : 1, max : 1, scaling : 0.5},level1);
+		value = -haxegon_Random.pick([25,40,50]);
 		break;
 	default:
 		value = 100;
@@ -11008,116 +11437,33 @@ Spells.poison_room_spell = function() {
 	return { type : SpellType.SpellType_ModHealth, duration_type : SpellDuration.SpellDuration_EveryTurn, duration : -1, interval : 15 + Math.floor(6 * Math.random()), interval_current : 0, value : -1 * Stats.get({ min : 1, max : 1, scaling : 0.5},level), origin_name : "noname"};
 };
 Spells.teleport_room_spell = function() {
-	return { type : SpellType.SpellType_RandomTeleport, duration_type : SpellDuration.SpellDuration_EveryTurn, duration : -1, interval : 7 + Math.floor(39 * Math.random()), interval_current : 0, value : 0, origin_name : "noname"};
-};
-Spells.random_equipment_spell_equip_negative = function(equipment_type) {
-	var level = Main.current_level();
-	var type;
-	switch(equipment_type[1]) {
-	case 0:
-		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModHealth, c : 1.0},{ v : SpellType.SpellType_ModDefense, c : 1.0},{ v : SpellType.SpellType_ModHealthMax, c : 1.0},{ v : SpellType.SpellType_SummonSkeletons, c : 1.0},{ v : SpellType.SpellType_SummonSkeletons, c : 1.0}]);
-		break;
-	case 1:
-		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModHealthMax, c : 1.0}]);
-		break;
-	case 2:
-		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModHealthMax, c : 1.0}]);
-		break;
-	case 3:
-		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModHealthMax, c : 1.0}]);
-		break;
-	}
-	var duration_type;
-	switch(type[1]) {
-	case 0:
-		duration_type = haxegon_Random.pick_chance([{ v : SpellDuration.SpellDuration_EveryAttack, c : 1.0},{ v : SpellDuration.SpellDuration_EveryTurn, c : 0.5}]);
-		break;
-	case 1:
-		duration_type = SpellDuration.SpellDuration_EveryTurn;
-		break;
-	case 3:
-		duration_type = SpellDuration.SpellDuration_EveryTurn;
-		break;
-	case 35:
-		duration_type = SpellDuration.SpellDuration_EveryAttack;
-		break;
-	default:
-		duration_type = SpellDuration.SpellDuration_Permanent;
-	}
-	var interval;
-	switch(type[1]) {
-	case 0:
-		switch(duration_type[1]) {
-		case 1:
-			interval = 30 + Math.floor(21 * Math.random());
-			break;
-		case 2:
-			interval = 10 + Math.floor(6 * Math.random());
-			break;
-		default:
-			interval = 1;
-		}
-		break;
-	case 35:
-		interval = 15 + Math.floor(6 * Math.random());
-		break;
-	default:
-		interval = 0;
-	}
-	var value;
-	switch(type[1]) {
-	case 0:
-		value = -1 * Stats.get({ min : 1, max : 1, scaling : 1.0},level);
-		break;
-	case 1:
-		value = -1 * Stats.get({ min : 1, max : 1, scaling : 1.0},level);
-		break;
-	case 3:
-		value = -1 * Stats.get({ min : 1, max : 1, scaling : 1.0},level);
-		break;
-	default:
-		value = 0;
-	}
-	return { type : type, duration_type : duration_type, duration : -1, interval : interval, interval_current : 0, value : value, origin_name : "noname"};
-};
-Spells.get_weapon_equip_spell_weight = function(spell) {
-	var _g = spell.type;
-	switch(_g[1]) {
-	case 0:
-		return 0.1 * spell.value;
-	case 14:
-		return 0.1 * spell.value;
-	case 18:
-		return 0.1 * spell.value;
-	case 20:
-		return 0.1 * spell.value;
-	case 39:
-		return 0.1 * spell.value;
-	default:
-		return 0;
-	}
+	var from = GenerateWorld.ROOM_SIZE_MAX * 0.5 | 0;
+	return { type : SpellType.SpellType_RandomTeleport, duration_type : SpellDuration.SpellDuration_EveryTurn, duration : -1, interval : from + Math.floor((GenerateWorld.ROOM_SIZE_MAX * 3 - from + 1) * Math.random()), interval_current : 0, value : 0, origin_name : "noname"};
 };
 Spells.random_equipment_spell_equip = function(equipment_type) {
 	var level = Main.current_level();
 	var type;
 	switch(equipment_type[1]) {
 	case 0:
-		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModDropChance, c : 1.0},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_Critical, c : 1.0},{ v : SpellType.SpellType_ChainDamage, c : 1.0},{ v : SpellType.SpellType_ModHealth, c : 1.0},{ v : SpellType.SpellType_ModAttackByCopper, c : 1.0},{ v : SpellType.SpellType_ModCopper, c : 1.0}]);
+		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModDropChance, c : 1.0},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_Critical, c : 1.0},{ v : SpellType.SpellType_ChainDamage, c : 1.0},{ v : SpellType.SpellType_ModHealth, c : 1.0},{ v : SpellType.SpellType_ModAttackByCopper, c : 0.15},{ v : SpellType.SpellType_ModCopper, c : 1.0},{ v : SpellType.SpellType_SummonSkeletons, c : 0.25},{ v : SpellType.SpellType_SummonGolem, c : 0.5}]);
 		break;
 	case 1:
-		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModDropChance, c : 1.0},{ v : SpellType.SpellType_ModCopperChance, c : 1.0},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_UncoverMap, c : 1.0},{ v : SpellType.SpellType_ShowThings, c : 1.0},{ v : SpellType.SpellType_ModHealth, c : 1.0},{ v : SpellType.SpellType_HealthLeech, c : 1.0},{ v : SpellType.SpellType_Nolos, c : 1.0},{ v : SpellType.SpellType_ModAttackByCopper, c : 1.0}]);
+		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModDropChance, c : 1.0},{ v : SpellType.SpellType_ModCopperChance, c : 1.0},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_UncoverMap, c : 1.0},{ v : SpellType.SpellType_ShowThings, c : 1.0},{ v : SpellType.SpellType_ModHealth, c : 1.0},{ v : SpellType.SpellType_HealthLeech, c : 1.0},{ v : SpellType.SpellType_Nolos, c : 1.0},{ v : SpellType.SpellType_ModAttack, c : 1.0},{ v : SpellType.SpellType_ModAttackByCopper, c : 0.15}]);
 		break;
 	case 2:
-		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModDropChance, c : 1.0},{ v : SpellType.SpellType_ModCopperChance, c : 1.0},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_LuckyCharge, c : 1.0},{ v : SpellType.SpellType_Critical, c : 1.0},{ v : SpellType.SpellType_AoeDamage, c : 1.0},{ v : SpellType.SpellType_ModDefenseByCopper, c : 1.0}]);
+		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModDropChance, c : 1.0},{ v : SpellType.SpellType_ModCopperChance, c : 1.0},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_LuckyCharge, c : 1.0},{ v : SpellType.SpellType_Critical, c : 1.0},{ v : SpellType.SpellType_SummonSkeletons, c : 0.25},{ v : SpellType.SpellType_AoeDamage, c : 1.0},{ v : SpellType.SpellType_ModDefenseByCopper, c : 0.15}]);
 		break;
 	case 3:
-		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModDropChance, c : 1.0},{ v : SpellType.SpellType_ModCopperChance, c : 1.0},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_LuckyCharge, c : 1.0},{ v : SpellType.SpellType_Critical, c : 1.0},{ v : SpellType.SpellType_HealthLeech, c : 1.0},{ v : SpellType.SpellType_DamageShield, c : 1.0},{ v : SpellType.SpellType_ModDefenseByCopper, c : 1.0}]);
+		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModDropChance, c : 1.0},{ v : SpellType.SpellType_ModCopperChance, c : 1.0},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_LuckyCharge, c : 1.0},{ v : SpellType.SpellType_Critical, c : 1.0},{ v : SpellType.SpellType_HealthLeech, c : 1.0},{ v : SpellType.SpellType_DamageShield, c : 1.0},{ v : SpellType.SpellType_ModAttack, c : 1.0},{ v : SpellType.SpellType_SummonGolem, c : 0.5},{ v : SpellType.SpellType_ModDefenseByCopper, c : 0.15}]);
 		break;
 	}
 	var duration_type;
 	switch(type[1]) {
 	case 0:
-		duration_type = SpellDuration.SpellDuration_EveryAttack;
+		duration_type = SpellDuration.SpellDuration_EveryAttackChance;
+		break;
+	case 2:
+		duration_type = SpellDuration.SpellDuration_EveryAttackChance;
 		break;
 	case 7:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
@@ -11132,16 +11478,16 @@ Spells.random_equipment_spell_equip = function(equipment_type) {
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
 		break;
 	case 14:
-		duration_type = SpellDuration.SpellDuration_EveryAttack;
+		duration_type = SpellDuration.SpellDuration_EveryAttackChance;
 		break;
 	case 18:
-		duration_type = SpellDuration.SpellDuration_EveryAttack;
+		duration_type = SpellDuration.SpellDuration_EveryAttackChance;
 		break;
 	case 19:
-		duration_type = SpellDuration.SpellDuration_EveryAttack;
+		duration_type = SpellDuration.SpellDuration_EveryAttackChance;
 		break;
 	case 20:
-		duration_type = SpellDuration.SpellDuration_EveryAttack;
+		duration_type = SpellDuration.SpellDuration_EveryAttackChance;
 		break;
 	case 21:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
@@ -11152,8 +11498,14 @@ Spells.random_equipment_spell_equip = function(equipment_type) {
 	case 23:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
 		break;
+	case 34:
+		duration_type = SpellDuration.SpellDuration_EveryAttackChance;
+		break;
+	case 35:
+		duration_type = SpellDuration.SpellDuration_EveryAttackChance;
+		break;
 	case 37:
-		duration_type = SpellDuration.SpellDuration_EveryAttack;
+		duration_type = SpellDuration.SpellDuration_EveryAttackChance;
 		break;
 	case 39:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
@@ -11167,22 +11519,31 @@ Spells.random_equipment_spell_equip = function(equipment_type) {
 	var interval;
 	switch(type[1]) {
 	case 0:
-		interval = 5 + Math.floor(4 * Math.random());
+		interval = 20;
+		break;
+	case 2:
+		interval = 20;
 		break;
 	case 14:
-		interval = 5 + Math.floor(4 * Math.random());
+		interval = 20;
 		break;
 	case 18:
-		interval = 5 + Math.floor(4 * Math.random());
+		interval = 20;
 		break;
 	case 19:
-		interval = 5 + Math.floor(4 * Math.random());
+		interval = 20;
 		break;
 	case 20:
-		interval = 5 + Math.floor(4 * Math.random());
+		interval = 20;
+		break;
+	case 34:
+		interval = 8;
+		break;
+	case 35:
+		interval = 10;
 		break;
 	case 37:
-		interval = 5 + Math.floor(4 * Math.random());
+		interval = 20;
 		break;
 	default:
 		interval = 0;
@@ -11191,6 +11552,9 @@ Spells.random_equipment_spell_equip = function(equipment_type) {
 	switch(type[1]) {
 	case 0:
 		value = Stats.get({ min : 1, max : 1, scaling : 1.0},level);
+		break;
+	case 2:
+		value = Stats.get({ min : 1, max : 1, scaling : 0.5},level);
 		break;
 	case 12:
 		value = 10;
@@ -11219,6 +11583,12 @@ Spells.random_equipment_spell_equip = function(equipment_type) {
 	case 23:
 		value = 10;
 		break;
+	case 34:
+		value = level;
+		break;
+	case 35:
+		value = level;
+		break;
 	case 37:
 		value = Stats.get({ min : 1, max : 1, scaling : 1.0},level);
 		break;
@@ -11232,17 +11602,19 @@ Spells.get_equipment_spell_use_charges = function(s) {
 	switch(_g[1]) {
 	case 0:
 		return 1 + Math.floor(2 * Math.random());
-	case 2:
-		return 1 + Math.floor(2 * Math.random());
 	case 5:
 		return 1;
 	case 6:
 		return 1;
 	case 7:
 		return 2 + Math.floor(2 * Math.random());
+	case 8:
+		return 1 + Math.floor(2 * Math.random());
 	case 11:
 		return 1 + Math.floor(2 * Math.random());
 	case 14:
+		return 1 + Math.floor(2 * Math.random());
+	case 15:
 		return 1 + Math.floor(2 * Math.random());
 	case 17:
 		return 1 + Math.floor(2 * Math.random());
@@ -11271,42 +11643,29 @@ Spells.get_spells_min_use_charges = function(spells) {
 	}
 	return charges_min;
 };
-Spells.get_weapon_use_spell_weight = function(spell) {
-	var _g = spell.type;
-	switch(_g[1]) {
-	case 2:
-		return 0.3 * spell.value;
-	case 14:
-		return 0.1 * spell.value;
-	case 34:
-		return 0.3 * spell.value;
-	default:
-		return 0;
-	}
-};
 Spells.random_equipment_spell_use = function(equipment_type) {
 	var level = Main.current_level();
 	var type;
 	switch(equipment_type[1]) {
 	case 0:
-		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_AoeDamage, c : 1.0},{ v : SpellType.SpellType_Invisibility, c : 0.5},{ v : SpellType.SpellType_SummonGolem, c : 1.0},{ v : SpellType.SpellType_ModAttack, c : 1.0}]);
+		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_AoeDamage, c : 1.0},{ v : SpellType.SpellType_Invisibility, c : 0.5},{ v : SpellType.SpellType_SummonGolem, c : 1.0}]);
 		break;
 	case 1:
-		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_SummonImp, c : 1.0},{ v : SpellType.SpellType_ChainDamage, c : 1.0},{ v : SpellType.SpellType_Combust, c : 1.0}]);
+		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_SummonImp, c : 1.0},{ v : SpellType.SpellType_ChainDamage, c : 1.0},{ v : SpellType.SpellType_Combust, c : 100000000.0}]);
 		break;
 	case 2:
-		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModHealth, c : 1.0},{ v : SpellType.SpellType_AoeDamage, c : 1.0},{ v : SpellType.SpellType_Invisibility, c : 1.0},{ v : SpellType.SpellType_ModAttack, c : 1.0}]);
+		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModHealth, c : 1.0},{ v : SpellType.SpellType_AoeDamage, c : 1.0},{ v : SpellType.SpellType_Invisibility, c : 1.0}]);
 		break;
 	case 3:
-		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModMoveSpeed, c : 1.0},{ v : SpellType.SpellType_RandomTeleport, c : 0.5},{ v : SpellType.SpellType_SafeTeleport, c : 0.5}]);
+		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModMoveSpeed, c : 1.0},{ v : SpellType.SpellType_RandomTeleport, c : 0.5},{ v : SpellType.SpellType_SafeTeleport, c : 0.5},{ v : SpellType.SpellType_Noclip, c : 0.1}]);
 		break;
 	}
 	var duration_type;
 	switch(type[1]) {
-	case 2:
-		duration_type = SpellDuration.SpellDuration_EveryAttack;
-		break;
 	case 7:
+		duration_type = SpellDuration.SpellDuration_EveryTurn;
+		break;
+	case 8:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
 		break;
 	case 11:
@@ -11320,10 +11679,10 @@ Spells.random_equipment_spell_use = function(equipment_type) {
 	}
 	var duration;
 	switch(type[1]) {
-	case 2:
-		duration = 3 + Math.floor(2 * Math.random());
-		break;
 	case 7:
+		duration = 60 + Math.floor(21 * Math.random());
+		break;
+	case 8:
 		duration = 60 + Math.floor(21 * Math.random());
 		break;
 	case 11:
@@ -11339,9 +11698,6 @@ Spells.random_equipment_spell_use = function(equipment_type) {
 	switch(type[1]) {
 	case 0:
 		value = Stats.get({ min : 3, max : 4, scaling : 1.0},level);
-		break;
-	case 2:
-		value = Stats.get({ min : 1, max : 1, scaling : 1.0},level);
 		break;
 	case 11:
 		value = 1;
@@ -11374,46 +11730,7 @@ Spells.random_equipment_spells = function(equipment_type) {
 	var total_spell_count = haxegon_Random.pick_chance([{ v : 0, c : 1.0},{ v : 1, c : level > 0 ? 2.0 : 1.0},{ v : 2, c : level > 0 ? 1.0 : 0}]);
 	var spell_equip_count = 0;
 	var spell_use_count = 0;
-	var spell_equip_negative_count = 0;
-	if(total_spell_count == 2) {
-		Main.current_level_mod -= 1;
-	}
-	if(equipment_type == EquipmentType.EquipmentType_Weapon) {
-		if(total_spell_count == 1) {
-			(haxegon_Random.pick_chance([{ v : function() {
-				spell_equip_count = 1;
-			}, c : 1.0},{ v : function() {
-				spell_use_count = 1;
-			}, c : 1.0}]))();
-		} else if(total_spell_count == 2) {
-			(haxegon_Random.pick_chance([{ v : function() {
-				spell_equip_negative_count = 1;
-				spell_equip_count = 1;
-			}, c : 1.0},{ v : function() {
-				spell_equip_negative_count = 1;
-				spell_use_count = 1;
-			}, c : 1.0},{ v : function() {
-				spell_equip_count = 1;
-				spell_use_count = 1;
-			}, c : 0.5},{ v : function() {
-				spell_equip_count = 2;
-			}, c : 0.5}]))();
-		} else if(total_spell_count == 3) {
-			(haxegon_Random.pick_chance([{ v : function() {
-				spell_equip_negative_count = 1;
-				spell_equip_count = 1;
-				spell_use_count = 1;
-			}, c : 1.0},{ v : function() {
-				spell_equip_negative_count = 1;
-				spell_equip_count = 2;
-			}, c : 1.0},{ v : function() {
-				spell_use_count = 1;
-				spell_equip_count = 2;
-			}, c : 0.25},{ v : function() {
-				spell_equip_count = 3;
-			}, c : 0.25}]))();
-		}
-	} else if(total_spell_count == 1) {
+	if(total_spell_count == 1) {
 		(haxegon_Random.pick_chance([{ v : function() {
 			spell_equip_count = 1;
 		}, c : 1.0},{ v : function() {
@@ -11423,16 +11740,9 @@ Spells.random_equipment_spells = function(equipment_type) {
 		(haxegon_Random.pick_chance([{ v : function() {
 			spell_equip_count = 1;
 			spell_use_count = 1;
-		}, c : 0.5},{ v : function() {
+		}, c : 1.0},{ v : function() {
 			spell_equip_count = 2;
 		}, c : 0.5}]))();
-	} else if(total_spell_count == 3) {
-		(haxegon_Random.pick_chance([{ v : function() {
-			spell_use_count = 1;
-			spell_equip_count = 2;
-		}, c : 0.25},{ v : function() {
-			spell_equip_count = 3;
-		}, c : 0.25}]))();
 	}
 	var equip_spells = [];
 	var _g1 = 0;
@@ -11441,21 +11751,12 @@ Spells.random_equipment_spells = function(equipment_type) {
 		var i = _g1++;
 		equip_spells.push(Spells.random_equipment_spell_equip(equipment_type));
 	}
+	var use_spells = [];
 	var _g11 = 0;
-	var _g2 = spell_equip_negative_count;
+	var _g2 = spell_use_count;
 	while(_g11 < _g2) {
 		var i1 = _g11++;
-		equip_spells.push(Spells.random_equipment_spell_equip_negative(equipment_type));
-	}
-	var use_spells = [];
-	var _g12 = 0;
-	var _g3 = spell_use_count;
-	while(_g12 < _g3) {
-		var i2 = _g12++;
 		use_spells.push(Spells.random_equipment_spell_use(equipment_type));
-	}
-	if(total_spell_count == 2) {
-		Main.current_level_mod += 1;
 	}
 	return [equip_spells,use_spells];
 };
@@ -16127,7 +16428,7 @@ haxegon_Gfx.draw_circle = function(x,y,radius,col,alpha) {
 	haxegon_Gfx.shapematrix.translate(x,y);
 	haxegon_Gfx.drawto.draw(haxegon_Gfx.tempshape,haxegon_Gfx.shapematrix);
 };
-haxegon_Gfx.fill_circle = function(x,y,radius,col,alpha) {
+haxegon_Gfx.fillcircle = function(x,y,radius,col,alpha) {
 	if(alpha == null) {
 		alpha = 1.0;
 	}
@@ -21628,6 +21929,16 @@ js_Boot.__resolveNativeClass = function(name) {
 var js_Browser = function() { };
 $hxClasses["js.Browser"] = js_Browser;
 js_Browser.__name__ = ["js","Browser"];
+js_Browser.getLocalStorage = function() {
+	try {
+		var s = window.localStorage;
+		s.getItem("");
+		return s;
+	} catch( e ) {
+		haxe_CallStack.lastException = e;
+		return null;
+	}
+};
 js_Browser.alert = function(v) {
 	window.alert(js_Boot.__string_rec(v,""));
 };
@@ -39645,7 +39956,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 556341;
+	this.version = 41046;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
@@ -79933,6 +80244,235 @@ openfl_net_NetStream.prototype = $extend(openfl_events_EventDispatcher.prototype
 	}
 	,__class__: openfl_net_NetStream
 });
+var openfl_net_SharedObject = function() {
+	openfl_events_EventDispatcher.call(this);
+	this.client = this;
+	this.objectEncoding = openfl_net_SharedObject.defaultObjectEncoding;
+};
+$hxClasses["openfl.net.SharedObject"] = openfl_net_SharedObject;
+openfl_net_SharedObject.__name__ = ["openfl","net","SharedObject"];
+openfl_net_SharedObject.getLocal = function(name,localPath,secure) {
+	if(secure == null) {
+		secure = false;
+	}
+	var illegalValues = [" ","~","%","&","\\",";",":","\"","'",",","<",">","?","#"];
+	var allowed = true;
+	if(name == null || name == "") {
+		allowed = false;
+	} else {
+		var _g = 0;
+		while(_g < illegalValues.length) {
+			var value = illegalValues[_g];
+			++_g;
+			if(name.indexOf(value) > -1) {
+				allowed = false;
+				break;
+			}
+		}
+	}
+	if(!allowed) {
+		throw new js__$Boot_HaxeError(new openfl_errors_Error("Error #2134: Cannot create SharedObject."));
+	}
+	if(localPath == null) {
+		localPath = window.location.href;
+	}
+	if(openfl_net_SharedObject.__sharedObjects == null) {
+		openfl_net_SharedObject.__sharedObjects = new haxe_ds_StringMap();
+		if(lime_app_Application.current != null) {
+			lime_app_Application.current.onExit.add(openfl_net_SharedObject.application_onExit);
+		}
+	}
+	var id = localPath + "/" + name;
+	var _this = openfl_net_SharedObject.__sharedObjects;
+	if(!(__map_reserved[id] != null ? _this.existsReserved(id) : _this.h.hasOwnProperty(id))) {
+		var sharedObject = new openfl_net_SharedObject();
+		sharedObject.data = { };
+		sharedObject.__localPath = localPath;
+		sharedObject.__name = name;
+		var encodedData = null;
+		try {
+			var storage = js_Browser.getLocalStorage();
+			if(storage != null) {
+				encodedData = storage.getItem(localPath + ":" + name);
+			}
+		} catch( e ) {
+			haxe_CallStack.lastException = e;
+		}
+		if(encodedData != null && encodedData != "") {
+			try {
+				var unserializer = new haxe_Unserializer(encodedData);
+				unserializer.setResolver({ resolveEnum : Type.resolveEnum, resolveClass : openfl_net_SharedObject.__resolveClass});
+				sharedObject.data = unserializer.unserialize();
+			} catch( e1 ) {
+				haxe_CallStack.lastException = e1;
+			}
+		}
+		var _this1 = openfl_net_SharedObject.__sharedObjects;
+		if(__map_reserved[id] != null) {
+			_this1.setReserved(id,sharedObject);
+		} else {
+			_this1.h[id] = sharedObject;
+		}
+	}
+	var _this2 = openfl_net_SharedObject.__sharedObjects;
+	if(__map_reserved[id] != null) {
+		return _this2.getReserved(id);
+	} else {
+		return _this2.h[id];
+	}
+};
+openfl_net_SharedObject.getRemote = function(name,remotePath,persistence,secure) {
+	if(secure == null) {
+		secure = false;
+	}
+	if(persistence == null) {
+		persistence = false;
+	}
+	openfl__$internal_Lib.notImplemented({ fileName : "SharedObject.hx", lineNumber : 671, className : "openfl.net.SharedObject", methodName : "getRemote"});
+	return null;
+};
+openfl_net_SharedObject.__getPath = function(localPath,name) {
+	var path = lime_system_System.get_applicationStorageDirectory() + "/" + localPath + "/";
+	name = StringTools.replace(name,"//","/");
+	name = StringTools.replace(name,"//","/");
+	if(StringTools.startsWith(name,"/")) {
+		name = HxOverrides.substr(name,1,null);
+	}
+	if(StringTools.endsWith(name,"/")) {
+		name = name.substring(0,name.length - 1);
+	}
+	if(name.indexOf("/") > -1) {
+		var split = name.split("/");
+		name = "";
+		var _g1 = 0;
+		var _g = split.length - 1;
+		while(_g1 < _g) {
+			var i = _g1++;
+			name += "#" + split[i] + "/";
+		}
+		name += split[split.length - 1];
+	}
+	return path + name + ".sol";
+};
+openfl_net_SharedObject.__mkdir = function(directory) {
+};
+openfl_net_SharedObject.__resolveClass = function(name) {
+	if(name != null) {
+		if(StringTools.startsWith(name,"neash.")) {
+			name = StringTools.replace(name,"neash.","openfl.");
+		}
+		if(StringTools.startsWith(name,"native.")) {
+			name = StringTools.replace(name,"native.","openfl.");
+		}
+		if(StringTools.startsWith(name,"flash.")) {
+			name = StringTools.replace(name,"flash.","openfl.");
+		}
+		if(StringTools.startsWith(name,"openfl._v2.")) {
+			name = StringTools.replace(name,"openfl._v2.","openfl.");
+		}
+		if(StringTools.startsWith(name,"openfl._legacy.")) {
+			name = StringTools.replace(name,"openfl._legacy.","openfl.");
+		}
+		return Type.resolveClass(name);
+	}
+	return null;
+};
+openfl_net_SharedObject.application_onExit = function(_) {
+	var _this = openfl_net_SharedObject.__sharedObjects;
+	var sharedObject = new haxe_ds__$StringMap_StringMapIterator(_this,_this.arrayKeys());
+	while(sharedObject.hasNext()) {
+		var sharedObject1 = sharedObject.next();
+		sharedObject1.flush();
+	}
+};
+openfl_net_SharedObject.__super__ = openfl_events_EventDispatcher;
+openfl_net_SharedObject.prototype = $extend(openfl_events_EventDispatcher.prototype,{
+	client: null
+	,data: null
+	,fps: null
+	,objectEncoding: null
+	,__localPath: null
+	,__name: null
+	,clear: function() {
+		this.data = { };
+		try {
+			var storage = js_Browser.getLocalStorage();
+			if(storage != null) {
+				storage.removeItem(this.__localPath + ":" + this.__name);
+			}
+		} catch( e ) {
+			haxe_CallStack.lastException = e;
+		}
+	}
+	,close: function() {
+	}
+	,connect: function(myConnection,params) {
+		openfl__$internal_Lib.notImplemented({ fileName : "SharedObject.hx", lineNumber : 293, className : "openfl.net.SharedObject", methodName : "connect"});
+	}
+	,flush: function(minDiskSpace) {
+		if(minDiskSpace == null) {
+			minDiskSpace = 0;
+		}
+		if(Reflect.fields(this.data).length == 0) {
+			return 0;
+		}
+		var encodedData = haxe_Serializer.run(this.data);
+		try {
+			var storage = js_Browser.getLocalStorage();
+			if(storage != null) {
+				storage.removeItem(this.__localPath + ":" + this.__name);
+				storage.setItem(this.__localPath + ":" + this.__name,encodedData);
+			}
+		} catch( e ) {
+			haxe_CallStack.lastException = e;
+			return 1;
+		}
+		return 0;
+	}
+	,send: function(args) {
+		openfl__$internal_Lib.notImplemented({ fileName : "SharedObject.hx", lineNumber : 680, className : "openfl.net.SharedObject", methodName : "send"});
+	}
+	,setDirty: function(propertyName) {
+	}
+	,setProperty: function(propertyName,value) {
+		if(this.data != null) {
+			this.data[propertyName] = value;
+		}
+	}
+	,get_size: function() {
+		try {
+			var d = haxe_Serializer.run(this.data);
+			return haxe_io_Bytes.ofString(d).length;
+		} catch( e ) {
+			haxe_CallStack.lastException = e;
+			return 0;
+		}
+	}
+	,__class__: openfl_net_SharedObject
+});
+var openfl_net__$SharedObjectFlushStatus_SharedObjectFlushStatus_$Impl_$ = {};
+$hxClasses["openfl.net._SharedObjectFlushStatus.SharedObjectFlushStatus_Impl_"] = openfl_net__$SharedObjectFlushStatus_SharedObjectFlushStatus_$Impl_$;
+openfl_net__$SharedObjectFlushStatus_SharedObjectFlushStatus_$Impl_$.__name__ = ["openfl","net","_SharedObjectFlushStatus","SharedObjectFlushStatus_Impl_"];
+openfl_net__$SharedObjectFlushStatus_SharedObjectFlushStatus_$Impl_$.fromString = function(value) {
+	switch(value) {
+	case "flushed":
+		return 0;
+	case "pending":
+		return 1;
+	default:
+		return null;
+	}
+};
+openfl_net__$SharedObjectFlushStatus_SharedObjectFlushStatus_$Impl_$.toString = function(value) {
+	switch(value) {
+	case 0:
+		return "flushed";
+	case 1:
+		return "pending";
+	default:
+		return null;
+	}
+};
 var openfl_net_URLLoader = function(request) {
 	openfl_events_EventDispatcher.call(this);
 	this.bytesLoaded = 0;
@@ -86895,6 +87435,7 @@ Entities.EOF = "0";
 Entities.generated_names = [];
 Entities.generated_first_chars = [];
 Entities.armor_type_tallies = [];
+Entities.talk_talker_talks = ["Skeleton says: \"Summoned creatures can be very powerful if you\ncooperate with them.\"","Skeleton says: \"Merchants are very strong but I've heard that\nsomeone has defeated one before.\"","Skeleton says: \"You're it!\"","Skeleton says: \"There is treasure hidden behind walls.\"","Skeleton says: \"I hate when monsters sneak up on me!\nHave to be very careful around cornerns nowadays.\"","Skeleton says: \"It's so quiet here.\"","Skeleton says: \" \"Sometimes\" means around 25% of the time\n...or was it 15%?\"","Skeleton says: \"There's nothing at the top of the tower.\"","Skeleton says: \"What do merchants do with the copper?\"","Skeleton says: \"I'm a skeleton. Spooky!\"","Skeleton says: \"The best way to be satisfied is to be satisfied.\"","Skeleton says: \"Will you carry my can and fight the fairies?\"","Skeleton says: \"If you summon me and I don't talk,\ndon't think ill of me. Getting summoned disorients\nme quite a bit!\"","Skeleton says: \"You used to be able to copy a copy orb.\nThat didn't end well.\"","Skeleton says: \"Be careful around merchants.\""];
 haxegon_Data.width = 0;
 haxegon_Data.height = 0;
 Entity.all = [];
@@ -86924,7 +87465,7 @@ Entity.position_map = haxegon_Data.create2darray(125,125,-1);
 GenerateWorld.ORIGIN_X = 1;
 GenerateWorld.ORIGIN_Y = 1;
 GenerateWorld.ROOM_SPACING = 3;
-GenerateWorld.DIG_TRIES = 300;
+GenerateWorld.GENERATE_ROOM_ITERATIONS = 1000;
 GenerateWorld.ROOMS_MAX = 15;
 GenerateWorld.ROOM_SIZE_MIN = 5;
 GenerateWorld.ROOM_SIZE_MAX = 15;
@@ -86933,11 +87474,11 @@ GenerateWorld.MERCHANT_ITEM_AMOUNT = 3;
 GenerateWorld.ROOM_SPELL_CHANCE = 3;
 GenerateWorld.ROOM_SPELL_SPREADS_TO_NEIGHBORS_CHANCE = 50;
 GenerateWorld.ITEM_IN_ENEMY_ROOM_CHANCE = 33;
-GenerateWorld.ENEMY_TYPES_PER_LEVEL_MIN = 2;
-GenerateWorld.ENEMY_TYPES_PER_LEVEL_MAX = 5;
+GenerateWorld.TALK_TALKER_CHANCE = 10;
 GenerateWorld.KEY_ON_ENEMY_CHANCE = 50;
 GenerateWorld.MERCHANT_ITEM_LEVEL_BONUS = 1;
-GenerateWorld.ENEMY_ITEM_IDEAL_RATIO = 0.6;
+GenerateWorld.ENEMY_ITEM_IDEAL_RATIO = 0.7;
+GenerateWorld.HEALTH_POTION_TALLY_SIZE = 15;
 GenerateWorld.enemy_rooms_this_floor = 0;
 GenerateWorld.item_rooms_this_floor = 0;
 GenerateWorld.enemies_this_floor = 0;
@@ -86946,6 +87487,7 @@ GenerateWorld.floors_until_floor_with_merchant = 1 + Math.floor(3 * Math.random(
 GenerateWorld.health_potion_tally = [];
 GenerateWorld.weapons_on_floor = new haxe_ds_IntMap();
 GenerateWorld.statues_on_floor = new haxe_ds_IntMap();
+GenerateWorld.healthmax_on_floor = new haxe_ds_IntMap();
 LOS.rays = [];
 LOS.free_map = haxegon_Data.create2darray(31,31,false);
 Main.SCREEN_WIDTH = 1600;
@@ -86962,6 +87504,8 @@ Main.MINIMAP_Y = 0;
 Main.RINGS_MAX = 2;
 Main.PLAYER_SPELLS_MAX = 10;
 Main.SPELL_ITEM_LEVEL_BONUS = 1;
+Main.FLOORS_PER_PALETTE = 3;
+Main.FLOORS_PER_LEVEL = 2;
 Main.UI_X = 1005;
 Main.PLAYER_STATS_Y = 0;
 Main.PLAYER_STATS_NUMBERS_OFFSET = 85;
@@ -86986,6 +87530,7 @@ Main.visited_room = [];
 Main.room_on_minimap = [];
 Main.SHOW_SHOW_BUTTONS_BUTTON = false;
 Main.DRAW_INVISIBLE_ENTITIES = true;
+Main.USER_long_spell_descriptions = true;
 Main.stairs_x = 0;
 Main.stairs_y = 0;
 Main.location_spells = (function($this) {
@@ -87010,6 +87555,7 @@ Main.location_spells = (function($this) {
 Main.four_dxdy = [{ x : -1, y : 0},{ x : 1, y : 0},{ x : 0, y : 1},{ x : 0, y : -1}];
 Main.current_floor = 0;
 Main.current_level_mod = 0;
+Main.seen_talks = [1,2,3];
 Main.time_stamp = 0.0;
 Main.can_restart_timer_max = 60;
 openfl_text_Font.__fontByName = new haxe_ds_StringMap();
@@ -87302,6 +87848,19 @@ Tile.Golem = 17;
 Tile.Skeleton = 27;
 Tile.Imp = 37;
 Tile.Merchant = 47;
+Tile.Enemy = (function($this) {
+	var $r;
+	var _g = [];
+	{
+		var _g1 = 0;
+		while(_g1 < 5) {
+			var i = _g1++;
+			_g.push((5 + i) * 10 + 7);
+		}
+	}
+	$r = _g;
+	return $r;
+}(this));
 Xml.Element = 0;
 Xml.PCData = 1;
 Xml.CData = 2;
@@ -89291,6 +89850,9 @@ openfl_media_SoundMixer.MAX_ACTIVE_CHANNELS = 32;
 openfl_media_SoundMixer.__soundChannels = [];
 openfl_media_SoundMixer.__soundTransform = new openfl_media_SoundTransform();
 openfl_net_NetConnection.CONNECT_SUCCESS = "NetConnection.Connect.Success";
+openfl_net_SharedObject.defaultObjectEncoding = 10;
+openfl_net__$SharedObjectFlushStatus_SharedObjectFlushStatus_$Impl_$.FLUSHED = 0;
+openfl_net__$SharedObjectFlushStatus_SharedObjectFlushStatus_$Impl_$.PENDING = 1;
 openfl_net__$URLLoaderDataFormat_URLLoaderDataFormat_$Impl_$.BINARY = 0;
 openfl_net__$URLLoaderDataFormat_URLLoaderDataFormat_$Impl_$.TEXT = 1;
 openfl_net__$URLLoaderDataFormat_URLLoaderDataFormat_$Impl_$.VARIABLES = 2;
