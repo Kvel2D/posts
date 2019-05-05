@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","658");
+		_this.setReserved("build","673");
 	} else {
-		_this.h["build"] = "658";
+		_this.h["build"] = "673";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -923,9 +923,9 @@ ApplicationMain.create = function(config) {
 	}
 	var _this5 = app.meta;
 	if(__map_reserved["version"] != null) {
-		_this5.setReserved("version","0.2.7");
+		_this5.setReserved("version","0.2.8");
 	} else {
-		_this5.h["version"] = "0.2.7";
+		_this5.h["version"] = "0.2.8";
 	}
 	var attributes = { allowHighDPI : true, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 0, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "Katabot", width : 0, x : null, y : null};
 	attributes.context = { antialiasing : 0, background : 0, colorDepth : 32, depth : true, hardware : true, stencil : true, type : null, vsync : true};
@@ -6973,7 +6973,7 @@ Main.timer_start = function() {
 };
 Main.timer_end = function() {
 	var new_stamp = new Date().getTime() / 1000;
-	haxe_Log.trace("" + (new_stamp - Main.time_stamp),{ fileName : "Main.hx", lineNumber : 721, className : "Main", methodName : "timer_end"});
+	haxe_Log.trace("" + (new_stamp - Main.time_stamp),{ fileName : "Main.hx", lineNumber : 725, className : "Main", methodName : "timer_end"});
 	Main.time_stamp = new_stamp;
 };
 Main.get_view_x = function() {
@@ -7228,7 +7228,7 @@ Main.prototype = {
 		haxegon_Gfx.drawtoscreen();
 	}
 	,print_tutorial: function() {
-		var tutorial_text = ["CONTROLS","------------------------------","WASD to move.","SPACE to skip a turn.","ESCAPE to open options menu.","------------------------------","Right-click on things to interact with them.","You can interact with things on the map if they are next to you.","You can interact with your equipment and items.","------------------------------","Left-clicking performs some default interactions:","Left-click on enemies to attack them.","Left-click on items and equipment on the ground to pick them up.","Left-click on items in inventory to use them."];
+		var tutorial_text = ["CONTROLS","------------------------------","WASD to move.","SPACE to skip a turn.","ESCAPE to open options menu.","------------------------------","Right-click on things to interact with them.","You can interact with things on the map if they are next to you.","You can interact with your equipment and items.","------------------------------","Left-clicking performs some default interactions:","Left-click on enemies to attack them.","Left-click on items and equipment on the ground to pick them up.","Left-click on items in inventory to use them.","------------------------------","Equipment can have Passive and Use spells.","Passive spells are active all the time or randomly activated.","Use spells are listed after \"Use:\"."];
 		var _g = [];
 		var _g1 = 0;
 		while(_g1 < 20) {
@@ -8170,9 +8170,7 @@ Main.prototype = {
 		}
 		target_combat.health -= combat.attack;
 		this.add_message(combat.message);
-		if(combat.attack != 0) {
-			this.add_message("" + this.entity_name(e,"Monster") + " attacks " + this.entity_name(target,"something") + " for " + combat.attack + " damage.");
-		}
+		this.add_message("" + this.entity_name(e,"Monster") + " attacks " + this.entity_name(target,"something") + " for " + combat.attack + " damage.");
 		if(Entity.move.h.hasOwnProperty(e)) {
 			var move = Entity.move.h[e];
 			move.cant_move = true;
@@ -8369,8 +8367,8 @@ Main.prototype = {
 		}
 		var absorb_amount = damage - actual_damage;
 		Player.health -= actual_damage;
+		this.add_message("You take " + actual_damage + " damage" + from_text + ".");
 		if(actual_damage > 0) {
-			this.add_message("You take " + actual_damage + " damage" + from_text + ".");
 			this.add_damage_number(-actual_damage);
 		}
 		if(absorb_amount > 0) {
@@ -8831,7 +8829,7 @@ Main.prototype = {
 				total_string += "\ncopper_gained=" + this.copper_gains[i + 1] + "\n\n";
 			}
 		}
-		haxe_Log.trace(total_string,{ fileName : "Main.hx", lineNumber : 2070, className : "Main", methodName : "print_game_stats"});
+		haxe_Log.trace(total_string,{ fileName : "Main.hx", lineNumber : 2072, className : "Main", methodName : "print_game_stats"});
 	}
 	,render_world: function() {
 		var _gthis = this;
@@ -9413,7 +9411,7 @@ Main.prototype = {
 					var can_attack = Entity.combat.h.hasOwnProperty(hovered_anywhere);
 					var can_pickup = Entity.item.h.hasOwnProperty(hovered_anywhere) && !Entity.cost.h.hasOwnProperty(hovered_anywhere);
 					var can_equip = Entity.equipment.h.hasOwnProperty(hovered_anywhere) && !Entity.cost.h.hasOwnProperty(hovered_anywhere);
-					var can_use = Entity["use"].h.hasOwnProperty(hovered_anywhere);
+					var can_use = Entity["use"].h.hasOwnProperty(hovered_anywhere) && !Entity.cost.h.hasOwnProperty(hovered_anywhere);
 					var can_open = Entity.container.h.hasOwnProperty(hovered_anywhere);
 					if(can_attack && !can_pickup && !can_equip) {
 						this.attack_target = hovered_anywhere;
@@ -9599,7 +9597,7 @@ Main.prototype = {
 							spell.interval *= 4;
 						}
 					} else {
-						haxe_Log.trace("no prio defined for " + Std.string(spell.type),{ fileName : "Main.hx", lineNumber : 2953, className : "Main", methodName : "update_normal"});
+						haxe_Log.trace("no prio defined for " + Std.string(spell.type),{ fileName : "Main.hx", lineNumber : 2955, className : "Main", methodName : "update_normal"});
 					}
 				}
 				return spell_over;
@@ -10810,7 +10808,7 @@ Spells.get_description = function(spell) {
 		break;
 	case 35:
 		if($long) {
-			effect = "Summon Skeletons that attack nearby enemies";
+			effect = "Summon Skeletons that attack nearby enemies but don't follow you";
 		} else {
 			effect = "Summon Skeletons";
 		}
@@ -40074,7 +40072,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 490127;
+	this.version = 102572;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
