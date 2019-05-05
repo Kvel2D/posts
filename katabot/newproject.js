@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","673");
+		_this.setReserved("build","677");
 	} else {
-		_this.h["build"] = "673";
+		_this.h["build"] = "677";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -923,9 +923,9 @@ ApplicationMain.create = function(config) {
 	}
 	var _this5 = app.meta;
 	if(__map_reserved["version"] != null) {
-		_this5.setReserved("version","0.2.8");
+		_this5.setReserved("version","0.2.9");
 	} else {
-		_this5.h["version"] = "0.2.8";
+		_this5.h["version"] = "0.2.9";
 	}
 	var attributes = { allowHighDPI : true, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 0, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "Katabot", width : 0, x : null, y : null};
 	attributes.context = { antialiasing : 0, background : 0, colorDepth : 32, depth : true, hardware : true, stencil : true, type : null, vsync : true};
@@ -5628,9 +5628,9 @@ GenerateWorld.ENEMY_TYPES_PER_LEVEL = function() {
 };
 GenerateWorld.ENEMY_ITEM_IDEAL_RATIO = function() {
 	if(Player.more_enemies) {
-		return 0.9;
+		return 0.8;
 	} else {
-		return 0.7;
+		return 0.6;
 	}
 };
 GenerateWorld.MERCHANT_ITEM_COST = function() {
@@ -40072,7 +40072,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 102572;
+	this.version = 779127;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
