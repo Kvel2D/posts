@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","619");
+		_this.setReserved("build","658");
 	} else {
-		_this.h["build"] = "619";
+		_this.h["build"] = "658";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -923,9 +923,9 @@ ApplicationMain.create = function(config) {
 	}
 	var _this5 = app.meta;
 	if(__map_reserved["version"] != null) {
-		_this5.setReserved("version","0.2.6");
+		_this5.setReserved("version","0.2.7");
 	} else {
-		_this5.h["version"] = "0.2.6";
+		_this5.h["version"] = "0.2.7";
 	}
 	var attributes = { allowHighDPI : true, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 0, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "Katabot", width : 0, x : null, y : null};
 	attributes.context = { antialiasing : 0, background : 0, colorDepth : 32, depth : true, hardware : true, stencil : true, type : null, vsync : true};
@@ -4639,7 +4639,7 @@ Entities.stairs = function(x,y) {
 	var v1 = { color : 11721967, seen : false};
 	Entity.draw_on_minimap.h[e] = v1;
 	var this1 = Entity["use"];
-	var v2 = { spells : [Spells.next_floor()], charges : 1, consumable : false, flavor_text : "You ascend the stairs.", need_target : false, draw_charges : false};
+	var v2 = { spells : [Spells.next_floor()], charges : 1, consumable : false, flavor_text : "You ascend Stairs.", need_target : false, draw_charges : false};
 	this1.h[e] = v2;
 	return e;
 };
@@ -4680,7 +4680,7 @@ Entities.random_weapon = function(x,y) {
 	equip_spells.splice(0,0,x1);
 	if(use_spells.length > 0) {
 		var this1 = Entity["use"];
-		var v2 = { spells : use_spells, charges : Spells.get_spells_min_use_charges(use_spells), consumable : false, flavor_text : "You use weapon's spell.", need_target : Spells.need_target(use_spells[0].type), draw_charges : true};
+		var v2 = { spells : use_spells, charges : Spells.get_spells_min_use_charges(use_spells), consumable : false, flavor_text : "You use Sword spell.", need_target : Spells.need_target(use_spells[0].type), draw_charges : true};
 		this1.h[e] = v2;
 	}
 	var v3 = { type : EquipmentType.EquipmentType_Weapon, spells : equip_spells};
@@ -4767,7 +4767,7 @@ Entities.random_armor = function(x,y) {
 	equip_spells.splice(0,0,x1);
 	if(use_spells.length > 0) {
 		var this4 = Entity["use"];
-		var v3 = { spells : use_spells, charges : Spells.get_spells_min_use_charges(use_spells), consumable : false, flavor_text : "You use armor's spell.", need_target : Spells.need_target(use_spells[0].type), draw_charges : true};
+		var v3 = { spells : use_spells, charges : Spells.get_spells_min_use_charges(use_spells), consumable : false, flavor_text : "You use " + Entity.$name.h[e] + " spell.", need_target : Spells.need_target(use_spells[0].type), draw_charges : true};
 		this4.h[e] = v3;
 	}
 	var v4 = { type : armor_type, spells : equip_spells};
@@ -4801,7 +4801,7 @@ Entities.random_potion = function(x,y,force_spell) {
 	var v = { spells : []};
 	Entity.item.h[e] = v;
 	var spell = Spells.random_potion_spell(level,force_spell);
-	var v1 = { spells : [spell], charges : 1, consumable : true, flavor_text : "You chug the potion.", need_target : false, draw_charges : true};
+	var v1 = { spells : [spell], charges : 1, consumable : true, flavor_text : "You chug Potion.", need_target : false, draw_charges : true};
 	Entity["use"].h[e] = v1;
 	var spell_color = Spells.get_color(spell);
 	var v2 = Tile.Potion[spell_color == SpellColor.SpellColor_Gray ? 0 : spell_color == SpellColor.SpellColor_Purple ? 1 : spell_color == SpellColor.SpellColor_Yellow ? 2 : spell_color == SpellColor.SpellColor_Red ? 3 : spell_color == SpellColor.SpellColor_Blue ? 4 : spell_color == SpellColor.SpellColor_Green ? 5 : 0];
@@ -4821,7 +4821,7 @@ Entities.random_scroll = function(x,y) {
 	Entity.item.h[e] = v;
 	var spell = Spells.random_scroll_spell(level);
 	var this1 = Entity["use"];
-	var v1 = { spells : [spell], charges : 1, consumable : true, flavor_text : "You read the scroll aloud.", need_target : Spells.need_target(spell.type), draw_charges : true};
+	var v1 = { spells : [spell], charges : 1, consumable : true, flavor_text : "You read Scroll aloud.", need_target : Spells.need_target(spell.type), draw_charges : true};
 	this1.h[e] = v1;
 	var spell_color = Spells.get_color(spell);
 	var v2 = Tile.Scroll[spell_color == SpellColor.SpellColor_Gray ? 0 : spell_color == SpellColor.SpellColor_Purple ? 1 : spell_color == SpellColor.SpellColor_Yellow ? 2 : spell_color == SpellColor.SpellColor_Red ? 3 : spell_color == SpellColor.SpellColor_Blue ? 4 : spell_color == SpellColor.SpellColor_Green ? 5 : 0];
@@ -4841,7 +4841,7 @@ Entities.random_orb = function(x,y) {
 	Entity.item.h[e] = v;
 	var spell = Spells.random_orb_spell(level);
 	var this1 = Entity["use"];
-	var v1 = { spells : [spell], charges : 1, consumable : true, flavor_text : "You crush the orb in your hands.", need_target : Spells.need_target(spell.type), draw_charges : true};
+	var v1 = { spells : [spell], charges : 1, consumable : true, flavor_text : "You crush Orb in your hand.", need_target : Spells.need_target(spell.type), draw_charges : true};
 	this1.h[e] = v1;
 	var spell_color = Spells.get_color(spell);
 	var v2 = Tile.Orb[spell_color == SpellColor.SpellColor_Gray ? 0 : spell_color == SpellColor.SpellColor_Purple ? 1 : spell_color == SpellColor.SpellColor_Yellow ? 2 : spell_color == SpellColor.SpellColor_Red ? 3 : spell_color == SpellColor.SpellColor_Blue ? 4 : spell_color == SpellColor.SpellColor_Green ? 5 : 0];
@@ -4860,7 +4860,7 @@ Entities.random_enemy_type = function(type_number) {
 	if(attack == 0) {
 		attack = 1;
 	}
-	var health = Stats.get({ min : 4, max : 5, scaling : 3.0},level);
+	var health = Player.stronger_enemies ? Stats.get({ min : 5, max : 6, scaling : 4.0},level) : Stats.get({ min : 4, max : 5, scaling : 3.0},level);
 	if(Main.current_floor == 0) {
 		attack = 1;
 		health = Math.round(health / 2);
@@ -5140,10 +5140,10 @@ Entities.copper = function(x,y) {
 	Entity.$name.h[e] = "Copper";
 	var v = { 'char' : "C", color : 16245355};
 	Entity.draw_char.h[e] = v;
-	Entity.description.h[e] = "A bunch of copper pieces";
+	Entity.description.h[e] = "A bunch of Copper";
 	Entity.draw_tile.h[e] = 94;
 	var this1 = Entity["use"];
-	var v1 = { spells : [Spells.mod_copper(Stats.get({ min : 1, max : 2, scaling : 1.0},level))], charges : 1, consumable : true, flavor_text : "You pick up the copper.", need_target : false, draw_charges : false};
+	var v1 = { spells : [Spells.mod_copper(Stats.get({ min : 1, max : 2, scaling : 1.0},level))], charges : 1, consumable : true, flavor_text : "You pick up Copper.", need_target : false, draw_charges : false};
 	this1.h[e] = v1;
 	Entity.validate(e);
 	return e;
@@ -5626,6 +5626,13 @@ GenerateWorld.__name__ = ["GenerateWorld"];
 GenerateWorld.ENEMY_TYPES_PER_LEVEL = function() {
 	return 2 + Math.floor(2 * Math.random());
 };
+GenerateWorld.ENEMY_ITEM_IDEAL_RATIO = function() {
+	if(Player.more_enemies) {
+		return 0.9;
+	} else {
+		return 0.7;
+	}
+};
 GenerateWorld.MERCHANT_ITEM_COST = function() {
 	var tmp = Main.current_level();
 	return Stats.get({ min : 4, max : 6, scaling : 3.0},tmp);
@@ -5756,8 +5763,6 @@ GenerateWorld.fill_rooms_with_entities = function() {
 			return 1.0;
 		}
 	};
-	GenerateWorld.enemy_rooms_this_floor = 0;
-	GenerateWorld.item_rooms_this_floor = 0;
 	var enemies = [];
 	var items = [];
 	var _g32 = 1;
@@ -5802,7 +5807,6 @@ GenerateWorld.fill_rooms_with_entities = function() {
 					tally_health_potions(f3 == health_potion);
 					items.push(e2);
 				}
-				GenerateWorld.enemy_rooms_this_floor++;
 			};
 		})(positions);
 		var merchant_room = (function(r1) {
@@ -5868,7 +5872,6 @@ GenerateWorld.fill_rooms_with_entities = function() {
 					tally_health_potions(f6 == health_potion);
 					items.push(e4);
 				}
-				GenerateWorld.item_rooms_this_floor++;
 			};
 		})(positions,r);
 		var locked_room = (function(positions4,r3) {
@@ -5924,13 +5927,13 @@ GenerateWorld.fill_rooms_with_entities = function() {
 		haxegon_Random.shuffle(items);
 		var enemy_item_ratio = 1.0 * enemies.length / items.length;
 		var item_enemy_ratio = 1.0 * items.length / enemies.length;
-		if(enemy_item_ratio > 0.7) {
-			while(enemy_item_ratio > 0.7) {
+		if(enemy_item_ratio > GenerateWorld.ENEMY_ITEM_IDEAL_RATIO()) {
+			while(enemy_item_ratio > GenerateWorld.ENEMY_ITEM_IDEAL_RATIO()) {
 				Entity.remove(enemies.pop());
 				enemy_item_ratio = 1.0 * enemies.length / items.length;
 			}
-		} else if(item_enemy_ratio > 1.4285714285714286) {
-			while(item_enemy_ratio > 1.4285714285714286) {
+		} else if(item_enemy_ratio > 1.0 / GenerateWorld.ENEMY_ITEM_IDEAL_RATIO()) {
+			while(item_enemy_ratio > 1.0 / GenerateWorld.ENEMY_ITEM_IDEAL_RATIO()) {
 				Entity.remove(items.pop());
 				item_enemy_ratio = 1.0 * items.length / enemies.length;
 			}
@@ -6142,6 +6145,19 @@ GenerateWorld.fill_rooms_with_entities = function() {
 			} else {
 				Entities.talk_talker(pos7.x,pos7.y,false);
 			}
+		}
+	}
+	if(Main.current_floor == 0 && Math.floor(101 * Math.random()) <= 33) {
+		var random_room1 = haxegon_Random.pick(Main.rooms);
+		var positions9 = GenerateWorld.room_free_positions_shuffled(Main.rooms[0]);
+		var types = [SpellType.SpellType_MoreEnemies,SpellType.SpellType_WeakHeal,SpellType.SpellType_StrongerEnemies];
+		haxegon_Random.shuffle(types);
+		var potion_count = 1 + Math.floor(3 * Math.random());
+		while(positions9.length > 0 && potion_count > 0) {
+			var type = types.pop();
+			var pos8 = positions9.pop();
+			Entities.random_potion(pos8.x,pos8.y,type);
+			--potion_count;
 		}
 	}
 };
@@ -6417,7 +6433,7 @@ GenerateWorld.connect_rooms = function(rooms,disconnect_factor) {
 		rooms[c4.j].adjacent_rooms.push(rooms.length);
 		rooms.push({ x : c4.x1, y : c4.y1, width : width, height : height, is_connection : true, adjacent_rooms : [c4.i,c4.j], is_locked : false, is_horizontal : height == 0});
 	}
-	if(Math.floor(101 * Math.random()) <= 50) {
+	if(Math.floor(101 * Math.random()) <= 25) {
 		var disconnected_count = 1;
 		var width_max = 92;
 		var height_max = 92;
@@ -6861,7 +6877,7 @@ var Main = function() {
 	if(Main.obj.data.seen_talks != null) {
 		Main.seen_talks = Main.obj.data.seen_talks;
 	}
-	haxegon_Gfx.resizescreen(1600,1000);
+	haxegon_Gfx.resizescreen(1600,960);
 	haxegon_Text.setfont("pixelfj8");
 	haxegon_Gfx.loadtiles("tiles",8,8);
 	haxegon_Gfx.createimage("tiles_canvas",248,248);
@@ -6871,10 +6887,10 @@ var Main = function() {
 	haxegon_Gfx.createimage("minimap_canvas_connections",500,500);
 	haxegon_Gfx.createimage("minimap_canvas_rooms",500,500);
 	haxegon_Gfx.createimage("minimap_canvas_full",500,500);
-	haxegon_Gfx.createimage("ui_items_canvas",128,1000);
+	haxegon_Gfx.createimage("ui_items_canvas",128,960);
 	haxegon_Gfx.createtiles("test_enemy_tiles",8,8,100);
 	haxegon_Gfx.changetileset("tiles");
-	haxegon_Gfx.createimage("ui_canvas",600,1000);
+	haxegon_Gfx.createimage("ui_canvas",600,960);
 	haxegon_Gfx.drawtoimage("ui_canvas");
 	haxegon_Gfx.scale(1);
 	haxegon_Text.change_size(14);
@@ -6923,6 +6939,13 @@ var Main = function() {
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
+Main.RINGS_MAX = function() {
+	if(Player.extra_ring) {
+		return 3;
+	} else {
+		return 2;
+	}
+};
 Main.random_good_room = function() {
 	var _g = [];
 	var _g2 = 1;
@@ -6950,7 +6973,7 @@ Main.timer_start = function() {
 };
 Main.timer_end = function() {
 	var new_stamp = new Date().getTime() / 1000;
-	haxe_Log.trace("" + (new_stamp - Main.time_stamp),{ fileName : "Main.hx", lineNumber : 718, className : "Main", methodName : "timer_end"});
+	haxe_Log.trace("" + (new_stamp - Main.time_stamp),{ fileName : "Main.hx", lineNumber : 721, className : "Main", methodName : "timer_end"});
 	Main.time_stamp = new_stamp;
 };
 Main.get_view_x = function() {
@@ -7248,6 +7271,9 @@ Main.prototype = {
 		Player.damage_shield = 0;
 		Player.attack = 1;
 		Player.defense = 0;
+		Player.more_enemies = false;
+		Player.weak_heal = false;
+		Player.stronger_enemies = false;
 		Entities.generated_names = [];
 	}
 	,random_pattern: function(chance) {
@@ -7614,7 +7640,6 @@ Main.prototype = {
 			while(padded_name.length < 15) padded_name += " ";
 			floor_stats += "\n" + padded_name + "c=" + (__map_reserved[name1] != null ? enemy_counts.getReserved(name1) : enemy_counts.h[name1]) + "\ta=" + combat.attack + "\th=" + combat.health + "\tr^2=" + combat.range_squared + "\ta=" + aggression;
 		}
-		floor_stats += "\nenemy rooms = " + GenerateWorld.enemy_rooms_this_floor + "\nitem rooms = " + GenerateWorld.item_rooms_this_floor;
 		floor_stats += "\nenemies = " + GenerateWorld.enemies_this_floor + "\nitems = " + GenerateWorld.items_this_floor;
 		this.game_stats.push(floor_stats);
 		this.copper_gains.push(this.copper_gained_this_floor);
@@ -7793,9 +7818,43 @@ Main.prototype = {
 			Entity.remove(e);
 		}
 	}
+	,count_rings: function() {
+		var ring_count = 0;
+		var _g = 0;
+		while(_g < 2) {
+			var y = _g++;
+			var _g1 = 0;
+			while(_g1 < 4) {
+				var x = _g1++;
+				var e = Player.inventory[x][y];
+				if(Entity.item.h.hasOwnProperty(e) && !Entity.position.h.hasOwnProperty(e) && Entity.ring.h.hasOwnProperty(e)) {
+					++ring_count;
+				}
+			}
+		}
+		return ring_count;
+	}
+	,extra_ring_check: function(e) {
+		if(Entity.equipment.h.hasOwnProperty(e)) {
+			var equip_spells = Entity.equipment.h[e].spells;
+			var _g = 0;
+			while(_g < equip_spells.length) {
+				var s = equip_spells[_g];
+				++_g;
+				if(s.type == SpellType.SpellType_ExtraRing && this.count_rings() > 2) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	,equip_entity: function(e) {
 		var e_equipment = Entity.equipment.h[e];
 		var old_e = Player.equipment.get(e_equipment.type);
+		if(this.extra_ring_check(old_e)) {
+			this.add_message("Can't unequip " + this.entity_name(old_e,"armor") + " while having extra ring.");
+			return;
+		}
 		if(Entity.equipment.h.hasOwnProperty(old_e) && !Entity.position.h.hasOwnProperty(old_e)) {
 			this.add_message("You unequip " + this.entity_name(old_e,"old equipment") + ".");
 			var e_pos = Entity.position.h[e];
@@ -7821,37 +7880,22 @@ Main.prototype = {
 			}
 		}
 		if(Entity.ring.h.hasOwnProperty(e)) {
-			var ring_count = 0;
-			var _g2 = 0;
-			while(_g2 < 2) {
-				var y1 = _g2++;
-				var _g11 = 0;
-				while(_g11 < 4) {
-					var x1 = _g11++;
-					var other_e = Player.inventory[x1][y1];
-					if(Entity.item.h.hasOwnProperty(other_e) && !Entity.position.h.hasOwnProperty(other_e)) {
-						var other_item = Entity.item.h[other_e];
-						if(Entity.ring.h.hasOwnProperty(other_e)) {
-							++ring_count;
-							if(ring_count >= 2) {
-								this.add_message("Can't have more than " + 2 + " rings.");
-								return;
-							}
-						}
-					}
-				}
+			var ring_count = this.count_rings();
+			if(ring_count >= Main.RINGS_MAX()) {
+				this.add_message("Can't have more than " + Main.RINGS_MAX() + " rings.");
+				return;
 			}
 		}
-		var _g3 = 0;
-		while(_g3 < 2) {
-			var y2 = _g3++;
-			var _g12 = 0;
-			while(_g12 < 4) {
-				var x2 = _g12++;
-				var doesnt_exist = !Entity.item.h.hasOwnProperty(Player.inventory[x2][y2]);
-				var not_in_inventory = Entity.item.h.hasOwnProperty(Player.inventory[x2][y2]) && Entity.position.h.hasOwnProperty(Player.inventory[x2][y2]);
+		var _g2 = 0;
+		while(_g2 < 2) {
+			var y1 = _g2++;
+			var _g11 = 0;
+			while(_g11 < 4) {
+				var x1 = _g11++;
+				var doesnt_exist = !Entity.item.h.hasOwnProperty(Player.inventory[x1][y1]);
+				var not_in_inventory = Entity.item.h.hasOwnProperty(Player.inventory[x1][y1]) && Entity.position.h.hasOwnProperty(Player.inventory[x1][y1]);
 				if(doesnt_exist || not_in_inventory) {
-					Player.inventory[x2][y2] = e;
+					Player.inventory[x1][y1] = e;
 					this.add_message("You pick up " + this.entity_name(e,"a thing") + ".");
 					Entity.remove_position(e);
 					return;
@@ -7880,6 +7924,10 @@ Main.prototype = {
 		return { x : -1, y : -1};
 	}
 	,drop_entity_from_player: function(e) {
+		if(this.extra_ring_check(e)) {
+			this.add_message("Can't unequip " + this.entity_name(e,"armor") + " while having extra ring.");
+			return;
+		}
 		var pos = this.free_position_around_player();
 		if(pos.x != -1 && pos.y != -1) {
 			this.add_message("You drop " + this.entity_name(e,"a thing") + ".");
@@ -8753,10 +8801,22 @@ Main.prototype = {
 			Player.summon_buff = true;
 			break;
 		case 39:
-			Player.attack_mod += Math.ceil(Math.sqrt(Player.copper_count / 10));
+			Player.more_enemies = true;
 			break;
 		case 40:
+			Player.weak_heal = true;
+			break;
+		case 41:
+			Player.stronger_enemies = true;
+			break;
+		case 42:
+			Player.attack_mod += Math.ceil(Math.sqrt(Player.copper_count / 10));
+			break;
+		case 43:
 			Player.defense_mod += 2 * Math.ceil(Math.sqrt(Player.copper_count / 10));
+			break;
+		case 44:
+			Player.extra_ring = true;
 			break;
 		}
 	}
@@ -8771,7 +8831,7 @@ Main.prototype = {
 				total_string += "\ncopper_gained=" + this.copper_gains[i + 1] + "\n\n";
 			}
 		}
-		haxe_Log.trace(total_string,{ fileName : "Main.hx", lineNumber : 2028, className : "Main", methodName : "print_game_stats"});
+		haxe_Log.trace(total_string,{ fileName : "Main.hx", lineNumber : 2070, className : "Main", methodName : "print_game_stats"});
 	}
 	,render_world: function() {
 		var _gthis = this;
@@ -8984,7 +9044,7 @@ Main.prototype = {
 			haxegon_Text.display(0,0,messages_text);
 			haxegon_Gfx.drawtoscreen();
 		}
-		haxegon_Gfx.drawimage(1005,650,"messages_canvas");
+		haxegon_Gfx.drawimage(1005,630,"messages_canvas");
 		var _g10 = 0;
 		var _g18 = Main.entities_with(Entity.draw_on_minimap);
 		while(_g10 < _g18.length) {
@@ -9066,7 +9126,7 @@ Main.prototype = {
 		haxegon_Text.change_size(14);
 		var meta = openfl_Lib.get_current().stage.application.meta;
 		var version = __map_reserved["version"] != null ? meta.getReserved("version") : meta.h["version"];
-		haxegon_Text.display(0,1000 - haxegon_Text.height() * 2,"" + version);
+		haxegon_Text.display(0,960 - haxegon_Text.height() * 2,"" + version);
 	}
 	,move_timer: null
 	,move_timer_max: null
@@ -9474,6 +9534,7 @@ Main.prototype = {
 			Player.full_minimap = false;
 			Player.lucky_charge = 0;
 			Player.critical = 0;
+			Player.extra_ring = false;
 			var _g7 = [];
 			var _g21 = 0;
 			var _g16 = 4;
@@ -9538,7 +9599,7 @@ Main.prototype = {
 							spell.interval *= 4;
 						}
 					} else {
-						haxe_Log.trace("no prio defined for " + Std.string(spell.type),{ fileName : "Main.hx", lineNumber : 2910, className : "Main", methodName : "update_normal"});
+						haxe_Log.trace("no prio defined for " + Std.string(spell.type),{ fileName : "Main.hx", lineNumber : 2953, className : "Main", methodName : "update_normal"});
 					}
 				}
 				return spell_over;
@@ -9701,7 +9762,7 @@ Main.prototype = {
 	,update_dead: function() {
 		this.render_world();
 		var fade_alpha = 0.75 * Math.min(1.0,this.can_restart_timer / 60);
-		haxegon_Gfx.fillbox(0,0,1600,1000,0,fade_alpha);
+		haxegon_Gfx.fillbox(0,0,1600,960,0,fade_alpha);
 		haxegon_Text.change_size(100);
 		this.can_restart_timer++;
 		if(this.can_restart_timer > 60) {
@@ -9762,6 +9823,10 @@ Main.prototype = {
 			if(haxegon_GUI.auto_text_button("Controls")) {
 				this.print_tutorial();
 				this.need_to_update_messages_canvas = true;
+			}
+			if(haxegon_GUI.auto_text_button("Restart")) {
+				this.restart_game();
+				this.generate_level();
 			}
 			if(haxegon_GUI.auto_text_button("Close menu")) {
 				this.USER_show_buttons = false;
@@ -10366,7 +10431,7 @@ Reflect.makeVarArgs = function(f) {
 		return f(a);
 	};
 };
-var SpellType = $hxClasses["SpellType"] = { __ename__ : ["SpellType"], __constructs__ : ["SpellType_ModHealth","SpellType_ModHealthMax","SpellType_ModAttack","SpellType_ModDefense","SpellType_UncoverMap","SpellType_RandomTeleport","SpellType_SafeTeleport","SpellType_Nolos","SpellType_Noclip","SpellType_ShowThings","SpellType_NextFloor","SpellType_ModMoveSpeed","SpellType_ModDropChance","SpellType_ModCopperChance","SpellType_AoeDamage","SpellType_Combust","SpellType_ModDropLevel","SpellType_Invisibility","SpellType_EnergyShield","SpellType_DamageShield","SpellType_ChainDamage","SpellType_HealthLeech","SpellType_LuckyCharge","SpellType_Critical","SpellType_ModLevelHealth","SpellType_ModLevelAttack","SpellType_ModUseCharges","SpellType_CopyEntity","SpellType_ImproveEquipment","SpellType_EnchantEquipment","SpellType_Passify","SpellType_Sleep","SpellType_Charm","SpellType_SwapHealth","SpellType_SummonGolem","SpellType_SummonSkeletons","SpellType_SummonImp","SpellType_ModCopper","SpellType_ModSpellDamage","SpellType_ModAttackByCopper","SpellType_ModDefenseByCopper"] };
+var SpellType = $hxClasses["SpellType"] = { __ename__ : ["SpellType"], __constructs__ : ["SpellType_ModHealth","SpellType_ModHealthMax","SpellType_ModAttack","SpellType_ModDefense","SpellType_UncoverMap","SpellType_RandomTeleport","SpellType_SafeTeleport","SpellType_Nolos","SpellType_Noclip","SpellType_ShowThings","SpellType_NextFloor","SpellType_ModMoveSpeed","SpellType_ModDropChance","SpellType_ModCopperChance","SpellType_AoeDamage","SpellType_Combust","SpellType_ModDropLevel","SpellType_Invisibility","SpellType_EnergyShield","SpellType_DamageShield","SpellType_ChainDamage","SpellType_HealthLeech","SpellType_LuckyCharge","SpellType_Critical","SpellType_ModLevelHealth","SpellType_ModLevelAttack","SpellType_ModUseCharges","SpellType_CopyEntity","SpellType_ImproveEquipment","SpellType_EnchantEquipment","SpellType_Passify","SpellType_Sleep","SpellType_Charm","SpellType_SwapHealth","SpellType_SummonGolem","SpellType_SummonSkeletons","SpellType_SummonImp","SpellType_ModCopper","SpellType_ModSpellDamage","SpellType_MoreEnemies","SpellType_WeakHeal","SpellType_StrongerEnemies","SpellType_ModAttackByCopper","SpellType_ModDefenseByCopper","SpellType_ExtraRing"] };
 SpellType.SpellType_ModHealth = ["SpellType_ModHealth",0];
 SpellType.SpellType_ModHealth.toString = $estr;
 SpellType.SpellType_ModHealth.__enum__ = SpellType;
@@ -10484,13 +10549,25 @@ SpellType.SpellType_ModCopper.__enum__ = SpellType;
 SpellType.SpellType_ModSpellDamage = ["SpellType_ModSpellDamage",38];
 SpellType.SpellType_ModSpellDamage.toString = $estr;
 SpellType.SpellType_ModSpellDamage.__enum__ = SpellType;
-SpellType.SpellType_ModAttackByCopper = ["SpellType_ModAttackByCopper",39];
+SpellType.SpellType_MoreEnemies = ["SpellType_MoreEnemies",39];
+SpellType.SpellType_MoreEnemies.toString = $estr;
+SpellType.SpellType_MoreEnemies.__enum__ = SpellType;
+SpellType.SpellType_WeakHeal = ["SpellType_WeakHeal",40];
+SpellType.SpellType_WeakHeal.toString = $estr;
+SpellType.SpellType_WeakHeal.__enum__ = SpellType;
+SpellType.SpellType_StrongerEnemies = ["SpellType_StrongerEnemies",41];
+SpellType.SpellType_StrongerEnemies.toString = $estr;
+SpellType.SpellType_StrongerEnemies.__enum__ = SpellType;
+SpellType.SpellType_ModAttackByCopper = ["SpellType_ModAttackByCopper",42];
 SpellType.SpellType_ModAttackByCopper.toString = $estr;
 SpellType.SpellType_ModAttackByCopper.__enum__ = SpellType;
-SpellType.SpellType_ModDefenseByCopper = ["SpellType_ModDefenseByCopper",40];
+SpellType.SpellType_ModDefenseByCopper = ["SpellType_ModDefenseByCopper",43];
 SpellType.SpellType_ModDefenseByCopper.toString = $estr;
 SpellType.SpellType_ModDefenseByCopper.__enum__ = SpellType;
-SpellType.__empty_constructs__ = [SpellType.SpellType_ModHealth,SpellType.SpellType_ModHealthMax,SpellType.SpellType_ModAttack,SpellType.SpellType_ModDefense,SpellType.SpellType_UncoverMap,SpellType.SpellType_RandomTeleport,SpellType.SpellType_SafeTeleport,SpellType.SpellType_Nolos,SpellType.SpellType_Noclip,SpellType.SpellType_ShowThings,SpellType.SpellType_NextFloor,SpellType.SpellType_ModMoveSpeed,SpellType.SpellType_ModDropChance,SpellType.SpellType_ModCopperChance,SpellType.SpellType_AoeDamage,SpellType.SpellType_Combust,SpellType.SpellType_ModDropLevel,SpellType.SpellType_Invisibility,SpellType.SpellType_EnergyShield,SpellType.SpellType_DamageShield,SpellType.SpellType_ChainDamage,SpellType.SpellType_HealthLeech,SpellType.SpellType_LuckyCharge,SpellType.SpellType_Critical,SpellType.SpellType_ModLevelHealth,SpellType.SpellType_ModLevelAttack,SpellType.SpellType_ModUseCharges,SpellType.SpellType_CopyEntity,SpellType.SpellType_ImproveEquipment,SpellType.SpellType_EnchantEquipment,SpellType.SpellType_Passify,SpellType.SpellType_Sleep,SpellType.SpellType_Charm,SpellType.SpellType_SwapHealth,SpellType.SpellType_SummonGolem,SpellType.SpellType_SummonSkeletons,SpellType.SpellType_SummonImp,SpellType.SpellType_ModCopper,SpellType.SpellType_ModSpellDamage,SpellType.SpellType_ModAttackByCopper,SpellType.SpellType_ModDefenseByCopper];
+SpellType.SpellType_ExtraRing = ["SpellType_ExtraRing",44];
+SpellType.SpellType_ExtraRing.toString = $estr;
+SpellType.SpellType_ExtraRing.__enum__ = SpellType;
+SpellType.__empty_constructs__ = [SpellType.SpellType_ModHealth,SpellType.SpellType_ModHealthMax,SpellType.SpellType_ModAttack,SpellType.SpellType_ModDefense,SpellType.SpellType_UncoverMap,SpellType.SpellType_RandomTeleport,SpellType.SpellType_SafeTeleport,SpellType.SpellType_Nolos,SpellType.SpellType_Noclip,SpellType.SpellType_ShowThings,SpellType.SpellType_NextFloor,SpellType.SpellType_ModMoveSpeed,SpellType.SpellType_ModDropChance,SpellType.SpellType_ModCopperChance,SpellType.SpellType_AoeDamage,SpellType.SpellType_Combust,SpellType.SpellType_ModDropLevel,SpellType.SpellType_Invisibility,SpellType.SpellType_EnergyShield,SpellType.SpellType_DamageShield,SpellType.SpellType_ChainDamage,SpellType.SpellType_HealthLeech,SpellType.SpellType_LuckyCharge,SpellType.SpellType_Critical,SpellType.SpellType_ModLevelHealth,SpellType.SpellType_ModLevelAttack,SpellType.SpellType_ModUseCharges,SpellType.SpellType_CopyEntity,SpellType.SpellType_ImproveEquipment,SpellType.SpellType_EnchantEquipment,SpellType.SpellType_Passify,SpellType.SpellType_Sleep,SpellType.SpellType_Charm,SpellType.SpellType_SwapHealth,SpellType.SpellType_SummonGolem,SpellType.SpellType_SummonSkeletons,SpellType.SpellType_SummonImp,SpellType.SpellType_ModCopper,SpellType.SpellType_ModSpellDamage,SpellType.SpellType_MoreEnemies,SpellType.SpellType_WeakHeal,SpellType.SpellType_StrongerEnemies,SpellType.SpellType_ModAttackByCopper,SpellType.SpellType_ModDefenseByCopper,SpellType.SpellType_ExtraRing];
 var SpellDuration = $hxClasses["SpellDuration"] = { __ename__ : ["SpellDuration"], __constructs__ : ["SpellDuration_Permanent","SpellDuration_EveryTurn","SpellDuration_EveryAttack","SpellDuration_EveryAttackChance"] };
 SpellDuration.SpellDuration_Permanent = ["SpellDuration_Permanent",0];
 SpellDuration.SpellDuration_Permanent.toString = $estr;
@@ -10756,17 +10833,33 @@ Spells.get_description = function(spell) {
 		}
 		break;
 	case 39:
+		effect = "More enemies";
+		break;
+	case 40:
+		effect = "Weaker healing potions";
+		break;
+	case 41:
+		effect = "Stronger enemies";
+		break;
+	case 42:
 		if($long) {
 			effect = "Copper attack: + to attack based on copper count";
 		} else {
 			effect = "Copper attack";
 		}
 		break;
-	case 40:
+	case 43:
 		if($long) {
 			effect = "Copper defense: + to defense based on copper count";
 		} else {
 			effect = "Copper defense";
+		}
+		break;
+	case 44:
+		if($long) {
+			effect = "Third Finger: extra ring slot";
+		} else {
+			effect = "Third Finger";
 		}
 		break;
 	}
@@ -10885,6 +10978,12 @@ Spells.get_color = function(spell) {
 	case 37:
 		return SpellColor.SpellColor_Purple;
 	case 38:
+		return SpellColor.SpellColor_Blue;
+	case 39:
+		return SpellColor.SpellColor_Blue;
+	case 40:
+		return SpellColor.SpellColor_Blue;
+	case 41:
 		return SpellColor.SpellColor_Blue;
 	default:
 		return SpellColor.SpellColor_Gray;
@@ -11111,33 +11210,44 @@ Spells.random_potion_spell = function(level,force_spell) {
 	switch(type[1]) {
 	case 0:
 		duration_type = SpellDuration.SpellDuration_Permanent;
-		duration = 0;
-		value = Stats.get({ min : 5, max : 5, scaling : 0.5},level);
+		if(Player.weak_heal) {
+			value = Stats.get({ min : 3, max : 4, scaling : 0.4},level);
+		} else {
+			value = Stats.get({ min : 5, max : 5, scaling : 0.5},level);
+		}
 		break;
 	case 1:
 		duration_type = SpellDuration.SpellDuration_Permanent;
-		duration = 0;
 		value = Stats.get({ min : 2, max : 3, scaling : 0.25},level);
 		break;
 	case 2:
 		duration_type = SpellDuration.SpellDuration_EveryAttack;
-		duration = 3 + Math.floor(3 * Math.random());
-		value = Stats.get({ min : 1, max : 1, scaling : 0.5},level);
+		if(Math.floor(101 * Math.random()) <= 5) {
+			duration = 1;
+			value = 100;
+		} else {
+			duration = 3 + Math.floor(3 * Math.random());
+			value = Stats.get({ min : 1, max : 1, scaling : 0.5},level);
+		}
 		break;
 	case 3:
-		duration_type = SpellDuration.SpellDuration_EveryAttack;
-		duration = 3 + Math.floor(3 * Math.random());
-		value = Stats.get({ min : 2, max : 3, scaling : 1.0},level);
+		if(Math.floor(101 * Math.random()) <= 5) {
+			duration_type = SpellDuration.SpellDuration_EveryTurn;
+			duration = 5;
+			value = 100;
+		} else {
+			duration_type = SpellDuration.SpellDuration_EveryAttack;
+			duration = 3 + Math.floor(3 * Math.random());
+			value = Stats.get({ min : 2, max : 3, scaling : 1.0},level);
+		}
 		break;
 	case 4:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
 		duration = -2;
-		value = 0;
 		break;
 	case 9:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
 		duration = -2;
-		value = 0;
 		break;
 	case 11:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
@@ -11152,7 +11262,6 @@ Spells.random_potion_spell = function(level,force_spell) {
 	case 17:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
 		duration = 60 + Math.floor(21 * Math.random());
-		value = 0;
 		break;
 	case 23:
 		duration_type = SpellDuration.SpellDuration_EveryAttack;
@@ -11164,8 +11273,17 @@ Spells.random_potion_spell = function(level,force_spell) {
 		duration = 20 + Math.floor(11 * Math.random());
 		value = Stats.get({ min : 1, max : 1, scaling : 1.0},level);
 		break;
+	case 39:
+		duration_type = SpellDuration.SpellDuration_Permanent;
+		break;
+	case 40:
+		duration_type = SpellDuration.SpellDuration_Permanent;
+		break;
+	case 41:
+		duration_type = SpellDuration.SpellDuration_Permanent;
+		break;
 	default:
-		haxe_Log.trace("Unhandled potion spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 871, className : "Spells", methodName : "random_potion_spell"});
+		haxe_Log.trace("Unhandled potion spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 910, className : "Spells", methodName : "random_potion_spell"});
 	}
 	return { type : type, duration_type : duration_type, duration : duration, interval : 1, interval_current : 0, value : value, origin_name : "noname"};
 };
@@ -11237,7 +11355,7 @@ Spells.random_scroll_spell = function(level) {
 		value = level;
 		break;
 	default:
-		haxe_Log.trace("Unhandled scroll spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 978, className : "Spells", methodName : "random_scroll_spell"});
+		haxe_Log.trace("Unhandled scroll spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 1017, className : "Spells", methodName : "random_scroll_spell"});
 	}
 	return { type : type, duration_type : duration_type, duration : duration, interval : 1, interval_current : 0, value : value, origin_name : "noname"};
 };
@@ -11302,7 +11420,7 @@ Spells.random_ring_spell = function(level) {
 		value = Stats.get({ min : 1, max : 2, scaling : 1.0},level);
 		break;
 	default:
-		haxe_Log.trace("Unhandled ring spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 1079, className : "Spells", methodName : "random_ring_spell"});
+		haxe_Log.trace("Unhandled ring spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 1118, className : "Spells", methodName : "random_ring_spell"});
 	}
 	return { type : type, duration_type : duration_type, duration : -1, interval : interval, interval_current : 0, value : value, origin_name : "noname"};
 };
@@ -11323,7 +11441,7 @@ Spells.random_orb_spell = function(level) {
 	case 29:
 		break;
 	default:
-		haxe_Log.trace("Unhandled orb spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 1118, className : "Spells", methodName : "random_orb_spell"});
+		haxe_Log.trace("Unhandled orb spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 1157, className : "Spells", methodName : "random_orb_spell"});
 	}
 	return { type : type, duration_type : duration_type, duration : duration, interval : 1, interval_current : 0, value : value, origin_name : "noname"};
 };
@@ -11451,7 +11569,7 @@ Spells.random_equipment_spell_equip = function(equipment_type) {
 		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModDropChance, c : 1.0},{ v : SpellType.SpellType_ModCopperChance, c : 1.0},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_UncoverMap, c : 1.0},{ v : SpellType.SpellType_ShowThings, c : 1.0},{ v : SpellType.SpellType_ModHealth, c : 1.0},{ v : SpellType.SpellType_HealthLeech, c : 1.0},{ v : SpellType.SpellType_Nolos, c : 1.0},{ v : SpellType.SpellType_ModAttack, c : 1.0},{ v : SpellType.SpellType_ModAttackByCopper, c : 0.15}]);
 		break;
 	case 2:
-		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModDropChance, c : 1.0},{ v : SpellType.SpellType_ModCopperChance, c : 1.0},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_LuckyCharge, c : 1.0},{ v : SpellType.SpellType_Critical, c : 1.0},{ v : SpellType.SpellType_SummonSkeletons, c : 0.25},{ v : SpellType.SpellType_AoeDamage, c : 1.0},{ v : SpellType.SpellType_ModDefenseByCopper, c : 0.15}]);
+		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModDropChance, c : 1.0},{ v : SpellType.SpellType_ModCopperChance, c : 1.0},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_LuckyCharge, c : 1.0},{ v : SpellType.SpellType_Critical, c : 1.0},{ v : SpellType.SpellType_SummonSkeletons, c : 0.25},{ v : SpellType.SpellType_ExtraRing, c : 0.1},{ v : SpellType.SpellType_AoeDamage, c : 1.0},{ v : SpellType.SpellType_ModDefenseByCopper, c : 0.15}]);
 		break;
 	case 3:
 		type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModDropChance, c : 1.0},{ v : SpellType.SpellType_ModCopperChance, c : 1.0},{ v : SpellType.SpellType_EnergyShield, c : 1.0},{ v : SpellType.SpellType_LuckyCharge, c : 1.0},{ v : SpellType.SpellType_Critical, c : 1.0},{ v : SpellType.SpellType_HealthLeech, c : 1.0},{ v : SpellType.SpellType_DamageShield, c : 1.0},{ v : SpellType.SpellType_ModAttack, c : 1.0},{ v : SpellType.SpellType_SummonGolem, c : 0.5},{ v : SpellType.SpellType_ModDefenseByCopper, c : 0.15}]);
@@ -11507,10 +11625,10 @@ Spells.random_equipment_spell_equip = function(equipment_type) {
 	case 37:
 		duration_type = SpellDuration.SpellDuration_EveryAttackChance;
 		break;
-	case 39:
+	case 42:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
 		break;
-	case 40:
+	case 43:
 		duration_type = SpellDuration.SpellDuration_EveryTurn;
 		break;
 	default:
@@ -39956,7 +40074,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 234263;
+	this.version = 490127;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
@@ -87475,12 +87593,10 @@ GenerateWorld.ROOM_SPELL_CHANCE = 3;
 GenerateWorld.ROOM_SPELL_SPREADS_TO_NEIGHBORS_CHANCE = 50;
 GenerateWorld.ITEM_IN_ENEMY_ROOM_CHANCE = 33;
 GenerateWorld.TALK_TALKER_CHANCE = 10;
+GenerateWorld.DISCONNECTED_ROOM_CHANCE = 25;
 GenerateWorld.KEY_ON_ENEMY_CHANCE = 50;
 GenerateWorld.MERCHANT_ITEM_LEVEL_BONUS = 1;
-GenerateWorld.ENEMY_ITEM_IDEAL_RATIO = 0.7;
 GenerateWorld.HEALTH_POTION_TALLY_SIZE = 15;
-GenerateWorld.enemy_rooms_this_floor = 0;
-GenerateWorld.item_rooms_this_floor = 0;
 GenerateWorld.enemies_this_floor = 0;
 GenerateWorld.items_this_floor = 0;
 GenerateWorld.floors_until_floor_with_merchant = 1 + Math.floor(3 * Math.random());
@@ -87491,7 +87607,7 @@ GenerateWorld.healthmax_on_floor = new haxe_ds_IntMap();
 LOS.rays = [];
 LOS.free_map = haxegon_Data.create2darray(31,31,false);
 Main.SCREEN_WIDTH = 1600;
-Main.SCREEN_HEIGHT = 1000;
+Main.SCREEN_HEIGHT = 960;
 Main.TILESIZE = 8;
 Main.MAP_WIDTH = 125;
 Main.MAP_HEIGHT = 125;
@@ -87501,7 +87617,6 @@ Main.WORLD_SCALE = 4;
 Main.MINIMAP_SCALE = 4;
 Main.MINIMAP_X = 0;
 Main.MINIMAP_Y = 0;
-Main.RINGS_MAX = 2;
 Main.PLAYER_SPELLS_MAX = 10;
 Main.SPELL_ITEM_LEVEL_BONUS = 1;
 Main.FLOORS_PER_PALETTE = 3;
@@ -87515,7 +87630,7 @@ Main.INVENTORY_Y = 210;
 Main.INVENTORY_WIDTH = 4;
 Main.INVENTORY_HEIGHT = 2;
 Main.SPELL_LIST_Y = 300;
-Main.MESSAGES_Y = 600;
+Main.MESSAGES_Y = 580;
 Main.MESSAGES_LENGTH_MAX = 20;
 Main.TURN_DELIMITER = "------------------------------";
 Main.TOOLTIP_WORDWRAP = 400;
@@ -87651,10 +87766,18 @@ Player.full_minimap = false;
 Player.invisible = false;
 Player.increase_drop_level = false;
 Player.summon_buff = false;
+Player.more_enemies = false;
+Player.weak_heal = false;
+Player.stronger_enemies = false;
+Player.extra_ring = false;
 Spells.prios = (function($this) {
 	var $r;
 	var _g = new haxe_ds_EnumValueMap();
 	_g.set(SpellType.SpellType_NextFloor,0);
+	_g.set(SpellType.SpellType_ExtraRing,1);
+	_g.set(SpellType.SpellType_MoreEnemies,1);
+	_g.set(SpellType.SpellType_WeakHeal,1);
+	_g.set(SpellType.SpellType_StrongerEnemies,1);
 	_g.set(SpellType.SpellType_CopyEntity,1);
 	_g.set(SpellType.SpellType_ModUseCharges,1);
 	_g.set(SpellType.SpellType_Invisibility,1);
