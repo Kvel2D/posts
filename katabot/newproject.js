@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","677");
+		_this.setReserved("build","688");
 	} else {
-		_this.h["build"] = "677";
+		_this.h["build"] = "688";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -923,9 +923,9 @@ ApplicationMain.create = function(config) {
 	}
 	var _this5 = app.meta;
 	if(__map_reserved["version"] != null) {
-		_this5.setReserved("version","0.2.9");
+		_this5.setReserved("version","1.0.0");
 	} else {
-		_this5.h["version"] = "0.2.9";
+		_this5.h["version"] = "1.0.0";
 	}
 	var attributes = { allowHighDPI : true, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 0, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "Katabot", width : 0, x : null, y : null};
 	attributes.context = { antialiasing : 0, background : 0, colorDepth : 32, depth : true, hardware : true, stencil : true, type : null, vsync : true};
@@ -5628,7 +5628,7 @@ GenerateWorld.ENEMY_TYPES_PER_LEVEL = function() {
 };
 GenerateWorld.ENEMY_ITEM_IDEAL_RATIO = function() {
 	if(Player.more_enemies) {
-		return 0.8;
+		return 0.7;
 	} else {
 		return 0.6;
 	}
@@ -6849,6 +6849,7 @@ var Main = function() {
 		_g2.push([]);
 	}
 	this.spells_this_turn = _g2;
+	this.USER_version = false;
 	this.USER_draw_chars_only = false;
 	this.USER_tile_patterns = true;
 	this.USER_show_buttons = false;
@@ -6973,7 +6974,7 @@ Main.timer_start = function() {
 };
 Main.timer_end = function() {
 	var new_stamp = new Date().getTime() / 1000;
-	haxe_Log.trace("" + (new_stamp - Main.time_stamp),{ fileName : "Main.hx", lineNumber : 725, className : "Main", methodName : "timer_end"});
+	haxe_Log.trace("" + (new_stamp - Main.time_stamp),{ fileName : "Main.hx", lineNumber : 726, className : "Main", methodName : "timer_end"});
 	Main.time_stamp = new_stamp;
 };
 Main.get_view_x = function() {
@@ -7146,6 +7147,7 @@ Main.prototype = {
 	,USER_show_buttons: null
 	,USER_tile_patterns: null
 	,USER_draw_chars_only: null
+	,USER_version: null
 	,spells_this_turn: null
 	,attack_target: null
 	,interact_target: null
@@ -8829,7 +8831,7 @@ Main.prototype = {
 				total_string += "\ncopper_gained=" + this.copper_gains[i + 1] + "\n\n";
 			}
 		}
-		haxe_Log.trace(total_string,{ fileName : "Main.hx", lineNumber : 2072, className : "Main", methodName : "print_game_stats"});
+		haxe_Log.trace(total_string,{ fileName : "Main.hx", lineNumber : 2073, className : "Main", methodName : "print_game_stats"});
 	}
 	,render_world: function() {
 		var _gthis = this;
@@ -9121,10 +9123,12 @@ Main.prototype = {
 			}
 		}
 		haxegon_Gfx.fillbox(Player.x * 4,Player.y * 4,4,4,12461619);
-		haxegon_Text.change_size(14);
-		var meta = openfl_Lib.get_current().stage.application.meta;
-		var version = __map_reserved["version"] != null ? meta.getReserved("version") : meta.h["version"];
-		haxegon_Text.display(0,960 - haxegon_Text.height() * 2,"" + version);
+		if(this.USER_version) {
+			haxegon_Text.change_size(14);
+			var meta = openfl_Lib.get_current().stage.application.meta;
+			var version = __map_reserved["version"] != null ? meta.getReserved("version") : meta.h["version"];
+			haxegon_Text.display(0,960 - haxegon_Text.height() * 2,"" + version);
+		}
 	}
 	,move_timer: null
 	,move_timer_max: null
@@ -9597,7 +9601,7 @@ Main.prototype = {
 							spell.interval *= 4;
 						}
 					} else {
-						haxe_Log.trace("no prio defined for " + Std.string(spell.type),{ fileName : "Main.hx", lineNumber : 2955, className : "Main", methodName : "update_normal"});
+						haxe_Log.trace("no prio defined for " + Std.string(spell.type),{ fileName : "Main.hx", lineNumber : 2958, className : "Main", methodName : "update_normal"});
 					}
 				}
 				return spell_over;
@@ -11423,7 +11427,10 @@ Spells.random_ring_spell = function(level) {
 	return { type : type, duration_type : duration_type, duration : -1, interval : interval, interval_current : 0, value : value, origin_name : "noname"};
 };
 Spells.random_orb_spell = function(level) {
-	var type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModUseCharges, c : 1.0},{ v : SpellType.SpellType_CopyEntity, c : 1.0},{ v : SpellType.SpellType_ImproveEquipment, c : 1.0},{ v : SpellType.SpellType_EnchantEquipment, c : 1.0}]);
+	var type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModUseCharges, c : 1.0},{ v : SpellType.SpellType_CopyEntity, c : 0.5},{ v : SpellType.SpellType_ImproveEquipment, c : 1.0},{ v : SpellType.SpellType_EnchantEquipment, c : 1.0}]);
+	if(type == SpellType.SpellType_CopyEntity) {
+		haxe_Log.trace("!",{ fileName : "Spells.hx", lineNumber : 1142, className : "Spells", methodName : "random_orb_spell"});
+	}
 	var duration_type = SpellDuration.SpellDuration_Permanent;
 	var duration = 0;
 	var value = 0;
@@ -11439,7 +11446,7 @@ Spells.random_orb_spell = function(level) {
 	case 29:
 		break;
 	default:
-		haxe_Log.trace("Unhandled orb spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 1157, className : "Spells", methodName : "random_orb_spell"});
+		haxe_Log.trace("Unhandled orb spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 1161, className : "Spells", methodName : "random_orb_spell"});
 	}
 	return { type : type, duration_type : duration_type, duration : duration, interval : 1, interval_current : 0, value : value, origin_name : "noname"};
 };
@@ -40072,7 +40079,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 779127;
+	this.version = 260918;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
