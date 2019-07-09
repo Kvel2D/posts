@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","688");
+		_this.setReserved("build","746");
 	} else {
-		_this.h["build"] = "688";
+		_this.h["build"] = "746";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -6814,13 +6814,12 @@ var Main = function() {
 	this.move_timer_max = 5;
 	this.move_timer = 0;
 	this.enemy_tile_colors = [[10329501,16777215,12461619,14708619,10773538,15436081,16245355,4491546,10735143,11721967],[10329501,16777215,12461619,14708619,10773538,15436081,16245355,4491546,10735143,3252978,11721967],[0,10329501,16777215,12461619,14708619,10773538,15436081,16245355,10735143],[0,16777215,12461619,14708619,4799531,10773538,15436081,3098702,4491546,10735143,1779250,22404,3252978,11721967],[0,10329501,16777215,14708619,15436081,16245355,3098702,4491546,10735143,1779250,22404,3252978,11721967]];
-	this.inventory_render_cache = haxegon_Data.create2darray(4,2,null);
-	var _g = new haxe_ds_EnumValueMap();
-	_g.set(EquipmentType.EquipmentType_Head,null);
-	_g.set(EquipmentType.EquipmentType_Chest,null);
-	_g.set(EquipmentType.EquipmentType_Legs,null);
-	_g.set(EquipmentType.EquipmentType_Weapon,null);
-	this.equipment_render_cache = _g;
+	this.entity_id_to_canvas_state = new haxe_ds_IntMap();
+	this.entity_id_to_canvas = new haxe_ds_IntMap();
+	this.ENTITY_CANVAS_ID_MAX = 0;
+	this.entity_canvas_used = new haxe_ds_StringMap();
+	this.player_hp_cache = "";
+	this.player_stats_cache = "";
 	this.defense_count_this_level = 0;
 	this.attack_count_this_level = 0;
 	this.total_defense_this_level = 0;
@@ -6832,19 +6831,19 @@ var Main = function() {
 	this.use_entity_that_needs_target = -1;
 	this.targeting_state = TargetingState.TargetingState_NotTargeting;
 	this.added_message_this_turn = false;
-	var _g1 = [];
-	var _g11 = 0;
-	while(_g11 < 20) {
-		var i = _g11++;
-		_g1.push("------------------------------");
+	var _g = [];
+	var _g1 = 0;
+	while(_g1 < 20) {
+		var i = _g1++;
+		_g.push("------------------------------");
 	}
-	this.messages = _g1;
+	this.messages = _g;
 	this.interact_target = -1;
 	this.attack_target = -1;
 	var _g2 = [];
 	var _g21 = 0;
-	var _g12 = 4;
-	while(_g21 < _g12) {
+	var _g11 = 4;
+	while(_g21 < _g11) {
 		var i1 = _g21++;
 		_g2.push([]);
 	}
@@ -6888,7 +6887,8 @@ var Main = function() {
 	haxegon_Gfx.createimage("minimap_canvas_connections",500,500);
 	haxegon_Gfx.createimage("minimap_canvas_rooms",500,500);
 	haxegon_Gfx.createimage("minimap_canvas_full",500,500);
-	haxegon_Gfx.createimage("ui_items_canvas",128,960);
+	haxegon_Gfx.createimage("player_stats_canvas",128,960);
+	haxegon_Gfx.createimage("player_hp_canvas",100,100);
 	haxegon_Gfx.createtiles("test_enemy_tiles",8,8,100);
 	haxegon_Gfx.changetileset("tiles");
 	haxegon_Gfx.createimage("ui_canvas",600,960);
@@ -6907,9 +6907,9 @@ var Main = function() {
 	haxegon_Gfx.scale(4);
 	var armor_i = 0;
 	var _g3 = 0;
-	var _g13 = EquipmentType.__empty_constructs__;
-	while(_g3 < _g13.length) {
-		var equipment_type = _g13[_g3];
+	var _g12 = EquipmentType.__empty_constructs__;
+	while(_g3 < _g12.length) {
+		var equipment_type = _g12[_g3];
 		++_g3;
 		haxegon_Gfx.drawbox(armor_i * 8 * 4,135,32,32,16777215);
 		++armor_i;
@@ -6969,13 +6969,47 @@ Main.entities_with = function(map) {
 	}
 	return _g;
 };
-Main.timer_start = function() {
+Main.TIMER_START = function() {
 	Main.time_stamp = new Date().getTime() / 1000;
 };
-Main.timer_end = function() {
+Main.TIMER_END = function() {
 	var new_stamp = new Date().getTime() / 1000;
-	haxe_Log.trace("" + (new_stamp - Main.time_stamp),{ fileName : "Main.hx", lineNumber : 726, className : "Main", methodName : "timer_end"});
+	haxe_Log.trace("" + (new_stamp - Main.time_stamp),{ fileName : "Main.hx", lineNumber : 733, className : "Main", methodName : "TIMER_END"});
 	Main.time_stamp = new_stamp;
+};
+Main.TIME_SEGMENT = function(name) {
+	if(Main.started_timing_segment) {
+		var _this = Main.segment_deltas;
+		if(!(__map_reserved[name] != null ? _this.existsReserved(name) : _this.h.hasOwnProperty(name))) {
+			var this1 = Main.segment_deltas;
+			var v = [];
+			var _this1 = this1;
+			if(__map_reserved[name] != null) {
+				_this1.setReserved(name,v);
+			} else {
+				_this1.h[name] = v;
+			}
+		}
+		var _this2 = Main.segment_starts;
+		var start = __map_reserved[name] != null ? _this2.getReserved(name) : _this2.h[name];
+		var _this3 = Main.segment_deltas;
+		var deltas = __map_reserved[name] != null ? _this3.getReserved(name) : _this3.h[name];
+		var delta = new Date().getTime() / 1000 - start;
+		if(deltas.length > 180) {
+			deltas.shift();
+		}
+		deltas.push(delta);
+	} else {
+		var this2 = Main.segment_starts;
+		var v1 = new Date().getTime() / 1000;
+		var _this4 = this2;
+		if(__map_reserved[name] != null) {
+			_this4.setReserved(name,v1);
+		} else {
+			_this4.h[name] = v1;
+		}
+	}
+	Main.started_timing_segment = !Main.started_timing_segment;
 };
 Main.get_view_x = function() {
 	return Player.x - 15;
@@ -7114,7 +7148,7 @@ Main.get_entity_render_data = function(e) {
 	if(Entity.draw_tile.h.hasOwnProperty(e)) {
 		draw_tile = Entity.draw_tile.h[e];
 	}
-	if(!Entity.draw_char.h.hasOwnProperty(e) && !Entity.draw_tile.h.hasOwnProperty(e)) {
+	if(!Entity.draw_char.h.hasOwnProperty(e) && !Entity.draw_tile.h.hasOwnProperty(e) && false) {
 		draw_tile = 0;
 	}
 	var charges = -1;
@@ -7165,8 +7199,12 @@ Main.prototype = {
 	,total_defense_this_level: null
 	,attack_count_this_level: null
 	,defense_count_this_level: null
-	,equipment_render_cache: null
-	,inventory_render_cache: null
+	,player_stats_cache: null
+	,player_hp_cache: null
+	,entity_canvas_used: null
+	,ENTITY_CANVAS_ID_MAX: null
+	,entity_id_to_canvas: null
+	,entity_id_to_canvas_state: null
 	,enemy_tile_colors: null
 	,generate_enemy_tile: function(tile) {
 		haxegon_Gfx.scale(1);
@@ -7423,6 +7461,18 @@ Main.prototype = {
 		haxegon_Gfx.drawtoscreen();
 	}
 	,generate_level: function() {
+		this.entity_id_to_canvas = new haxe_ds_IntMap();
+		this.entity_id_to_canvas_state = new haxe_ds_IntMap();
+		var c = this.entity_canvas_used.keys();
+		while(c.hasNext()) {
+			var c1 = c.next();
+			var _this = this.entity_canvas_used;
+			if(__map_reserved[c1] != null) {
+				_this.setReserved(c1,false);
+			} else {
+				_this.h[c1] = false;
+			}
+		}
 		while(true) {
 			var _g = 0;
 			var _g1 = Main.entities_with(Entity.position);
@@ -8336,24 +8386,69 @@ Main.prototype = {
 			return false;
 		}
 	}
-	,draw_entity: function(e,x,y,render_data) {
-		if(render_data == null) {
-			render_data = Main.get_entity_render_data(e);
+	,draw_entity: function(e,x,y) {
+		var render_data = Main.get_entity_render_data(e);
+		var canvas = null;
+		if(this.entity_id_to_canvas.h.hasOwnProperty(e)) {
+			canvas = this.entity_id_to_canvas.h[e];
+		} else {
+			var c = this.entity_canvas_used.keys();
+			while(c.hasNext()) {
+				var c1 = c.next();
+				var _this = this.entity_canvas_used;
+				if(!(__map_reserved[c1] != null ? _this.getReserved(c1) : _this.h[c1])) {
+					canvas = c1;
+					break;
+				}
+			}
+			if(canvas == null) {
+				canvas = "entity_canvas" + this.ENTITY_CANVAS_ID_MAX;
+				haxegon_Gfx.createimage(canvas,32,42);
+				this.ENTITY_CANVAS_ID_MAX++;
+			}
+			var _this1 = this.entity_canvas_used;
+			if(__map_reserved[canvas] != null) {
+				_this1.setReserved(canvas,true);
+			} else {
+				_this1.h[canvas] = true;
+			}
+			this.entity_id_to_canvas.h[e] = canvas;
+			this.entity_id_to_canvas_state.h[e] = null;
 		}
-		if(render_data.draw_char != "null" && (render_data.draw_tile == -1 || this.USER_draw_chars_only)) {
-			haxegon_Text.change_size(32);
-			haxegon_Text.display(x,y,render_data.draw_char,render_data.draw_char_color);
-		} else if(render_data.draw_tile != -1) {
-			haxegon_Gfx.drawtile(x,y,render_data.draw_tile);
+		var current_state = this.entity_id_to_canvas_state.h[e];
+		var copy_render_data = function(d) {
+			return { draw_tile : d.draw_tile, draw_char : d.draw_char, draw_char_color : d.draw_char_color, charges : d.charges, health_bar : d.health_bar};
+		};
+		var render_data_equal = function(d1,d2) {
+			if(d1.draw_tile == d2.draw_tile && d1.draw_char == d2.draw_char && d1.draw_char_color == d2.draw_char_color && d1.charges == d2.charges) {
+				return d1.health_bar == d2.health_bar;
+			} else {
+				return false;
+			}
+		};
+		if(current_state == null || !render_data_equal(current_state,render_data)) {
+			haxegon_Gfx.scale(4);
+			haxegon_Gfx.drawtoimage(canvas);
+			haxegon_Gfx.clearscreentransparent();
+			if(render_data.draw_char != "null" && (render_data.draw_tile == -1 || this.USER_draw_chars_only)) {
+				haxegon_Text.change_size(32);
+				haxegon_Text.display(0,10,render_data.draw_char,render_data.draw_char_color);
+			} else if(render_data.draw_tile != -1) {
+				haxegon_Gfx.drawtile(0,10,render_data.draw_tile);
+			}
+			if(render_data.charges != -1) {
+				haxegon_Text.change_size(8);
+				haxegon_Text.display(0,10,"" + render_data.charges,16777215);
+			}
+			if(render_data.health_bar != "null") {
+				haxegon_Text.change_size(8);
+				haxegon_Text.display(0,0,render_data.health_bar);
+			}
+			haxegon_Gfx.drawtoscreen();
+			this.entity_id_to_canvas_state.h[e] = render_data;
+			haxegon_Gfx.scale(1);
 		}
-		if(render_data.charges != -1) {
-			haxegon_Text.change_size(8);
-			haxegon_Text.display(x,y,"" + render_data.charges,16777215);
-		}
-		if(render_data.health_bar != "null") {
-			haxegon_Text.change_size(8);
-			haxegon_Text.display(x,y - 10,render_data.health_bar);
-		}
+		haxegon_Gfx.drawimage(x,y - 10,canvas);
 	}
 	,damage_player: function(damage,from_text) {
 		if(from_text == null) {
@@ -8831,10 +8926,9 @@ Main.prototype = {
 				total_string += "\ncopper_gained=" + this.copper_gains[i + 1] + "\n\n";
 			}
 		}
-		haxe_Log.trace(total_string,{ fileName : "Main.hx", lineNumber : 2073, className : "Main", methodName : "print_game_stats"});
+		haxe_Log.trace(total_string,{ fileName : "Main.hx", lineNumber : 2158, className : "Main", methodName : "print_game_stats"});
 	}
 	,render_world: function() {
-		var _gthis = this;
 		var view_x = Player.x - 15;
 		var view_y = Player.y - 15;
 		haxegon_Gfx.scale(1);
@@ -8865,6 +8959,7 @@ Main.prototype = {
 		haxegon_Gfx.clearscreen(0);
 		haxegon_Gfx.scale(4);
 		haxegon_Gfx.drawimage(0,0,"tiles_canvas");
+		haxegon_Gfx.scale(1);
 		haxegon_Text.change_size(32);
 		var _g2 = 0;
 		var _g11 = Main.entities_with(Entity.position);
@@ -8888,6 +8983,7 @@ Main.prototype = {
 				this.draw_entity(e,(pos.x - Player.x + 15) * 8 * 4,(pos.y - Player.y + 15) * 8 * 4);
 			}
 		}
+		haxegon_Gfx.scale(4);
 		if(this.USER_draw_chars_only) {
 			haxegon_Text.change_size(32);
 			haxegon_Text.display((Player.x - Player.x + 15) * 8 * 4,(Player.y - Player.y + 15) * 8 * 4,"@",16245355);
@@ -8934,9 +9030,18 @@ Main.prototype = {
 				}
 			}
 		}
-		haxegon_Gfx.scale(1);
 		haxegon_Text.change_size(8);
-		haxegon_Text.display((Player.x - Player.x + 15) * 8 * 4,(Player.y - Player.y + 15) * 8 * 4 - 10,"" + Player.health + "/" + (Player.health_max + Player.health_max_mod));
+		haxegon_Gfx.scale(1);
+		var player_hp_text = "" + Player.health + "/" + (Player.health_max + Player.health_max_mod);
+		if(player_hp_text != this.player_hp_cache) {
+			haxegon_Gfx.drawtoimage("player_hp_canvas");
+			haxegon_Gfx.clearscreentransparent();
+			haxegon_Text.display(0,0,player_hp_text);
+			haxegon_Gfx.drawtoscreen();
+			this.player_hp_cache = player_hp_text;
+		}
+		haxegon_Gfx.drawimage((Player.x - Player.x + 15) * 8 * 4,(Player.y - Player.y + 15) * 8 * 4 - 10,"player_hp_canvas");
+		haxegon_Text.change_size(8);
 		var removed_damage_numbers = [];
 		var _g4 = 0;
 		var _g13 = this.damage_numbers;
@@ -8963,55 +9068,45 @@ Main.prototype = {
 		player_stats_right_text += "\n" + (Player.defense + Player.defense_mod);
 		player_stats_right_text += "\n" + Player.pure_absorb;
 		player_stats_right_text += "\n" + Player.copper_count;
-		haxegon_Text.display(1090,0,player_stats_right_text);
+		if(player_stats_right_text != this.player_stats_cache) {
+			haxegon_Gfx.drawtoimage("player_stats_canvas");
+			haxegon_Gfx.clearscreentransparent();
+			haxegon_Text.display(85,0,player_stats_right_text);
+			haxegon_Gfx.drawtoscreen();
+			this.player_stats_cache = player_stats_right_text;
+		}
 		haxegon_Gfx.scale(1);
 		haxegon_Gfx.drawimage(1005,0,"ui_canvas");
-		var draw_entity_selective = function(e2,x2,y2,current_data,new_data) {
-			var entity_changed = current_data == null && new_data != null || current_data != null && new_data != null && !_gthis.render_data_equals(new_data,current_data);
-			var entity_removed = current_data != null && new_data == null;
-			if(entity_changed || entity_removed) {
-				var box_pad = 1;
-				haxegon_Gfx.fillbox(x2 + box_pad,y2 + box_pad,32 - box_pad * 2,32 - box_pad * 2,0);
-			}
-			if(entity_changed) {
-				_gthis.draw_entity(e2,x2,y2,new_data);
-			}
-		};
-		haxegon_Gfx.scale(4);
-		haxegon_Gfx.drawtoimage("ui_items_canvas");
+		haxegon_Gfx.drawimage(1005,0,"player_stats_canvas");
+		haxegon_Gfx.scale(1);
 		var armor_i = 0;
 		var _g6 = 0;
 		var _g14 = EquipmentType.__empty_constructs__;
 		while(_g6 < _g14.length) {
 			var equipment_type1 = _g14[_g6];
 			++_g6;
-			var e3 = Player.equipment.get(equipment_type1);
-			var draw_x = armor_i * 8 * 4;
-			var draw_y = 135;
-			var current_data1 = this.equipment_render_cache.get(equipment_type1);
-			var new_data1 = Entity.equipment.h.hasOwnProperty(e3) && !Entity.position.h.hasOwnProperty(e3) ? Main.get_entity_render_data(e3) : null;
-			draw_entity_selective(e3,draw_x,draw_y,current_data1,new_data1);
-			this.equipment_render_cache.set(equipment_type1,new_data1);
+			var e2 = Player.equipment.get(equipment_type1);
+			if(Entity.equipment.h.hasOwnProperty(e2) && !Entity.position.h.hasOwnProperty(e2)) {
+				var draw_x = 1005 + armor_i * 8 * 4;
+				var draw_y = 135;
+				this.draw_entity(e2,draw_x,draw_y);
+			}
 			++armor_i;
 		}
 		var _g7 = 0;
 		while(_g7 < 4) {
-			var x3 = _g7++;
+			var x2 = _g7++;
 			var _g15 = 0;
 			while(_g15 < 2) {
-				var y3 = _g15++;
-				var e4 = Player.inventory[x3][y3];
-				var draw_x1 = x3 * 8 * 4;
-				var draw_y1 = 210 + y3 * 8 * 4;
-				var current_data2 = this.inventory_render_cache[x3][y3];
-				var new_data2 = Entity.item.h.hasOwnProperty(e4) && !Entity.position.h.hasOwnProperty(e4) ? Main.get_entity_render_data(e4) : null;
-				draw_entity_selective(e4,draw_x1,draw_y1,current_data2,new_data2);
-				this.inventory_render_cache[x3][y3] = new_data2;
+				var y2 = _g15++;
+				var e3 = Player.inventory[x2][y2];
+				if(Entity.item.h.hasOwnProperty(e3) && !Entity.position.h.hasOwnProperty(e3)) {
+					var draw_x1 = 1005 + x2 * 8 * 4;
+					var draw_y1 = 210 + y2 * 8 * 4;
+					this.draw_entity(e3,draw_x1,draw_y1);
+				}
 			}
 		}
-		haxegon_Gfx.drawtoscreen();
-		haxegon_Gfx.scale(1);
-		haxegon_Gfx.drawimage(1005,0,"ui_items_canvas");
 		haxegon_Gfx.scale(1);
 		haxegon_Text.change_size(14);
 		var active_spells = "SPELLS";
@@ -9048,15 +9143,15 @@ Main.prototype = {
 		var _g10 = 0;
 		var _g18 = Main.entities_with(Entity.draw_on_minimap);
 		while(_g10 < _g18.length) {
-			var e5 = _g18[_g10];
+			var e4 = _g18[_g10];
 			++_g10;
-			var draw_on_minimap = Entity.draw_on_minimap.h[e5];
-			if(!draw_on_minimap.seen && Entity.position.h.hasOwnProperty(e5)) {
-				var pos1 = Entity.position.h[e5];
+			var draw_on_minimap = Entity.draw_on_minimap.h[e4];
+			if(!draw_on_minimap.seen && Entity.position.h.hasOwnProperty(e4)) {
+				var pos1 = Entity.position.h[e4];
 				var tmp1;
-				var x4 = pos1.x;
-				var y4 = pos1.y;
-				if(!(x4 < Player.x - 15 || y4 < Player.y - 15 || x4 > Player.x + 15 || y4 > Player.y + 15)) {
+				var x3 = pos1.x;
+				var y3 = pos1.y;
+				if(!(x3 < Player.x - 15 || y3 < Player.y - 15 || x3 > Player.x + 15 || y3 > Player.y + 15)) {
 					if(!(!this.los[pos1.x - view_x][pos1.y - view_y] || Player.nolos)) {
 						tmp1 = this.DEV_nolos;
 					} else {
@@ -9104,11 +9199,11 @@ Main.prototype = {
 		var _g22 = 0;
 		var _g111 = Main.entities_with(Entity.draw_on_minimap);
 		while(_g22 < _g111.length) {
-			var e6 = _g111[_g22];
+			var e5 = _g111[_g22];
 			++_g22;
-			var draw_on_minimap1 = Entity.draw_on_minimap.h[e6];
-			if((draw_on_minimap1.seen || Player.show_things || this.DEV_full_minimap) && Entity.position.h.hasOwnProperty(e6)) {
-				var pos2 = Entity.position.h[e6];
+			var draw_on_minimap1 = Entity.draw_on_minimap.h[e5];
+			if((draw_on_minimap1.seen || Player.show_things || this.DEV_full_minimap) && Entity.position.h.hasOwnProperty(e5)) {
+				var pos2 = Entity.position.h[e5];
 				haxegon_Gfx.fillbox(pos2.x * 4,pos2.y * 4,6.,6.,draw_on_minimap1.color);
 			}
 		}
@@ -9116,9 +9211,9 @@ Main.prototype = {
 			var _g23 = 0;
 			var _g112 = Main.entities_with(Entity.combat);
 			while(_g23 < _g112.length) {
-				var e7 = _g112[_g23];
+				var e6 = _g112[_g23];
 				++_g23;
-				var pos3 = Entity.position.h[e7];
+				var pos3 = Entity.position.h[e6];
 				haxegon_Gfx.fillbox(pos3.x * 4,pos3.y * 4,6.,6.,12461619);
 			}
 		}
@@ -9601,7 +9696,7 @@ Main.prototype = {
 							spell.interval *= 4;
 						}
 					} else {
-						haxe_Log.trace("no prio defined for " + Std.string(spell.type),{ fileName : "Main.hx", lineNumber : 2958, className : "Main", methodName : "update_normal"});
+						haxe_Log.trace("no prio defined for " + Std.string(spell.type),{ fileName : "Main.hx", lineNumber : 3024, className : "Main", methodName : "update_normal"});
 					}
 				}
 				return spell_over;
@@ -9780,8 +9875,24 @@ Main.prototype = {
 		}
 	}
 	,update: function() {
-		var _g = this.game_state;
-		switch(_g[1]) {
+		if(haxegon_Input.justpressed(haxegon_Key.B)) {
+			var s = Main.segment_deltas.keys();
+			while(s.hasNext()) {
+				var s1 = s.next();
+				var _this = Main.segment_deltas;
+				var deltas = __map_reserved[s1] != null ? _this.getReserved(s1) : _this.h[s1];
+				var sum = 0.0;
+				var _g = 0;
+				while(_g < deltas.length) {
+					var d = deltas[_g];
+					++_g;
+					sum += d;
+				}
+				haxe_Log.trace("" + s1 + " = " + Math.round(sum / deltas.length * 10000),{ fileName : "Main.hx", lineNumber : 3240, className : "Main", methodName : "update"});
+			}
+		}
+		var _g1 = this.game_state;
+		switch(_g1[1]) {
 		case 0:
 			this.update_normal();
 			break;
@@ -9814,13 +9925,6 @@ Main.prototype = {
 				this.USER_draw_chars_only = !this.USER_draw_chars_only;
 				Main.obj.data.USER_draw_chars_only = this.USER_draw_chars_only;
 				Main.obj.flush();
-				this.inventory_render_cache = haxegon_Data.create2darray(4,2,null);
-				var _g1 = new haxe_ds_EnumValueMap();
-				_g1.set(EquipmentType.EquipmentType_Head,null);
-				_g1.set(EquipmentType.EquipmentType_Chest,null);
-				_g1.set(EquipmentType.EquipmentType_Legs,null);
-				_g1.set(EquipmentType.EquipmentType_Weapon,null);
-				this.equipment_render_cache = _g1;
 			}
 			if(haxegon_GUI.auto_text_button("Controls")) {
 				this.print_tutorial();
@@ -11428,9 +11532,6 @@ Spells.random_ring_spell = function(level) {
 };
 Spells.random_orb_spell = function(level) {
 	var type = haxegon_Random.pick_chance([{ v : SpellType.SpellType_ModUseCharges, c : 1.0},{ v : SpellType.SpellType_CopyEntity, c : 0.5},{ v : SpellType.SpellType_ImproveEquipment, c : 1.0},{ v : SpellType.SpellType_EnchantEquipment, c : 1.0}]);
-	if(type == SpellType.SpellType_CopyEntity) {
-		haxe_Log.trace("!",{ fileName : "Spells.hx", lineNumber : 1142, className : "Spells", methodName : "random_orb_spell"});
-	}
 	var duration_type = SpellDuration.SpellDuration_Permanent;
 	var duration = 0;
 	var value = 0;
@@ -11446,7 +11547,7 @@ Spells.random_orb_spell = function(level) {
 	case 29:
 		break;
 	default:
-		haxe_Log.trace("Unhandled orb spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 1161, className : "Spells", methodName : "random_orb_spell"});
+		haxe_Log.trace("Unhandled orb spell type: " + Std.string(type),{ fileName : "Spells.hx", lineNumber : 1157, className : "Spells", methodName : "random_orb_spell"});
 	}
 	return { type : type, duration_type : duration_type, duration : duration, interval : 1, interval_current : 0, value : value, origin_name : "noname"};
 };
@@ -14839,9 +14940,9 @@ haxegon_GUI.auto_text_button = function(text,skips) {
 	}
 	var text_height = haxegon_Text.height();
 	var button_height = text_height * 1.25;
-	haxegon_GUI.y += (button_height + 2) * skips;
+	haxegon_GUI.y += (button_height + haxegon_GUI.button_auto_spacing) * skips;
 	var pressed = haxegon_GUI.text_button(haxegon_GUI.x,haxegon_GUI.y,text);
-	haxegon_GUI.y += button_height + 2;
+	haxegon_GUI.y += button_height + haxegon_GUI.button_auto_spacing;
 	return pressed;
 };
 haxegon_GUI.text_button = function(button_x,button_y,text) {
@@ -14852,6 +14953,7 @@ haxegon_GUI.text_button = function(button_x,button_y,text) {
 	var point_x = haxegon_Mouse.x;
 	var point_y = haxegon_Mouse.y;
 	if(point_x >= button_x && point_x < button_x + button_width && point_y >= button_y && point_y < button_y + button_height) {
+		haxegon_GUI.hovering_button = true;
 		haxegon_Gfx.fillbox(button_x,button_y,button_width,button_height,haxegon_GUI.button_on_color);
 		if(haxegon_Mouse.leftclick()) {
 			return true;
@@ -14867,12 +14969,18 @@ haxegon_GUI.auto_slider = function(text,set_function,current,min,max,handle_widt
 	if(skips == null) {
 		skips = 0;
 	}
+	if(area_width == null) {
+		area_width = 400;
+	}
+	if(handle_width == null) {
+		handle_width = 20;
+	}
 	var text_width = haxegon_Text.width(text);
 	var text_height = haxegon_Text.height();
 	var height = text_height * 1.25;
-	haxegon_GUI.y += (height + 2) * skips;
+	haxegon_GUI.y += (height + haxegon_GUI.slider_auto_spacing) * skips;
 	haxegon_GUI.slider(haxegon_GUI.x,haxegon_GUI.y,text,set_function,current,min,max,handle_width,area_width);
-	haxegon_GUI.y += height + 2;
+	haxegon_GUI.y += height + haxegon_GUI.slider_auto_spacing;
 };
 haxegon_GUI.slider = function(slider_x,slider_y,text,set_function,current,min,max,handle_width,area_width,skips) {
 	if(skips == null) {
@@ -14883,9 +14991,9 @@ haxegon_GUI.slider = function(slider_x,slider_y,text,set_function,current,min,ma
 	var height = text_height * 1.25;
 	haxegon_Gfx.fillbox(slider_x,slider_y,area_width,height,haxegon_GUI.slider_background_color);
 	haxegon_Gfx.fillbox(slider_x + area_width * (current - min) / (max - min),slider_y + height * 0.05,handle_width,height * 0.9,haxegon_GUI.slider_handle_color);
-	var hash = "" + text + "_" + slider_x + "_" + slider_y;
-	if(haxegon_GUI.slider_cache.hash == hash) {
-		if(haxegon_GUI.slider_cache.dragged && haxegon_Mouse.leftheld()) {
+	var slider_name = "" + text + "_" + slider_x + "_" + slider_y;
+	if(haxegon_GUI.dragged_slider == slider_name) {
+		if(haxegon_Mouse.leftheld()) {
 			var value = current;
 			if(haxegon_Mouse.x < slider_x) {
 				value = min;
@@ -14896,38 +15004,47 @@ haxegon_GUI.slider = function(slider_x,slider_y,text,set_function,current,min,ma
 			}
 			set_function(value);
 		} else {
-			haxegon_GUI.slider_cache.hash = "";
+			haxegon_GUI.dragged_slider = null;
 		}
-	} else if(haxegon_Mouse.leftclick() || haxegon_Mouse.rightclick()) {
-		var point_x = haxegon_Mouse.x;
-		var point_y = haxegon_Mouse.y;
-		var box_x = slider_x - area_width * 0.1;
-		var box_y = haxegon_GUI.y - height * 0.5;
-		if(point_x >= box_x && point_x < box_x + area_width * 1.2 && point_y >= box_y && point_y < box_y + height * 1.1) {
+	} else {
+		var tmp;
+		if(haxegon_Mouse.leftclick() || haxegon_Mouse.rightclick()) {
+			var point_x = haxegon_Mouse.x;
+			var point_y = haxegon_Mouse.y;
+			var box_x = slider_x - area_width * 0.1;
+			var box_y = slider_y - height * 0.5;
+			if(point_x >= box_x && point_x < box_x + area_width * 1.2 && point_y >= box_y) {
+				tmp = point_y < box_y + height * 1.1;
+			} else {
+				tmp = false;
+			}
+		} else {
+			tmp = false;
+		}
+		if(tmp) {
 			if(haxegon_Mouse.leftclick()) {
-				haxegon_GUI.slider_cache.hash = hash;
-				haxegon_GUI.slider_cache.dragged = true;
+				haxegon_GUI.dragged_slider = slider_name;
 				var _this = haxegon_GUI.slider_defaults;
-				if(!(__map_reserved[hash] != null ? _this.existsReserved(hash) : _this.h.hasOwnProperty(hash))) {
+				if(!(__map_reserved[slider_name] != null ? _this.existsReserved(slider_name) : _this.h.hasOwnProperty(slider_name))) {
 					var _this1 = haxegon_GUI.slider_defaults;
-					if(__map_reserved[hash] != null) {
-						_this1.setReserved(hash,current);
+					if(__map_reserved[slider_name] != null) {
+						_this1.setReserved(slider_name,current);
 					} else {
-						_this1.h[hash] = current;
+						_this1.h[slider_name] = current;
 					}
 				}
 			} else if(haxegon_Mouse.rightclick()) {
 				var _this2 = haxegon_GUI.slider_defaults;
-				if(__map_reserved[hash] != null ? _this2.existsReserved(hash) : _this2.h.hasOwnProperty(hash)) {
+				if(__map_reserved[slider_name] != null ? _this2.existsReserved(slider_name) : _this2.h.hasOwnProperty(slider_name)) {
 					var _this3 = haxegon_GUI.slider_defaults;
-					set_function(__map_reserved[hash] != null ? _this3.getReserved(hash) : _this3.h[hash]);
+					set_function(__map_reserved[slider_name] != null ? _this3.getReserved(slider_name) : _this3.h[slider_name]);
 				}
 			}
 		}
 	}
 	var value_string = haxegon_MathExtensions.fixed_float(Math,current,3);
-	haxegon_Text.display(slider_x + area_width / 2 - haxegon_Text.width(value_string) / 2,haxegon_GUI.y,value_string,16777215);
-	haxegon_Text.display(slider_x + area_width + handle_width,haxegon_GUI.y,text);
+	haxegon_Text.display(slider_x + area_width / 2 - haxegon_Text.width(value_string) / 2,slider_y,value_string,16777215);
+	haxegon_Text.display(slider_x + area_width + handle_width,slider_y,text);
 };
 haxegon_GUI.prototype = {
 	__class__: haxegon_GUI
@@ -15926,10 +16043,10 @@ haxegon_Gfx.reset_ifclear = function() {
 };
 haxegon_Gfx.rotation = function(angle,xpivot,ypivot) {
 	if(ypivot == null) {
-		ypivot = -15000;
+		ypivot = 0;
 	}
 	if(xpivot == null) {
-		xpivot = -15000;
+		xpivot = 0;
 	}
 	haxegon_Gfx.imagerotate = angle;
 	haxegon_Gfx.imagerotatexpivot = xpivot;
@@ -16079,6 +16196,14 @@ haxegon_Gfx.createimage = function(imagename,width,height) {
 	}
 	var t = new openfl_display_BitmapData(Math.floor(width),Math.floor(height),true,0);
 	haxegon_Gfx.images.push(t);
+};
+haxegon_Gfx.imageexists = function(imagename) {
+	var _this = haxegon_Gfx.imageindex;
+	if(__map_reserved[imagename] != null) {
+		return _this.existsReserved(imagename);
+	} else {
+		return _this.h.hasOwnProperty(imagename);
+	}
 };
 haxegon_Gfx.resizeimage = function(imagename,scale) {
 	var _this = haxegon_Gfx.imageindex;
@@ -16314,7 +16439,7 @@ haxegon_Gfx.grabimagefromimage = function(imagename,imagetocopyfrom,x,y,w,h) {
 	haxegon_Gfx.imagenum = __map_reserved[imagename] != null ? _this1.getReserved(imagename) : _this1.h[imagename];
 	var _this2 = haxegon_Gfx.imageindex;
 	if(!(__map_reserved[imagetocopyfrom] != null ? _this2.existsReserved(imagetocopyfrom) : _this2.h.hasOwnProperty(imagetocopyfrom))) {
-		haxe_Log.trace("ERROR: No image called \"" + imagetocopyfrom + "\" found.",{ fileName : "Gfx.hx", lineNumber : 530, className : "haxegon.Gfx", methodName : "grabimagefromimage"});
+		haxe_Log.trace("ERROR: No image called \"" + imagetocopyfrom + "\" found.",{ fileName : "Gfx.hx", lineNumber : 534, className : "haxegon.Gfx", methodName : "grabimagefromimage"});
 	}
 	var _this3 = haxegon_Gfx.imageindex;
 	var imagenumfrom = __map_reserved[imagetocopyfrom] != null ? _this3.getReserved(imagetocopyfrom) : _this3.h[imagetocopyfrom];
@@ -16347,11 +16472,11 @@ haxegon_Gfx.copytile = function(totilenumber,fromtileset,fromtilenumber) {
 			var _this5 = haxegon_Gfx.tilesetindex;
 			var tmp4 = tmp3 + Std.string(haxegon_Gfx.tiles[__map_reserved[fromtileset] != null ? _this5.getReserved(fromtileset) : _this5.h[fromtileset]].width) + "x";
 			var _this6 = haxegon_Gfx.tilesetindex;
-			haxe_Log.trace(tmp4 + Std.string(haxegon_Gfx.tiles[__map_reserved[fromtileset] != null ? _this6.getReserved(fromtileset) : _this6.h[fromtileset]].height) + ") are different sizes. Maybe try just drawing to the tile you want instead with Gfx.drawtotile()?",{ fileName : "Gfx.hx", lineNumber : 547, className : "haxegon.Gfx", methodName : "copytile"});
+			haxe_Log.trace(tmp4 + Std.string(haxegon_Gfx.tiles[__map_reserved[fromtileset] != null ? _this6.getReserved(fromtileset) : _this6.h[fromtileset]].height) + ") are different sizes. Maybe try just drawing to the tile you want instead with Gfx.drawtotile()?",{ fileName : "Gfx.hx", lineNumber : 551, className : "haxegon.Gfx", methodName : "copytile"});
 			return;
 		}
 	} else {
-		haxe_Log.trace("ERROR: Tileset " + fromtileset + " hasn't been loaded or created.",{ fileName : "Gfx.hx", lineNumber : 551, className : "haxegon.Gfx", methodName : "copytile"});
+		haxe_Log.trace("ERROR: Tileset " + fromtileset + " hasn't been loaded or created.",{ fileName : "Gfx.hx", lineNumber : 555, className : "haxegon.Gfx", methodName : "copytile"});
 		return;
 	}
 };
@@ -16466,7 +16591,7 @@ haxegon_Gfx.tilealignontiley = function(y) {
 	}
 	return y;
 };
-haxegon_Gfx.draw_line = function(_x1,_y1,_x2,_y2,col,alpha) {
+haxegon_Gfx.drawline = function(_x1,_y1,_x2,_y2,col,alpha) {
 	if(alpha == null) {
 		alpha = 1.0;
 	}
@@ -16535,7 +16660,7 @@ haxegon_Gfx.fillHexagon = function(x,y,radius,angle,col,alpha) {
 	haxegon_Gfx.shapematrix.translate(x,y);
 	haxegon_Gfx.drawto.draw(haxegon_Gfx.tempshape,haxegon_Gfx.shapematrix);
 };
-haxegon_Gfx.draw_circle = function(x,y,radius,col,alpha) {
+haxegon_Gfx.drawcircle = function(x,y,radius,col,alpha) {
 	if(alpha == null) {
 		alpha = 1.0;
 	}
@@ -16593,7 +16718,7 @@ haxegon_Gfx.fill_tri_array = function(tri,col,alpha) {
 		alpha = 1.0;
 	}
 	if(tri.length != 6) {
-		haxe_Log.trace("Gfx.fill_tri_array(): tri array size must be 6",{ fileName : "Gfx.hx", lineNumber : 740, className : "haxegon.Gfx", methodName : "fill_tri_array"});
+		haxe_Log.trace("Gfx.fill_tri_array(): tri array size must be 6",{ fileName : "Gfx.hx", lineNumber : 744, className : "haxegon.Gfx", methodName : "fill_tri_array"});
 		return;
 	}
 	if(!haxegon_Gfx.clearscreeneachframe) {
@@ -17949,6 +18074,9 @@ haxegon_MathExtensions.point_line_dst_3d = function(math,point_x,point_y,point_z
 };
 haxegon_MathExtensions.dst = function(math,x1,y1,x2,y2) {
 	return Math.sqrt(haxegon_MathExtensions.dst2(null,x1,y1,x2,y2));
+};
+haxegon_MathExtensions.dst_iv2 = function(math,p1,p2) {
+	return haxegon_MathExtensions.dst(null,p1.x,p1.y,p2.x,p2.y);
 };
 haxegon_MathExtensions.dst2 = function(math,x1,y1,x2,y2) {
 	return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
@@ -40079,7 +40207,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 260918;
+	this.version = 486694;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
@@ -87649,7 +87777,7 @@ Main.tiles = haxegon_Data.create2darray(125,125,0);
 Main.visited_room = [];
 Main.room_on_minimap = [];
 Main.SHOW_SHOW_BUTTONS_BUTTON = false;
-Main.DRAW_INVISIBLE_ENTITIES = true;
+Main.DRAW_INVISIBLE_ENTITIES = false;
 Main.USER_long_spell_descriptions = true;
 Main.stairs_x = 0;
 Main.stairs_y = 0;
@@ -87677,6 +87805,9 @@ Main.current_floor = 0;
 Main.current_level_mod = 0;
 Main.seen_talks = [1,2,3];
 Main.time_stamp = 0.0;
+Main.segment_starts = new haxe_ds_StringMap();
+Main.segment_deltas = new haxe_ds_StringMap();
+Main.started_timing_segment = false;
 Main.can_restart_timer_max = 60;
 openfl_text_Font.__fontByName = new haxe_ds_StringMap();
 openfl_text_Font.__registeredFonts = [];
@@ -88064,9 +88195,7 @@ haxegon_Col.hslval = [0.0,0.0,0.0];
 haxegon_Debug.debuglog = [];
 haxegon_GUI.x = 0;
 haxegon_GUI.y = 0;
-haxegon_GUI.slider_cache = { hash : "", dragged : false};
 haxegon_GUI.slider_defaults = new haxe_ds_StringMap();
-haxegon_GUI.editable_cache = { hash : "", editing : false};
 haxegon_GUI.button_off_color = 10329501;
 haxegon_GUI.button_on_color = 14708619;
 haxegon_GUI.button_text_off_color = 16777215;
@@ -88074,6 +88203,9 @@ haxegon_GUI.button_text_on_color = 16777215;
 haxegon_GUI.slider_background_color = 10329501;
 haxegon_GUI.slider_handle_color = 14708619;
 haxegon_GUI.slider_text_color = 16777215;
+haxegon_GUI.slider_auto_spacing = 5;
+haxegon_GUI.button_auto_spacing = 2;
+haxegon_GUI.hovering_button = false;
 lime_math_Matrix3.__identity = new lime_math_Matrix3();
 openfl_geom_Matrix.__identity = new openfl_geom_Matrix();
 openfl_geom_Matrix.__pool = new lime_utils_ObjectPool(function() {
