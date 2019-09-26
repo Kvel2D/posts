@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","94");
+		_this.setReserved("build","98");
 	} else {
-		_this.h["build"] = "94";
+		_this.h["build"] = "98";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -4617,8 +4617,8 @@ Main.prototype = {
 		};
 		auto_editable("Number of locks = ",set1,this.number_of_locks);
 		var set2 = function(x7) {
-			_gthis.world_buffs_crit = haxegon_MathExtensions.sign(Math,x7);
-			_gthis.obj.data.world_buffs_crit = haxegon_MathExtensions.sign(Math,x7);
+			_gthis.world_buffs_crit = x7;
+			_gthis.obj.data.world_buffs_crit = x7;
 			_gthis.obj.flush();
 		};
 		auto_editable("World buffs crit = ",set2,this.world_buffs_crit);
@@ -33259,7 +33259,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 863417;
+	this.version = 596612;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
