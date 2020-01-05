@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","98");
+		_this.setReserved("build","40");
 	} else {
-		_this.h["build"] = "98";
+		_this.h["build"] = "40";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -911,9 +911,9 @@ ApplicationMain.create = function(config) {
 	}
 	var _this3 = app.meta;
 	if(__map_reserved["name"] != null) {
-		_this3.setReserved("name","Tarotus");
+		_this3.setReserved("name","lock-1.12");
 	} else {
-		_this3.h["name"] = "Tarotus";
+		_this3.h["name"] = "lock-1.12";
 	}
 	var _this4 = app.meta;
 	if(__map_reserved["packageName"] != null) {
@@ -927,7 +927,7 @@ ApplicationMain.create = function(config) {
 	} else {
 		_this5.h["version"] = "1.0.0";
 	}
-	var attributes = { allowHighDPI : false, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 0, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "Tarotus", width : 0, x : null, y : null};
+	var attributes = { allowHighDPI : false, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 0, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "lock-1.12", width : 0, x : null, y : null};
 	attributes.context = { antialiasing : 0, background : 0, colorDepth : 32, depth : true, hardware : true, stencil : true, type : null, vsync : true};
 	if(app.__window == null) {
 		if(config != null) {
@@ -4480,7 +4480,8 @@ var Main = function() {
 	this.show_notes = false;
 	this.boss_resistance = 24.0;
 	this.world_buffs_crit = 0;
-	this.number_of_locks = 3;
+	this.lock_count = 3;
+	this.corr_dmg = 666;
 	this.bolt_dmg = 481.5;
 	this.pen_mod = 0;
 	this.hit_mod = 0;
@@ -4489,13 +4490,11 @@ var Main = function() {
 	this.int_mod = 0;
 	this.avg_lock_pen = 0.0;
 	this.avg_lock_hit = 7.0;
-	this.avg_lock_talent_crit = 5.0;
 	this.avg_lock_crit = 5.0;
 	this.avg_lock_sp = 400.0;
 	this.avg_lock_int = 200.0;
 	this.my_pen = 0.0;
 	this.my_hit = 7.0;
-	this.my_talent_crit = 5.0;
 	this.my_crit = 5.0;
 	this.my_sp = 400.0;
 	this.my_int = 200.0;
@@ -4535,8 +4534,11 @@ var Main = function() {
 	if(this.obj.data.bolt_dmg != null) {
 		this.bolt_dmg = this.obj.data.bolt_dmg;
 	}
-	if(this.obj.data.number_of_locks != null) {
-		this.number_of_locks = this.obj.data.number_of_locks;
+	if(this.obj.data.corr_dmg != null) {
+		this.corr_dmg = this.obj.data.corr_dmg;
+	}
+	if(this.obj.data.lock_count != null) {
+		this.lock_count = this.obj.data.lock_count;
 	}
 	if(this.obj.data.world_buffs_crit != null) {
 		this.world_buffs_crit = this.obj.data.world_buffs_crit;
@@ -4551,13 +4553,11 @@ Main.prototype = {
 	my_int: null
 	,my_sp: null
 	,my_crit: null
-	,my_talent_crit: null
 	,my_hit: null
 	,my_pen: null
 	,avg_lock_int: null
 	,avg_lock_sp: null
 	,avg_lock_crit: null
-	,avg_lock_talent_crit: null
 	,avg_lock_hit: null
 	,avg_lock_pen: null
 	,int_mod: null
@@ -4566,7 +4566,8 @@ Main.prototype = {
 	,hit_mod: null
 	,pen_mod: null
 	,bolt_dmg: null
-	,number_of_locks: null
+	,corr_dmg: null
+	,lock_count: null
 	,world_buffs_crit: null
 	,boss_resistance: null
 	,obj: null
@@ -4578,7 +4579,7 @@ Main.prototype = {
 		});
 		if(this.show_notes) {
 			haxegon_Text.wordwrap = 700;
-			haxegon_Text.display(50,50,"Click on numbers to edit.\nRight click on slider to reset it.\nIntellect is total amount, the number that is shown in your character stats.\nCrit is from gear only, not including the base crit or the crit obtained from int or the crit from talents.\nShadow bolt damage is the average damage based on numbers in the spell tooltip.\nNumber of locks includes you.\nBoss resistance is after curse and needs to include level-based resistance, which is 24.");
+			haxegon_Text.display(50,50,"Click on numbers to edit.\nRight click on slider to reset it.\nIntellect is total amount, the number that is shown in your character stats.\nCrit is from gear only, not including the base crit or the crit obtained from int or the crit from talents.\nShadow bolt damage is the average damage based on numbers in the spell tooltip.\nLock count includes you.\nBoss resistance is after curse and needs to include level-based resistance, which is 24.\nCorruption dmg is the damage in the tooltip, the damage dealt over full duration.");
 			return;
 		}
 		haxegon_GUI.x = 550;
@@ -4599,7 +4600,7 @@ Main.prototype = {
 			_gthis.pen_mod = Math.round(x4);
 		},Math.round(this.pen_mod),-20,20,10,500,1);
 		var auto_editable_x = 10;
-		var auto_editable_y = 400;
+		var auto_editable_y = 300;
 		var auto_editable = function(text,set_function,current) {
 			haxegon_GUI.editable_number(auto_editable_x,auto_editable_y,text,set_function,current);
 			auto_editable_y += 30;
@@ -4611,47 +4612,48 @@ Main.prototype = {
 		};
 		auto_editable("Bolt dmg = ",set,this.bolt_dmg);
 		var set1 = function(x6) {
-			_gthis.number_of_locks = x6;
-			_gthis.obj.data.number_of_locks = x6;
+			_gthis.corr_dmg = x6;
+			_gthis.obj.data.corr_dmg = x6;
 			_gthis.obj.flush();
 		};
-		auto_editable("Number of locks = ",set1,this.number_of_locks);
+		auto_editable("Corruption dmg = ",set1,this.corr_dmg);
 		var set2 = function(x7) {
-			_gthis.world_buffs_crit = x7;
-			_gthis.obj.data.world_buffs_crit = x7;
+			_gthis.lock_count = x7;
+			_gthis.obj.data.lock_count = x7;
 			_gthis.obj.flush();
 		};
-		auto_editable("World buffs crit = ",set2,this.world_buffs_crit);
+		auto_editable("Lock count = ",set2,this.lock_count);
 		var set3 = function(x8) {
-			_gthis.boss_resistance = x8;
-			_gthis.obj.data.boss_resistance = x8;
+			_gthis.world_buffs_crit = x8;
+			_gthis.obj.data.world_buffs_crit = x8;
 			_gthis.obj.flush();
 		};
-		auto_editable("Boss resistance= ",set3,this.boss_resistance);
+		auto_editable("World buffs crit = ",set3,this.world_buffs_crit);
 		var set4 = function(x9) {
-			_gthis.my_int = x9;
-			_gthis.obj.data.my_int = x9;
+			_gthis.boss_resistance = x9;
+			_gthis.obj.data.boss_resistance = x9;
 			_gthis.obj.flush();
 		};
-		auto_editable("Your int = ",set4,this.my_int);
+		auto_editable("Boss resistance= ",set4,this.boss_resistance);
+		auto_editable_y += 20;
 		var set5 = function(x10) {
-			_gthis.my_sp = x10;
-			_gthis.obj.data.my_sp = x10;
+			_gthis.my_int = x10;
+			_gthis.obj.data.my_int = x10;
 			_gthis.obj.flush();
 		};
-		auto_editable("Your sp = ",set5,this.my_sp);
+		auto_editable("Your int = ",set5,this.my_int);
 		var set6 = function(x11) {
-			_gthis.my_crit = x11;
-			_gthis.obj.data.my_crit = x11;
+			_gthis.my_sp = x11;
+			_gthis.obj.data.my_sp = x11;
 			_gthis.obj.flush();
 		};
-		auto_editable("Your crit = ",set6,this.my_crit);
+		auto_editable("Your sp = ",set6,this.my_sp);
 		var set7 = function(x12) {
-			_gthis.my_talent_crit = x12;
-			_gthis.obj.data.my_talent_crit = x12;
+			_gthis.my_crit = x12;
+			_gthis.obj.data.my_crit = x12;
 			_gthis.obj.flush();
 		};
-		auto_editable("Your talent crit = ",set7,this.my_talent_crit);
+		auto_editable("Your crit = ",set7,this.my_crit);
 		var set8 = function(x13) {
 			_gthis.my_hit = x13;
 			_gthis.obj.data.my_hit = x13;
@@ -4664,6 +4666,7 @@ Main.prototype = {
 			_gthis.obj.flush();
 		};
 		auto_editable("Your pen = ",set9,this.my_pen);
+		auto_editable_y += 20;
 		var set10 = function(x15) {
 			_gthis.avg_lock_int = x15;
 			_gthis.obj.data.avg_lock_int = x15;
@@ -4683,57 +4686,46 @@ Main.prototype = {
 		};
 		auto_editable("Avg lock crit = ",set12,this.avg_lock_crit);
 		var set13 = function(x18) {
-			_gthis.avg_lock_talent_crit = x18;
-			_gthis.obj.data.avg_lock_talent_crit = x18;
+			_gthis.avg_lock_hit = x18;
+			_gthis.obj.data.avg_lock_hit = x18;
 			_gthis.obj.flush();
 		};
-		auto_editable("Avg lock talent crit = ",set13,this.avg_lock_talent_crit);
+		auto_editable("Avg lock hit = ",set13,this.avg_lock_hit);
 		var set14 = function(x19) {
-			_gthis.avg_lock_hit = x19;
-			_gthis.obj.data.avg_lock_hit = x19;
+			_gthis.avg_lock_pen = x19;
+			_gthis.obj.data.avg_lock_pen = x19;
 			_gthis.obj.flush();
 		};
-		auto_editable("Avg lock hit = ",set14,this.avg_lock_hit);
-		var set15 = function(x20) {
-			_gthis.avg_lock_pen = x20;
-			_gthis.obj.data.avg_lock_pen = x20;
-			_gthis.obj.flush();
-		};
-		auto_editable("Avg lock pen = ",set15,this.avg_lock_pen);
-		var calc_dmg = function($int,sp,crit,hit,pen,raid_crit_total) {
+		auto_editable("Avg lock pen = ",set14,this.avg_lock_pen);
+		var avg_lock_crit_total = this.avg_lock_crit + this.avg_lock_int / 60.6 + this.world_buffs_crit + 6.7;
+		var avg_lock_hit_chance = Math.min(0.99,(83.0 + this.avg_lock_hit) / 100);
+		var avg_lock_crit_chance = Math.min(1.0,avg_lock_crit_total / 100 * avg_lock_hit_chance);
+		var calc_dps = function($int,sp,crit,hit,pen) {
 			var hit_chance = Math.min(0.99,(83.0 + hit) / 100);
-			crit += $int / 60.6 + _gthis.world_buffs_crit + 1.7;
+			crit += $int / 60.6 + _gthis.world_buffs_crit + 6.7;
 			var crit_chance = Math.min(1.0,crit / 100);
-			var raid_crit_chance = Math.min(1.0,raid_crit_total / 100);
-			var imp_bolt_bonus = Math.max(1.0,raid_crit_chance * 1.2 + (1 - raid_crit_chance));
-			var dmg = (_gthis.bolt_dmg + sp * 0.8571) * 1.15 * imp_bolt_bonus * hit_chance;
-			dmg = dmg * (1.0 - crit_chance) + dmg * 2 * crit_chance;
-			dmg *= 1 - 0.75 * (Math.max(24,_gthis.boss_resistance - pen) / 300);
-			return dmg;
+			var imp_bolt_bonus = crit_chance * hit_chance * Math.pow(avg_lock_crit_chance,_gthis.lock_count - 1);
+			imp_bolt_bonus = Math.max(1.0,imp_bolt_bonus);
+			var bolt = (_gthis.bolt_dmg + sp * 0.8571) * 1.15 * imp_bolt_bonus * hit_chance;
+			bolt = bolt * (1.0 - crit_chance) + bolt * 2 * crit_chance;
+			bolt *= 1 - 0.75 * (Math.max(24,_gthis.boss_resistance - pen) / 300);
+			var corr = (_gthis.corr_dmg + sp) * 1.15;
+			var bolts_per_corr = 7;
+			var total_dmg = bolts_per_corr * bolt + corr;
+			var time = 18 + (1 - hit_chance) * 1.5;
+			var dps = total_dmg / time;
+			dps *= 1 - 0.75 * (Math.max(24,_gthis.boss_resistance - pen) / 300);
+			return dps;
 		};
-		var crit_total = function(crit1,int1,hit1) {
-			crit1 += int1 / 60.6 + _gthis.world_buffs_crit + 1.7;
-			var hit_chance1 = Math.min(0.99,(83.0 + hit1) / 100);
-			return Math.min(1.0,crit1 / 100 * hit_chance1);
-		};
-		var my_crit_total = crit_total(this.my_crit + this.my_talent_crit,this.my_int,this.my_hit);
-		var my_crit_total_modded = crit_total(this.my_crit + this.my_talent_crit + this.crit_mod,this.my_int + this.int_mod,this.my_hit + this.hit_mod);
-		var avg_lock_crit_total = crit_total(this.avg_lock_crit + this.avg_lock_talent_crit,this.avg_lock_int,this.avg_lock_hit);
-		var raid_crit_total1 = Math.min(1.0,my_crit_total + avg_lock_crit_total * (this.number_of_locks - 1));
-		var raid_crit_total_modded = Math.min(1.0,my_crit_total_modded + avg_lock_crit_total * (this.number_of_locks - 1));
-		var my_dmg = calc_dmg(this.my_int,this.my_sp,this.my_crit + this.my_talent_crit,this.my_hit,this.my_pen,raid_crit_total1);
-		var my_dmg_modded = calc_dmg(this.my_int + this.int_mod,this.my_sp + this.sp_mod,this.my_crit + this.my_talent_crit + this.crit_mod,this.my_hit + this.hit_mod,this.my_pen + this.pen_mod,raid_crit_total_modded);
-		var all_locks_dmg = my_dmg + (this.number_of_locks - 1) * calc_dmg(this.avg_lock_int,this.avg_lock_sp,this.avg_lock_crit + this.avg_lock_talent_crit,this.avg_lock_hit,this.avg_lock_pen,raid_crit_total1);
-		var all_locks_dmg_modded = my_dmg_modded + (this.number_of_locks - 1) * calc_dmg(this.avg_lock_int,this.avg_lock_sp,this.avg_lock_crit + this.avg_lock_talent_crit,this.avg_lock_hit,this.avg_lock_pen,raid_crit_total_modded);
+		var my_dps = calc_dps(this.my_int,this.my_sp,this.my_crit,this.my_hit,this.my_pen);
+		var my_dps_modded = calc_dps(this.my_int + this.int_mod,this.my_sp + this.sp_mod,this.my_crit + this.crit_mod,this.my_hit + this.hit_mod,this.my_pen + this.pen_mod);
+		var all_locks_dps = my_dps + (this.lock_count - 1) * calc_dps(this.avg_lock_int,this.avg_lock_sp,this.avg_lock_crit,this.avg_lock_hit,this.avg_lock_pen);
+		var all_locks_dps_modded = my_dps_modded + (this.lock_count - 1) * calc_dps(this.avg_lock_int,this.avg_lock_sp,this.avg_lock_crit,this.avg_lock_hit,this.avg_lock_pen);
 		var results_string = "";
-		results_string += "Your default dmg per bolt: \t\t" + haxegon_MathExtensions.fixed_float(Math,my_dmg,2);
-		results_string += "\nYour modified dmg per bolt: \t\t" + haxegon_MathExtensions.fixed_float(Math,my_dmg_modded,2);
-		results_string += "\nAll lock's default dmg per bolt: \t" + haxegon_MathExtensions.fixed_float(Math,all_locks_dmg,2);
-		results_string += "\nAll lock's modified dmg per bolt: \t" + haxegon_MathExtensions.fixed_float(Math,all_locks_dmg_modded,2);
-		results_string += "\nYour default dps: \t\t\t" + haxegon_MathExtensions.fixed_float(Math,my_dmg / 2.5,2);
-		results_string += "\nYour modified dps: \t\t\t" + haxegon_MathExtensions.fixed_float(Math,my_dmg_modded / 2.5,2);
-		results_string += "\nAll lock's default dps: \t\t\t" + haxegon_MathExtensions.fixed_float(Math,all_locks_dmg / 2.5,2);
-		results_string += "\nAll lock's modified dps: \t\t" + haxegon_MathExtensions.fixed_float(Math,all_locks_dmg_modded / 2.5,2);
+		results_string += "\nYour default dps: \t\t\t" + haxegon_MathExtensions.fixed_float(Math,my_dps,2);
+		results_string += "\nYour modified dps: \t\t\t" + haxegon_MathExtensions.fixed_float(Math,my_dps_modded,2);
+		results_string += "\nAll lock's default dps: \t\t\t" + haxegon_MathExtensions.fixed_float(Math,all_locks_dps,2);
+		results_string += "\nAll lock's modified dps: \t\t" + haxegon_MathExtensions.fixed_float(Math,all_locks_dps_modded,2);
 		haxegon_Text.display(10,50,results_string);
 	}
 	,__class__: Main
@@ -33259,7 +33251,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 596612;
+	this.version = 967743;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
@@ -80726,12 +80718,15 @@ openfl_display_DisplayObject.__tempStack = new lime_utils_ObjectPool(function() 
 	stack.set_length(0);
 });
 Main.INT_TO_CRIT = 60.6;
-Main.BASE_CRIT = 1.7;
+Main.BASE_CRIT = 6.7;
 Main.BOLT_COEFF = 0.8571;
+Main.BOLT_CAST_TIME = 2.5;
+Main.CORR_COEFF = 1.0;
+Main.CORR_CAST_TIME = 1.5;
+Main.CORR_DURATION = 18;
 Main.DEFAULT_INT = 200.0;
 Main.DEFAULT_SP = 400.0;
 Main.DEFAULT_CRIT = 5.0;
-Main.DEFAULT_TALENT_CRIT = 5.0;
 Main.DEFAULT_HIT = 7.0;
 Main.DEFAULT_PEN = 0.0;
 Main.DEFAULT_RESISTANCE = 24.0;
