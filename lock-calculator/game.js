@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","192");
+		_this.setReserved("build","197");
 	} else {
-		_this.h["build"] = "192";
+		_this.h["build"] = "197";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -927,7 +927,7 @@ ApplicationMain.create = function(config) {
 	} else {
 		_this5.h["version"] = "1.0.0";
 	}
-	var attributes = { allowHighDPI : false, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 0, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "lock-calculator", width : 0, x : null, y : null};
+	var attributes = { allowHighDPI : false, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 960, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : true, title : "lock-calculator", width : 1200, x : null, y : null};
 	attributes.context = { antialiasing : 0, background : 0, colorDepth : 32, depth : true, hardware : true, stencil : true, type : null, vsync : true};
 	if(app.__window == null) {
 		if(config != null) {
@@ -33743,7 +33743,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 653678;
+	this.version = 143410;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
