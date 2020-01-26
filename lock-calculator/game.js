@@ -893,9 +893,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","197");
+		_this.setReserved("build","8");
 	} else {
-		_this.h["build"] = "197";
+		_this.h["build"] = "8";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -3994,7 +3994,7 @@ Main.prototype = {
 			imp_bolt_bonus = Math.max(1.0,imp_bolt_bonus);
 			var bolt = (_gthis.stats.bolt_dmg + sp * 0.8571) * 1.15 * imp_bolt_bonus;
 			bolt = bolt * (1.0 - crit_chance) + bolt * 2 * crit_chance;
-			var corr = (_gthis.stats.corr_dmg + sp) * 1.15 / 5;
+			var corr = (_gthis.stats.corr_dmg + sp) * 1.15 / 6;
 			var burn = (_gthis.stats.burn_dmg + sp * 0.4285) * 1.15 * imp_bolt_bonus;
 			burn = burn * (1.0 - crit_chance) + burn * 2 * crit_chance;
 			var unmodded_hit_chance = (base_hit + _gthis.stats.hit) / 100;
@@ -33743,7 +33743,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 143410;
+	this.version = 100091;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = ["lime","utils","AssetCache"];
@@ -89153,7 +89153,7 @@ Main.BOLT_COEFF = 0.8571;
 Main.BOLT_CAST_TIME = 2.5;
 Main.CORR_COEFF = 1.0;
 Main.CORR_CAST_TIME = 1.5;
-Main.CORR_TICKS = 5;
+Main.CORR_TICKS = 6;
 Main.CORR_TICK_PERIOD = 3.0;
 Main.BURN_COEFF = 0.4285;
 Main.BURN_CAST_TIME = 1.5;
