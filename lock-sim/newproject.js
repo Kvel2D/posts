@@ -806,9 +806,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","12");
+		_this.setReserved("build","13");
 	} else {
-		_this.h["build"] = "12";
+		_this.h["build"] = "13";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -4726,22 +4726,35 @@ _$List_ListIterator.prototype = {
 	,__class__: _$List_ListIterator
 };
 var Main = function() {
+	this.split_mods = true;
 	this.show_notes = false;
-	this.hit_mod = 0;
-	this.sp_mod = 0;
-	this.crit_mod = 0;
-	this.int_mod = 0;
+	this.trash_mods = { 'int' : 0, sp : 0, crit : 0, hit : 0};
+	this.boss_mods = { 'int' : 0, sp : 0, crit : 0, hit : 0};
 	this.raid_trash = { bolts : 121, corr_casts : 34, corrs : 163, burns : 42, curses : 74};
 	this.raid_boss = { bolts : 99, corr_casts : 19, corrs : 90, burns : 10, curses : 11};
-	this.stats = { 'int' : 300, sp : 790, crit : 1, hit : 0, lock_count : 5, world_buffs_crit : 18, bolt_dmg : 481.5, corr_dmg : 666.0, burn_dmg : 488.0};
+	this.vars = { lock_count : 5, world_buffs_crit : 18, bolt_dmg : 481.5, corr_dmg : 666.0, burn_dmg : 488.0};
+	this.boss_stats = { 'int' : 300, sp : 790, crit : 1, hit : 0};
+	this.trash_stats = { 'int' : 300, sp : 790, crit : 1, hit : 0};
 	haxegon_Text.set_size(3);
 	GUI.set_pallete(haxegon_Col.GRAY,haxegon_Col.NIGHTBLUE,haxegon_Col.WHITE,haxegon_Col.WHITE);
-	this.obj = openfl_net_SharedObject.getLocal("stats");
-	if(this.obj.data.stats == null) {
-		this.obj.data.stats = this.stats;
+	this.obj = openfl_net_SharedObject.getLocal("lock-sim-data");
+	if(this.obj.data.vars == null) {
+		this.obj.data.vars = this.vars;
 		this.obj.flush();
 	} else {
-		this.stats = this.obj.data;
+		this.vars = this.obj.data.vars;
+	}
+	if(this.obj.data.boss_stats == null) {
+		this.obj.data.boss_stats = this.boss_stats;
+		this.obj.flush();
+	} else {
+		this.boss_stats = this.obj.data.boss_stats;
+	}
+	if(this.obj.data.trash_stats == null) {
+		this.obj.data.trash_stats = this.trash_stats;
+		this.obj.flush();
+	} else {
+		this.trash_stats = this.obj.data.trash_stats;
 	}
 	if(this.obj.data.raid_boss == null) {
 		this.obj.data.raid_boss = this.raid_boss;
@@ -4759,20 +4772,24 @@ var Main = function() {
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
 Main.prototype = {
-	stats: null
+	trash_stats: null
+	,boss_stats: null
+	,vars: null
 	,raid_boss: null
 	,raid_trash: null
-	,int_mod: null
-	,crit_mod: null
-	,sp_mod: null
-	,hit_mod: null
+	,boss_mods: null
+	,trash_mods: null
 	,obj: null
 	,show_notes: null
+	,split_mods: null
 	,update: function() {
 		var _gthis = this;
 		haxegon_Gfx.clearscreen(haxegon_Col.rgb(30,30,30));
 		GUI.text_button(0,0,"Toggle notes",function() {
 			_gthis.show_notes = !_gthis.show_notes;
+		});
+		GUI.text_button(0,haxegon_Text.height() + 20,"Split mods: " + (this.split_mods ? "ON" : "OFF"),function() {
+			_gthis.split_mods = !_gthis.split_mods;
 		});
 		if(this.show_notes) {
 			haxegon_Text.set_wordwrap(700);
@@ -4780,23 +4797,51 @@ Main.prototype = {
 			return;
 		}
 		GUI.x = 370;
-		GUI.y = 50;
-		var SLIDER_WIDTH = 800;
+		GUI.y = 10;
+		var SLIDER_WIDTH = 500;
 		var HANDLE_WIDTH = 15;
+		var trash_slider_x = GUI.x;
+		if(this.split_mods) {
+			haxegon_Text.display(GUI.x,GUI.y,"TRASH");
+		}
 		GUI.auto_slider("int",function(x) {
-			_gthis.int_mod = Math.round(x);
-		},Math.round(this.int_mod),-50,50,HANDLE_WIDTH,SLIDER_WIDTH,1);
+			_gthis.trash_mods["int"] = Math.round(x);
+		},Math.round(this.trash_mods["int"]),-50,50,HANDLE_WIDTH,SLIDER_WIDTH,1);
 		GUI.auto_slider("sp",function(x1) {
-			_gthis.sp_mod = Math.round(x1);
-		},Math.round(this.sp_mod),-50,50,HANDLE_WIDTH,SLIDER_WIDTH,1);
+			_gthis.trash_mods.sp = Math.round(x1);
+		},Math.round(this.trash_mods.sp),-50,50,HANDLE_WIDTH,SLIDER_WIDTH,1);
 		GUI.auto_slider("crit",function(x2) {
-			_gthis.crit_mod = Math.round(x2);
-		},Math.round(this.crit_mod),-5,5,HANDLE_WIDTH,SLIDER_WIDTH,1);
+			_gthis.trash_mods.crit = Math.round(x2);
+		},Math.round(this.trash_mods.crit),-5,5,HANDLE_WIDTH,SLIDER_WIDTH,1);
 		GUI.auto_slider("hit",function(x3) {
-			_gthis.hit_mod = Math.round(x3);
-		},Math.round(this.hit_mod),-5,5,HANDLE_WIDTH,SLIDER_WIDTH,1);
-		var auto_editable_x = 10;
-		var auto_editable_y = 120;
+			_gthis.trash_mods.hit = Math.round(x3);
+		},Math.round(this.trash_mods.hit),-5,5,HANDLE_WIDTH,SLIDER_WIDTH,1);
+		GUI.x = 370 + SLIDER_WIDTH + 80;
+		GUI.y = 10;
+		var boss_slider_x = GUI.x;
+		if(this.split_mods) {
+			haxegon_Text.display(GUI.x,GUI.y,"BOSS");
+			GUI.auto_slider("int",function(x4) {
+				_gthis.boss_mods["int"] = Math.round(x4);
+			},Math.round(this.boss_mods["int"]),-50,50,HANDLE_WIDTH,SLIDER_WIDTH,1);
+			GUI.auto_slider("sp",function(x5) {
+				_gthis.boss_mods.sp = Math.round(x5);
+			},Math.round(this.boss_mods.sp),-50,50,HANDLE_WIDTH,SLIDER_WIDTH,1);
+			GUI.auto_slider("crit",function(x6) {
+				_gthis.boss_mods.crit = Math.round(x6);
+			},Math.round(this.boss_mods.crit),-5,5,HANDLE_WIDTH,SLIDER_WIDTH,1);
+			GUI.auto_slider("hit",function(x7) {
+				_gthis.boss_mods.hit = Math.round(x7);
+			},Math.round(this.boss_mods.hit),-5,5,HANDLE_WIDTH,SLIDER_WIDTH,1);
+		}
+		if(!this.split_mods) {
+			this.boss_mods["int"] = this.trash_mods["int"];
+			this.boss_mods.sp = this.trash_mods.sp;
+			this.boss_mods.crit = this.trash_mods.crit;
+			this.boss_mods.hit = this.trash_mods.hit;
+		}
+		var auto_editable_x = 10.0;
+		var auto_editable_y = 120.0;
 		var AUTO_EDITABLE_SPACING = 30;
 		var auto_editable = function(text,set_function,current) {
 			GUI.editable_number(auto_editable_x,auto_editable_y,text,set_function,current);
@@ -4807,163 +4852,191 @@ Main.prototype = {
 			haxegon_Text.display(auto_editable_x,auto_editable_y,text1);
 			auto_editable_y += AUTO_EDITABLE_SPACING;
 		};
-		auto_heading("Character stats:");
-		var set = function(x4) {
-			_gthis.stats["int"] = x4;
-			_gthis.obj.data.stats["int"] = x4;
+		auto_editable_y += 350;
+		var set = function(x8) {
+			_gthis.vars.bolt_dmg = x8;
+			_gthis.obj.data.vars.bolt_dmg = x8;
 			_gthis.obj.flush();
 		};
-		auto_editable("int = ",set,this.stats["int"]);
-		var set1 = function(x5) {
-			_gthis.stats.sp = x5;
-			_gthis.obj.data.stats.sp = x5;
+		auto_editable("bolt dmg = ",set,this.vars.bolt_dmg);
+		var set1 = function(x9) {
+			_gthis.vars.corr_dmg = x9;
+			_gthis.obj.data.vars.corr_dmg = x9;
 			_gthis.obj.flush();
 		};
-		auto_editable("sp = ",set1,this.stats.sp);
-		var set2 = function(x6) {
-			_gthis.stats.crit = x6;
-			_gthis.obj.data.stats.crit = x6;
+		auto_editable("corr dmg = ",set1,this.vars.corr_dmg);
+		var set2 = function(x10) {
+			_gthis.vars.burn_dmg = x10;
+			_gthis.obj.data.vars.burn_dmg = x10;
 			_gthis.obj.flush();
 		};
-		auto_editable("crit = ",set2,this.stats.crit);
-		var set3 = function(x7) {
-			_gthis.stats.hit = x7;
-			_gthis.obj.data.stats.hit = x7;
+		auto_editable("burn dmg = ",set2,this.vars.burn_dmg);
+		var set3 = function(x11) {
+			_gthis.vars.lock_count = x11;
+			_gthis.obj.data.vars.lock_count = x11;
 			_gthis.obj.flush();
 		};
-		auto_editable("hit = ",set3,this.stats.hit);
-		auto_heading("Stats:");
-		var set4 = function(x8) {
-			_gthis.stats.bolt_dmg = x8;
-			_gthis.obj.data.stats.bolt_dmg = x8;
+		auto_editable("lock count = ",set3,this.vars.lock_count);
+		var set4 = function(x12) {
+			_gthis.vars.world_buffs_crit = x12;
+			_gthis.obj.data.vars.world_buffs_crit = x12;
 			_gthis.obj.flush();
 		};
-		auto_editable("bolt dmg = ",set4,this.stats.bolt_dmg);
-		var set5 = function(x9) {
-			_gthis.stats.corr_dmg = x9;
-			_gthis.obj.data.stats.corr_dmg = x9;
+		auto_editable("wbuffs crit = ",set4,this.vars.world_buffs_crit);
+		auto_editable_x = boss_slider_x;
+		auto_editable_y = 400;
+		auto_heading("Encounter stats:");
+		var set5 = function(x13) {
+			_gthis.boss_stats["int"] = x13;
+			_gthis.obj.data.boss_stats["int"] = x13;
 			_gthis.obj.flush();
 		};
-		auto_editable("corr dmg = ",set5,this.stats.corr_dmg);
-		var set6 = function(x10) {
-			_gthis.stats.burn_dmg = x10;
-			_gthis.obj.data.stats.burn_dmg = x10;
+		auto_editable("int = ",set5,this.boss_stats["int"]);
+		var set6 = function(x14) {
+			_gthis.boss_stats.sp = x14;
+			_gthis.obj.data.boss_stats.sp = x14;
 			_gthis.obj.flush();
 		};
-		auto_editable("burn dmg = ",set6,this.stats.burn_dmg);
-		var set7 = function(x11) {
-			_gthis.stats.lock_count = x11;
-			_gthis.obj.data.stats.lock_count = x11;
+		auto_editable("sp = ",set6,this.boss_stats.sp);
+		var set7 = function(x15) {
+			_gthis.boss_stats.crit = x15;
+			_gthis.obj.data.boss_stats.crit = x15;
 			_gthis.obj.flush();
 		};
-		auto_editable("lock count = ",set7,this.stats.lock_count);
-		var set8 = function(x12) {
-			_gthis.stats.world_buffs_crit = x12;
-			_gthis.obj.data.stats.world_buffs_crit = x12;
+		auto_editable("crit = ",set7,this.boss_stats.crit);
+		var set8 = function(x16) {
+			_gthis.boss_stats.hit = x16;
+			_gthis.obj.data.boss_stats.hit = x16;
 			_gthis.obj.flush();
 		};
-		auto_editable("wbuffs crit = ",set8,this.stats.world_buffs_crit);
-		var encounters_y = auto_editable_y;
+		auto_editable("hit = ",set8,this.boss_stats.hit);
 		auto_heading("Encounters:");
-		var set9 = function(x13) {
-			_gthis.raid_boss.bolts = x13;
-			_gthis.obj.data.raid_boss.bolts = x13;
+		var set9 = function(x17) {
+			_gthis.raid_boss.bolts = x17;
+			_gthis.obj.data.raid_boss.bolts = x17;
 			_gthis.obj.flush();
 		};
 		auto_editable("bolt casts = ",set9,this.raid_boss.bolts);
-		var set10 = function(x14) {
-			_gthis.raid_boss.corr_casts = x14;
-			_gthis.obj.data.raid_boss.corr_casts = x14;
+		var set10 = function(x18) {
+			_gthis.raid_boss.corr_casts = x18;
+			_gthis.obj.data.raid_boss.corr_casts = x18;
 			_gthis.obj.flush();
 		};
 		auto_editable("corr casts = ",set10,this.raid_boss.corr_casts);
-		var set11 = function(x15) {
-			_gthis.raid_boss.corrs = x15;
-			_gthis.obj.data.raid_boss.corrs = x15;
+		var set11 = function(x19) {
+			_gthis.raid_boss.corrs = x19;
+			_gthis.obj.data.raid_boss.corrs = x19;
 			_gthis.obj.flush();
 		};
 		auto_editable("corr hits = ",set11,this.raid_boss.corrs);
-		var set12 = function(x16) {
-			_gthis.raid_boss.burns = x16;
-			_gthis.obj.data.raid_boss.burns = x16;
+		var set12 = function(x20) {
+			_gthis.raid_boss.burns = x20;
+			_gthis.obj.data.raid_boss.burns = x20;
 			_gthis.obj.flush();
 		};
 		auto_editable("burn casts = ",set12,this.raid_boss.burns);
-		var set13 = function(x17) {
-			_gthis.raid_boss.curses = x17;
-			_gthis.obj.data.raid_boss.curses = x17;
+		var set13 = function(x21) {
+			_gthis.raid_boss.curses = x21;
+			_gthis.obj.data.raid_boss.curses = x21;
 			_gthis.obj.flush();
 		};
 		auto_editable("curse casts = ",set13,this.raid_boss.curses);
-		auto_editable_y = encounters_y;
-		auto_editable_x += 400;
+		auto_editable_x = trash_slider_x;
+		auto_editable_y = 400;
+		auto_heading("Trash stats:");
+		var set14 = function(x22) {
+			_gthis.trash_stats["int"] = x22;
+			_gthis.obj.data.trash_stats["int"] = x22;
+			_gthis.obj.flush();
+		};
+		auto_editable("int = ",set14,this.trash_stats["int"]);
+		var set15 = function(x23) {
+			_gthis.trash_stats.sp = x23;
+			_gthis.obj.data.trash_stats.sp = x23;
+			_gthis.obj.flush();
+		};
+		auto_editable("sp = ",set15,this.trash_stats.sp);
+		var set16 = function(x24) {
+			_gthis.trash_stats.crit = x24;
+			_gthis.obj.data.trash_stats.crit = x24;
+			_gthis.obj.flush();
+		};
+		auto_editable("crit = ",set16,this.trash_stats.crit);
+		var set17 = function(x25) {
+			_gthis.trash_stats.hit = x25;
+			_gthis.obj.data.trash_stats.hit = x25;
+			_gthis.obj.flush();
+		};
+		auto_editable("hit = ",set17,this.trash_stats.hit);
 		auto_heading("Trash:");
-		var set14 = function(x18) {
-			_gthis.raid_trash.bolts = x18;
-			_gthis.obj.data.raid_trash.bolts = x18;
+		var set18 = function(x26) {
+			_gthis.raid_trash.bolts = x26;
+			_gthis.obj.data.raid_trash.bolts = x26;
 			_gthis.obj.flush();
 		};
-		auto_editable("bolt casts = ",set14,this.raid_trash.bolts);
-		var set15 = function(x19) {
-			_gthis.raid_trash.corr_casts = x19;
-			_gthis.obj.data.raid_trash.corr_casts = x19;
+		auto_editable("bolt casts = ",set18,this.raid_trash.bolts);
+		var set19 = function(x27) {
+			_gthis.raid_trash.corr_casts = x27;
+			_gthis.obj.data.raid_trash.corr_casts = x27;
 			_gthis.obj.flush();
 		};
-		auto_editable("corr casts = ",set15,this.raid_trash.corr_casts);
-		var set16 = function(x20) {
-			_gthis.raid_trash.corrs = x20;
-			_gthis.obj.data.raid_trash.corrs = x20;
+		auto_editable("corr casts = ",set19,this.raid_trash.corr_casts);
+		var set20 = function(x28) {
+			_gthis.raid_trash.corrs = x28;
+			_gthis.obj.data.raid_trash.corrs = x28;
 			_gthis.obj.flush();
 		};
-		auto_editable("corr hits = ",set16,this.raid_trash.corrs);
-		var set17 = function(x21) {
-			_gthis.raid_trash.burns = x21;
-			_gthis.obj.data.raid_trash.burns = x21;
+		auto_editable("corr hits = ",set20,this.raid_trash.corrs);
+		var set21 = function(x29) {
+			_gthis.raid_trash.burns = x29;
+			_gthis.obj.data.raid_trash.burns = x29;
 			_gthis.obj.flush();
 		};
-		auto_editable("burn casts = ",set17,this.raid_trash.burns);
-		var set18 = function(x22) {
-			_gthis.raid_trash.curses = x22;
-			_gthis.obj.data.raid_trash.curses = x22;
+		auto_editable("burn casts = ",set21,this.raid_trash.burns);
+		var set22 = function(x30) {
+			_gthis.raid_trash.curses = x30;
+			_gthis.obj.data.raid_trash.curses = x30;
 			_gthis.obj.flush();
 		};
-		auto_editable("curse casts = ",set18,this.raid_trash.curses);
+		auto_editable("curse casts = ",set22,this.raid_trash.curses);
 		var calc_dps = function(modded,is_boss) {
-			var $int = _gthis.stats["int"];
-			var sp = _gthis.stats.sp;
-			var crit = _gthis.stats.crit;
-			var hit = _gthis.stats.hit;
+			var stats = is_boss ? _gthis.boss_stats : _gthis.trash_stats;
+			var mods = is_boss ? _gthis.boss_mods : _gthis.trash_mods;
+			var $int = stats["int"];
+			var sp = stats.sp;
+			var crit = stats.crit;
+			var hit = stats.hit;
 			if(modded) {
-				$int += _gthis.int_mod;
-				sp += _gthis.sp_mod;
-				crit += _gthis.crit_mod;
-				hit += _gthis.hit_mod;
+				$int += mods["int"];
+				sp += mods.sp;
+				crit += mods.crit;
+				hit += mods.hit;
 			}
 			var base_hit = is_boss ? 83 : 94;
 			var raid_stats = is_boss ? _gthis.raid_boss : _gthis.raid_trash;
 			var level_resistance = is_boss ? 24 : 16;
 			var hit_chance = (base_hit + hit) / 100;
 			hit_chance = Math.min(0.99,hit_chance);
-			var crit_chance = (6.7 + crit + $int / 60.6 + _gthis.stats.world_buffs_crit) / 100;
+			var crit_chance = (6.7 + crit + $int / 60.6 + _gthis.vars.world_buffs_crit) / 100;
 			crit_chance = Math.min(1.0,crit_chance);
 			var crit_with_hit = crit_chance * hit_chance;
 			crit_with_hit = Math.min(1.0,crit_with_hit);
-			var other_crit_chance = (6.7 + _gthis.stats.crit + $int / 60.6 + _gthis.stats.world_buffs_crit) / 100;
+			var other_crit_chance = (6.7 + stats.crit + $int / 60.6 + _gthis.vars.world_buffs_crit) / 100;
 			other_crit_chance = Math.min(1.0,other_crit_chance);
-			var other_hit_chance = (base_hit + _gthis.stats.hit) / 100;
+			var other_hit_chance = (base_hit + stats.hit) / 100;
 			other_hit_chance = Math.min(0.99,other_hit_chance);
 			var other_crit_with_hit = other_crit_chance * other_hit_chance;
 			other_crit_with_hit = Math.min(1.0,other_crit_with_hit);
-			var avg_crit_with_hit = (crit_with_hit + other_crit_with_hit * (_gthis.stats.lock_count - 1)) / _gthis.stats.lock_count;
+			var avg_crit_with_hit = (crit_with_hit + other_crit_with_hit * (_gthis.vars.lock_count - 1)) / _gthis.vars.lock_count;
 			var four_miss_chance = Math.pow(1.0 - avg_crit_with_hit,4);
 			var imp_bolt_bonus = (1.0 - four_miss_chance) * 0.2 + 1.0;
 			imp_bolt_bonus = Math.max(1.0,imp_bolt_bonus);
-			var bolt = (_gthis.stats.bolt_dmg + sp * 0.8571) * 1.15 * imp_bolt_bonus;
+			var bolt = (_gthis.vars.bolt_dmg + sp * 0.8571) * 1.15 * imp_bolt_bonus;
 			bolt = bolt * (1.0 - crit_chance) + bolt * 2 * crit_chance;
-			var corr = (_gthis.stats.corr_dmg + sp * 1.0) * 1.15 / 6;
-			var burn = (_gthis.stats.burn_dmg + sp * 0.4285) * 1.15 * imp_bolt_bonus;
+			var corr = (_gthis.vars.corr_dmg + sp * 1.0) * 1.15 / 6;
+			var burn = (_gthis.vars.burn_dmg + sp * 0.4285) * 1.15 * imp_bolt_bonus;
 			burn = burn * (1.0 - crit_chance) + burn * 2 * crit_chance;
-			var unmodded_hit_chance = (base_hit + _gthis.stats.hit) / 100;
+			var unmodded_hit_chance = (base_hit + stats.hit) / 100;
 			unmodded_hit_chance = Math.min(0.99,unmodded_hit_chance);
 			var corr_casts_without_misses = raid_stats.corr_casts / (2.0 - unmodded_hit_chance);
 			var corr_casts_corrected = corr_casts_without_misses * (2.0 - hit_chance);
@@ -4989,7 +5062,7 @@ Main.prototype = {
 		var results_string = "DPS:";
 		results_string += "\ndefault: " + MathExtensions.fixed_float(Math,dps1,2);
 		results_string += "\nmodded: " + MathExtensions.fixed_float(Math,dps_modded,2);
-		haxegon_Text.display(10,40,results_string);
+		haxegon_Text.display(10,100,results_string);
 	}
 	,__class__: Main
 };
@@ -12205,8 +12278,8 @@ haxegon_Core.prototype = $extend(starling_display_Sprite.prototype,{
 		haxegon_Text.init();
 		haxegon_Text.defaultfont();
 		haxegon_Sound.init();
-		haxegon_Gfx.screenwidth = Std.parseInt("1300") | 0;
-		haxegon_Gfx.screenheight = Std.parseInt("720") | 0;
+		haxegon_Gfx.screenwidth = Std.parseInt("1550") | 0;
+		haxegon_Gfx.screenheight = Std.parseInt("800") | 0;
 		haxegon_Gfx.screenwidthmid = haxegon_Gfx.screenwidth / 2 | 0;
 		haxegon_Gfx.screenheightmid = haxegon_Gfx.screenheight / 2 | 0;
 		haxegon_Gfx.startframe();
@@ -12216,7 +12289,7 @@ haxegon_Core.prototype = $extend(starling_display_Sprite.prototype,{
 		haxegon_Scene.init();
 		if(haxegon_Core.enablescreen) {
 			if(!haxegon_Gfx.gfxinit) {
-				haxegon_Gfx.resizescreen(Std.parseInt("1300"),Std.parseInt("720"));
+				haxegon_Gfx.resizescreen(Std.parseInt("1550"),Std.parseInt("800"));
 			}
 			haxegon_Gfx.endframe();
 		} else {
@@ -94951,8 +95024,8 @@ starling_display_DisplayObjectContainer.sBroadcastListeners = openfl__$Vector_Ve
 starling_display_DisplayObjectContainer.sSortBuffer = openfl__$Vector_Vector_$Impl_$.toObjectVector(null);
 starling_display_DisplayObjectContainer.sCacheToken = new starling_rendering_BatchToken();
 haxegon_Core.version = "0.12.0";
-haxegon_Core.WINDOW_WIDTH = "1300";
-haxegon_Core.WINDOW_HEIGHT = "720";
+haxegon_Core.WINDOW_WIDTH = "1550";
+haxegon_Core.WINDOW_HEIGHT = "800";
 haxegon_Core._fullscreenbutton = false;
 haxegon_Core._fullscreenbuttonx = 0;
 haxegon_Core._fullscreenbuttony = 0;
