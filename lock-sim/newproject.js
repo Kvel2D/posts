@@ -806,9 +806,9 @@ ApplicationMain.create = function(config) {
 	ManifestResources.init(config);
 	var _this = app.meta;
 	if(__map_reserved["build"] != null) {
-		_this.setReserved("build","15");
+		_this.setReserved("build","16");
 	} else {
-		_this.h["build"] = "15";
+		_this.h["build"] = "16";
 	}
 	var _this1 = app.meta;
 	if(__map_reserved["company"] != null) {
@@ -4728,16 +4728,14 @@ _$List_ListIterator.prototype = {
 var Main = function() {
 	this.split_mods = true;
 	this.show_notes = false;
-	this.trash_mods = { 'int' : 0, sp : 0, crit : 0, hit : 0};
+	this.vars = { lock_count : 5, world_buffs_crit : 18, bolt_dmg : 481.5};
 	this.boss_mods = { 'int' : 0, sp : 0, crit : 0, hit : 0};
-	this.raid_trash = { bolts : 121, corr_casts : 34, corrs : 163, burns : 42, curses : 74};
-	this.raid_boss = { bolts : 99, corr_casts : 19, corrs : 90, burns : 10, curses : 11};
-	this.vars = { lock_count : 5, world_buffs_crit : 18, suppression_hit : 4, bolt_dmg : 481.5, corr_dmg : 666.0, burn_dmg : 488.0};
+	this.trash_mods = { 'int' : 0, sp : 0, crit : 0, hit : 0};
 	this.boss_stats = { 'int' : 300, sp : 790, crit : 1, hit : 0};
 	this.trash_stats = { 'int' : 300, sp : 790, crit : 1, hit : 0};
 	haxegon_Text.set_size(3);
 	GUI.set_pallete(haxegon_Col.GRAY,haxegon_Col.NIGHTBLUE,haxegon_Col.WHITE,haxegon_Col.WHITE);
-	this.obj = openfl_net_SharedObject.getLocal("lock-sim-data");
+	this.obj = openfl_net_SharedObject.getLocal("lock-data");
 	if(this.obj.data.vars == null) {
 		this.obj.data.vars = this.vars;
 		this.obj.flush();
@@ -4756,29 +4754,15 @@ var Main = function() {
 	} else {
 		this.trash_stats = this.obj.data.trash_stats;
 	}
-	if(this.obj.data.raid_boss == null) {
-		this.obj.data.raid_boss = this.raid_boss;
-		this.obj.flush();
-	} else {
-		this.raid_boss = this.obj.data.raid_boss;
-	}
-	if(this.obj.data.raid_trash == null) {
-		this.obj.data.raid_trash = this.raid_trash;
-		this.obj.flush();
-	} else {
-		this.raid_trash = this.obj.data.raid_trash;
-	}
 };
 $hxClasses["Main"] = Main;
 Main.__name__ = ["Main"];
 Main.prototype = {
 	trash_stats: null
 	,boss_stats: null
-	,vars: null
-	,raid_boss: null
-	,raid_trash: null
-	,boss_mods: null
 	,trash_mods: null
+	,boss_mods: null
+	,vars: null
 	,obj: null
 	,show_notes: null
 	,split_mods: null
@@ -4793,7 +4777,7 @@ Main.prototype = {
 		});
 		if(this.show_notes) {
 			haxegon_Text.set_wordwrap(700);
-			haxegon_Text.display(50,50,"Click on numbers to edit.\nRight click on slider to reset it.\nIntellect is total amount, the number that is shown in your character stats.\nCrit is from gear only, not including the base crit or the crit obtained from int or the crit from talents.\nSpell damage values are the ones in the spell tooltip(or average if 2 values).\nLock count includes you.\nStats for other locks are assumed to be equal to yours(without slider mods).\nTake counts/hits/casts from your typical raid on warcraftlogs.");
+			haxegon_Text.display(50,50,"Click on numbers to edit.\nRight click on slider to reset it.\nIntellect is total amount, the number that is shown in your character stats.\nCrit is from gear only, not including the base crit or the crit obtained from int or the crit from talents.\nShadow bolt damage is base, the one in the tooltip.\nLock count includes you.\nStats for other locks are assumed to be equal to yours(without slider mods).");
 			return;
 		}
 		GUI.x = 370;
@@ -4858,154 +4842,74 @@ Main.prototype = {
 			_gthis.obj.data.vars.bolt_dmg = x8;
 			_gthis.obj.flush();
 		};
-		auto_editable("bolt dmg = ",set,this.vars.bolt_dmg);
+		auto_editable("bolt dmg: ",set,this.vars.bolt_dmg);
 		var set1 = function(x9) {
-			_gthis.vars.corr_dmg = x9;
-			_gthis.obj.data.vars.corr_dmg = x9;
+			_gthis.vars.lock_count = x9;
+			_gthis.obj.data.vars.lock_count = x9;
 			_gthis.obj.flush();
 		};
-		auto_editable("corr dmg = ",set1,this.vars.corr_dmg);
+		auto_editable("lock count: ",set1,this.vars.lock_count);
 		var set2 = function(x10) {
-			_gthis.vars.burn_dmg = x10;
-			_gthis.obj.data.vars.burn_dmg = x10;
+			_gthis.vars.world_buffs_crit = x10;
+			_gthis.obj.data.vars.world_buffs_crit = x10;
 			_gthis.obj.flush();
 		};
-		auto_editable("burn dmg = ",set2,this.vars.burn_dmg);
-		var set3 = function(x11) {
-			_gthis.vars.lock_count = x11;
-			_gthis.obj.data.vars.lock_count = x11;
-			_gthis.obj.flush();
-		};
-		auto_editable("lock count = ",set3,this.vars.lock_count);
-		var set4 = function(x12) {
-			_gthis.vars.world_buffs_crit = x12;
-			_gthis.obj.data.vars.world_buffs_crit = x12;
-			_gthis.obj.flush();
-		};
-		auto_editable("wbuffs crit = ",set4,this.vars.world_buffs_crit);
-		var set5 = function(x13) {
-			_gthis.vars.suppression_hit = x13;
-			_gthis.obj.data.vars.suppression_hit = x13;
-			_gthis.obj.flush();
-		};
-		auto_editable("suppression hit = ",set5,this.vars.suppression_hit);
+		auto_editable("wbuffs crit: ",set2,this.vars.world_buffs_crit);
 		auto_editable_x = boss_slider_x;
 		auto_editable_y = 400;
 		auto_heading("Encounter stats:");
+		var set3 = function(x11) {
+			_gthis.boss_stats["int"] = x11;
+			_gthis.obj.data.boss_stats["int"] = x11;
+			_gthis.obj.flush();
+		};
+		auto_editable("int: ",set3,this.boss_stats["int"]);
+		var set4 = function(x12) {
+			_gthis.boss_stats.sp = x12;
+			_gthis.obj.data.boss_stats.sp = x12;
+			_gthis.obj.flush();
+		};
+		auto_editable("sp: ",set4,this.boss_stats.sp);
+		var set5 = function(x13) {
+			_gthis.boss_stats.crit = x13;
+			_gthis.obj.data.boss_stats.crit = x13;
+			_gthis.obj.flush();
+		};
+		auto_editable("crit: ",set5,this.boss_stats.crit);
 		var set6 = function(x14) {
-			_gthis.boss_stats["int"] = x14;
-			_gthis.obj.data.boss_stats["int"] = x14;
+			_gthis.boss_stats.hit = x14;
+			_gthis.obj.data.boss_stats.hit = x14;
 			_gthis.obj.flush();
 		};
-		auto_editable("int = ",set6,this.boss_stats["int"]);
-		var set7 = function(x15) {
-			_gthis.boss_stats.sp = x15;
-			_gthis.obj.data.boss_stats.sp = x15;
-			_gthis.obj.flush();
-		};
-		auto_editable("sp = ",set7,this.boss_stats.sp);
-		var set8 = function(x16) {
-			_gthis.boss_stats.crit = x16;
-			_gthis.obj.data.boss_stats.crit = x16;
-			_gthis.obj.flush();
-		};
-		auto_editable("crit = ",set8,this.boss_stats.crit);
-		var set9 = function(x17) {
-			_gthis.boss_stats.hit = x17;
-			_gthis.obj.data.boss_stats.hit = x17;
-			_gthis.obj.flush();
-		};
-		auto_editable("hit = ",set9,this.boss_stats.hit);
-		auto_heading("Encounters:");
-		var set10 = function(x18) {
-			_gthis.raid_boss.bolts = x18;
-			_gthis.obj.data.raid_boss.bolts = x18;
-			_gthis.obj.flush();
-		};
-		auto_editable("bolt casts = ",set10,this.raid_boss.bolts);
-		var set11 = function(x19) {
-			_gthis.raid_boss.corr_casts = x19;
-			_gthis.obj.data.raid_boss.corr_casts = x19;
-			_gthis.obj.flush();
-		};
-		auto_editable("corr casts = ",set11,this.raid_boss.corr_casts);
-		var set12 = function(x20) {
-			_gthis.raid_boss.corrs = x20;
-			_gthis.obj.data.raid_boss.corrs = x20;
-			_gthis.obj.flush();
-		};
-		auto_editable("corr hits = ",set12,this.raid_boss.corrs);
-		var set13 = function(x21) {
-			_gthis.raid_boss.burns = x21;
-			_gthis.obj.data.raid_boss.burns = x21;
-			_gthis.obj.flush();
-		};
-		auto_editable("burn casts = ",set13,this.raid_boss.burns);
-		var set14 = function(x22) {
-			_gthis.raid_boss.curses = x22;
-			_gthis.obj.data.raid_boss.curses = x22;
-			_gthis.obj.flush();
-		};
-		auto_editable("curse casts = ",set14,this.raid_boss.curses);
+		auto_editable("hit: ",set6,this.boss_stats.hit);
 		auto_editable_x = trash_slider_x;
 		auto_editable_y = 400;
 		auto_heading("Trash stats:");
-		var set15 = function(x23) {
-			_gthis.trash_stats["int"] = x23;
-			_gthis.obj.data.trash_stats["int"] = x23;
+		var set7 = function(x15) {
+			_gthis.trash_stats["int"] = x15;
+			_gthis.obj.data.trash_stats["int"] = x15;
 			_gthis.obj.flush();
 		};
-		auto_editable("int = ",set15,this.trash_stats["int"]);
-		var set16 = function(x24) {
-			_gthis.trash_stats.sp = x24;
-			_gthis.obj.data.trash_stats.sp = x24;
+		auto_editable("int: ",set7,this.trash_stats["int"]);
+		var set8 = function(x16) {
+			_gthis.trash_stats.sp = x16;
+			_gthis.obj.data.trash_stats.sp = x16;
 			_gthis.obj.flush();
 		};
-		auto_editable("sp = ",set16,this.trash_stats.sp);
-		var set17 = function(x25) {
-			_gthis.trash_stats.crit = x25;
-			_gthis.obj.data.trash_stats.crit = x25;
+		auto_editable("sp: ",set8,this.trash_stats.sp);
+		var set9 = function(x17) {
+			_gthis.trash_stats.crit = x17;
+			_gthis.obj.data.trash_stats.crit = x17;
 			_gthis.obj.flush();
 		};
-		auto_editable("crit = ",set17,this.trash_stats.crit);
-		var set18 = function(x26) {
-			_gthis.trash_stats.hit = x26;
-			_gthis.obj.data.trash_stats.hit = x26;
+		auto_editable("crit: ",set9,this.trash_stats.crit);
+		var set10 = function(x18) {
+			_gthis.trash_stats.hit = x18;
+			_gthis.obj.data.trash_stats.hit = x18;
 			_gthis.obj.flush();
 		};
-		auto_editable("hit = ",set18,this.trash_stats.hit);
-		auto_heading("Trash:");
-		var set19 = function(x27) {
-			_gthis.raid_trash.bolts = x27;
-			_gthis.obj.data.raid_trash.bolts = x27;
-			_gthis.obj.flush();
-		};
-		auto_editable("bolt casts = ",set19,this.raid_trash.bolts);
-		var set20 = function(x28) {
-			_gthis.raid_trash.corr_casts = x28;
-			_gthis.obj.data.raid_trash.corr_casts = x28;
-			_gthis.obj.flush();
-		};
-		auto_editable("corr casts = ",set20,this.raid_trash.corr_casts);
-		var set21 = function(x29) {
-			_gthis.raid_trash.corrs = x29;
-			_gthis.obj.data.raid_trash.corrs = x29;
-			_gthis.obj.flush();
-		};
-		auto_editable("corr hits = ",set21,this.raid_trash.corrs);
-		var set22 = function(x30) {
-			_gthis.raid_trash.burns = x30;
-			_gthis.obj.data.raid_trash.burns = x30;
-			_gthis.obj.flush();
-		};
-		auto_editable("burn casts = ",set22,this.raid_trash.burns);
-		var set23 = function(x31) {
-			_gthis.raid_trash.curses = x31;
-			_gthis.obj.data.raid_trash.curses = x31;
-			_gthis.obj.flush();
-		};
-		auto_editable("curse casts = ",set23,this.raid_trash.curses);
-		var calc_dps = function(modded,is_boss) {
+		auto_editable("hit: ",set10,this.trash_stats.hit);
+		var calc_dmg = function(modded,is_boss) {
 			var stats = is_boss ? _gthis.boss_stats : _gthis.trash_stats;
 			var mods = is_boss ? _gthis.boss_mods : _gthis.trash_mods;
 			var $int = stats["int"];
@@ -5018,60 +4922,43 @@ Main.prototype = {
 				crit += mods.crit;
 				hit += mods.hit;
 			}
-			var aff_hit = hit + _gthis.vars.suppression_hit;
 			var base_hit = is_boss ? 83 : 94;
-			var raid_stats = is_boss ? _gthis.raid_boss : _gthis.raid_trash;
 			var level_resistance = is_boss ? 24 : 16;
 			var hit_chance = (base_hit + hit) / 100;
-			hit_chance = Math.min(0.99,hit_chance);
-			var aff_hit_chance = (base_hit + aff_hit) / 100;
-			aff_hit_chance = Math.min(0.99,aff_hit_chance);
+			if(hit_chance > 0.99) {
+				hit_chance = 0.99;
+			}
 			var crit_chance = (6.7 + crit + $int / 60.6 + _gthis.vars.world_buffs_crit) / 100;
-			crit_chance = Math.min(1.0,crit_chance);
+			if(crit_chance > 1.0) {
+				crit_chance = 1.0;
+			}
 			var crit_with_hit = crit_chance * hit_chance;
-			crit_with_hit = Math.min(1.0,crit_with_hit);
 			var other_crit_chance = (6.7 + stats.crit + $int / 60.6 + _gthis.vars.world_buffs_crit) / 100;
-			other_crit_chance = Math.min(1.0,other_crit_chance);
+			if(other_crit_chance > 1.0) {
+				other_crit_chance = 1.0;
+			}
 			var other_hit_chance = (base_hit + stats.hit) / 100;
 			other_hit_chance = Math.min(0.99,other_hit_chance);
+			if(other_hit_chance > 1.0) {
+				other_hit_chance = 1.0;
+			}
 			var other_crit_with_hit = other_crit_chance * other_hit_chance;
-			other_crit_with_hit = Math.min(1.0,other_crit_with_hit);
 			var avg_crit_with_hit = (crit_with_hit + other_crit_with_hit * (_gthis.vars.lock_count - 1)) / _gthis.vars.lock_count;
 			var four_miss_chance = Math.pow(1.0 - avg_crit_with_hit,4);
 			var imp_bolt_bonus = (1.0 - four_miss_chance) * 0.2 + 1.0;
 			imp_bolt_bonus = Math.max(1.0,imp_bolt_bonus);
 			var bolt = (_gthis.vars.bolt_dmg + sp * 0.8571) * 1.15 * imp_bolt_bonus;
 			bolt = bolt * (1.0 - crit_chance) + bolt * 2 * crit_chance;
-			var corr = (_gthis.vars.corr_dmg + sp * 1.0) * 1.15 / 6;
-			var burn = (_gthis.vars.burn_dmg + sp * 0.4285) * 1.15 * imp_bolt_bonus;
-			burn = burn * (1.0 - crit_chance) + burn * 2 * crit_chance;
-			var unmodded_aff_hit_chance = (base_hit + stats.hit + _gthis.vars.suppression_hit) / 100;
-			unmodded_aff_hit_chance = Math.min(0.99,unmodded_aff_hit_chance);
-			var corr_casts_without_misses = raid_stats.corr_casts / (2.0 - unmodded_aff_hit_chance);
-			var corr_casts_corrected = corr_casts_without_misses * (2.0 - aff_hit_chance);
-			var corrs_NOT_missed = raid_stats.corr_casts - corr_casts_corrected;
-			var extra_corrs = corrs_NOT_missed * 1.5 / 3.0;
-			var extra_bolts = 1.5 * corrs_NOT_missed / 2.5;
-			var curses_without_misses = raid_stats.curses / (2.0 - unmodded_aff_hit_chance);
-			var curses_corrected = curses_without_misses * (2.0 - aff_hit_chance);
-			var curses_NOT_missed = raid_stats.curses - curses_corrected;
-			extra_bolts += 1.5 * curses_NOT_missed / 2.5;
-			var total_dmg = bolt * (raid_stats.bolts + extra_bolts) * hit_chance + corr * (raid_stats.corrs + extra_corrs) + burn * raid_stats.burns * hit_chance;
-			var total_time = 2.5 * raid_stats.bolts + 1.5 * raid_stats.corrs + 1.5 * raid_stats.burns + raid_stats.curses * 1.5;
-			var dps = total_dmg / total_time;
-			dps *= 1 - 0.75 * level_resistance / 300;
-			return dps;
+			bolt *= hit_chance;
+			return Math.round(bolt);
 		};
-		var dps_boss = calc_dps(false,true);
-		var dps_trash = calc_dps(false,false);
-		var dps1 = (dps_boss + dps_trash) / 2;
-		var dps_modded_boss = calc_dps(true,true);
-		var dps_modded_trash = calc_dps(true,false);
-		var dps_modded = (dps_modded_boss + dps_modded_trash) / 2;
-		var results_string = "DPS:";
-		results_string += "\ndefault: " + MathExtensions.fixed_float(Math,dps1,2);
-		results_string += "\nmodded: " + MathExtensions.fixed_float(Math,dps_modded,2);
-		haxegon_Text.display(10,100,results_string);
+		var dmg_base_boss = calc_dmg(false,true);
+		var dmg_base_trash = calc_dmg(false,false);
+		var dmg_base = Math.round((dmg_base_boss + dmg_base_trash) / 2);
+		var dmg_modded_boss = calc_dmg(true,true);
+		var dmg_modded_trash = calc_dmg(true,false);
+		var dmg_modded = Math.round((dmg_modded_boss + dmg_modded_trash) / 2);
+		haxegon_Text.display(10,100,"Bolt damage:\nbase: " + dmg_base + "\nmodded: " + dmg_modded);
 	}
 	,__class__: Main
 };
@@ -94928,17 +94815,9 @@ GUI.slider_background_color = haxegon_Col.GRAY;
 GUI.slider_handle_color = haxegon_Col.PINK;
 GUI.slider_text_color = haxegon_Col.WHITE;
 GUI.input = "";
-Main.GCD = 1.5;
 Main.INT_TO_CRIT = 60.6;
 Main.BASE_CRIT = 6.7;
 Main.BOLT_COEFF = 0.8571;
-Main.BOLT_CAST_TIME = 2.5;
-Main.CORR_COEFF = 1.0;
-Main.CORR_CAST_TIME = 1.5;
-Main.CORR_TICKS = 6;
-Main.CORR_TICK_PERIOD = 3.0;
-Main.BURN_COEFF = 0.4285;
-Main.BURN_CAST_TIME = 1.5;
 Main.BOSS_HIT = 83;
 Main.TRASH_HIT = 94;
 Main.TALENT_BONUS = 1.15;
