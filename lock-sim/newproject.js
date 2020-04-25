@@ -4728,7 +4728,7 @@ _$List_ListIterator.prototype = {
 var Main = function() {
 	this.split_mods = true;
 	this.show_notes = false;
-	this.vars = { lock_count : 5, world_buffs_crit : 18, bolt_dmg : 481.5};
+	this.vars = { lock_count : 5, world_buffs_crit : 18, bolt_dmg : 481.5, kings : 0, heart : 0};
 	this.boss_mods = { 'int' : 0, sp : 0, crit : 0, hit : 0};
 	this.trash_mods = { 'int' : 0, sp : 0, crit : 0, hit : 0};
 	this.boss_stats = { 'int' : 300, sp : 790, crit : 1, hit : 0};
@@ -4855,60 +4855,72 @@ Main.prototype = {
 			_gthis.obj.flush();
 		};
 		auto_editable("wbuffs crit: ",set2,this.vars.world_buffs_crit);
+		var set3 = function(x11) {
+			_gthis.vars.kings = x11;
+			_gthis.obj.data.vars.kings = x11;
+			_gthis.obj.flush();
+		};
+		auto_editable("kings on: ",set3,this.vars.kings);
+		var set4 = function(x12) {
+			_gthis.vars.heart = x12;
+			_gthis.obj.data.vars.heart = x12;
+			_gthis.obj.flush();
+		};
+		auto_editable("heart on: ",set4,this.vars.heart);
 		auto_editable_x = boss_slider_x;
 		auto_editable_y = 400;
 		auto_heading("Encounter stats:");
-		var set3 = function(x11) {
-			_gthis.boss_stats["int"] = x11;
-			_gthis.obj.data.boss_stats["int"] = x11;
-			_gthis.obj.flush();
-		};
-		auto_editable("int: ",set3,this.boss_stats["int"]);
-		var set4 = function(x12) {
-			_gthis.boss_stats.sp = x12;
-			_gthis.obj.data.boss_stats.sp = x12;
-			_gthis.obj.flush();
-		};
-		auto_editable("sp: ",set4,this.boss_stats.sp);
 		var set5 = function(x13) {
-			_gthis.boss_stats.crit = x13;
-			_gthis.obj.data.boss_stats.crit = x13;
+			_gthis.boss_stats["int"] = x13;
+			_gthis.obj.data.boss_stats["int"] = x13;
 			_gthis.obj.flush();
 		};
-		auto_editable("crit: ",set5,this.boss_stats.crit);
+		auto_editable("int: ",set5,this.boss_stats["int"]);
 		var set6 = function(x14) {
-			_gthis.boss_stats.hit = x14;
-			_gthis.obj.data.boss_stats.hit = x14;
+			_gthis.boss_stats.sp = x14;
+			_gthis.obj.data.boss_stats.sp = x14;
 			_gthis.obj.flush();
 		};
-		auto_editable("hit: ",set6,this.boss_stats.hit);
+		auto_editable("sp: ",set6,this.boss_stats.sp);
+		var set7 = function(x15) {
+			_gthis.boss_stats.crit = x15;
+			_gthis.obj.data.boss_stats.crit = x15;
+			_gthis.obj.flush();
+		};
+		auto_editable("crit: ",set7,this.boss_stats.crit);
+		var set8 = function(x16) {
+			_gthis.boss_stats.hit = x16;
+			_gthis.obj.data.boss_stats.hit = x16;
+			_gthis.obj.flush();
+		};
+		auto_editable("hit: ",set8,this.boss_stats.hit);
 		auto_editable_x = trash_slider_x;
 		auto_editable_y = 400;
 		auto_heading("Trash stats:");
-		var set7 = function(x15) {
-			_gthis.trash_stats["int"] = x15;
-			_gthis.obj.data.trash_stats["int"] = x15;
-			_gthis.obj.flush();
-		};
-		auto_editable("int: ",set7,this.trash_stats["int"]);
-		var set8 = function(x16) {
-			_gthis.trash_stats.sp = x16;
-			_gthis.obj.data.trash_stats.sp = x16;
-			_gthis.obj.flush();
-		};
-		auto_editable("sp: ",set8,this.trash_stats.sp);
 		var set9 = function(x17) {
-			_gthis.trash_stats.crit = x17;
-			_gthis.obj.data.trash_stats.crit = x17;
+			_gthis.trash_stats["int"] = x17;
+			_gthis.obj.data.trash_stats["int"] = x17;
 			_gthis.obj.flush();
 		};
-		auto_editable("crit: ",set9,this.trash_stats.crit);
+		auto_editable("int: ",set9,this.trash_stats["int"]);
 		var set10 = function(x18) {
-			_gthis.trash_stats.hit = x18;
-			_gthis.obj.data.trash_stats.hit = x18;
+			_gthis.trash_stats.sp = x18;
+			_gthis.obj.data.trash_stats.sp = x18;
 			_gthis.obj.flush();
 		};
-		auto_editable("hit: ",set10,this.trash_stats.hit);
+		auto_editable("sp: ",set10,this.trash_stats.sp);
+		var set11 = function(x19) {
+			_gthis.trash_stats.crit = x19;
+			_gthis.obj.data.trash_stats.crit = x19;
+			_gthis.obj.flush();
+		};
+		auto_editable("crit: ",set11,this.trash_stats.crit);
+		var set12 = function(x20) {
+			_gthis.trash_stats.hit = x20;
+			_gthis.obj.data.trash_stats.hit = x20;
+			_gthis.obj.flush();
+		};
+		auto_editable("hit: ",set12,this.trash_stats.hit);
 		var calc_dmg = function(modded,is_boss) {
 			var stats = is_boss ? _gthis.boss_stats : _gthis.trash_stats;
 			var mods = is_boss ? _gthis.boss_mods : _gthis.trash_mods;
@@ -4922,6 +4934,14 @@ Main.prototype = {
 				crit += mods.crit;
 				hit += mods.hit;
 			}
+			var int_bonus_from_buffs = 1.0;
+			if(_gthis.vars.kings == 1) {
+				int_bonus_from_buffs *= 1.15;
+			}
+			if(_gthis.vars.heart == 1) {
+				int_bonus_from_buffs *= 1.1;
+			}
+			$int = Math.round($int * int_bonus_from_buffs);
 			var base_hit = is_boss ? 83 : 94;
 			var level_resistance = is_boss ? 24 : 16;
 			var hit_chance = (base_hit + hit) / 100;
@@ -94823,6 +94843,8 @@ Main.TRASH_HIT = 94;
 Main.TALENT_BONUS = 1.15;
 Main.HIT_CHANCE_MAX = 0.99;
 Main.CRIT_CHANCE_MAX = 1.0;
+Main.KINGS_INT_BONUS = 1.15;
+Main.HEART_INT_BONUS = 1.1;
 MathExtensions.CONCAVE = -1;
 MathExtensions.TANGENTIAL = 0;
 MathExtensions.CONVEX = 1;
